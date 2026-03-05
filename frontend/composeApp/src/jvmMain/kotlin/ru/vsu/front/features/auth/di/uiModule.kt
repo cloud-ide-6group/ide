@@ -9,7 +9,7 @@ import ru.vsu.front.features.auth.ui.LoginViewModel
 /**
  * Модуль слоя ui
  *
- * @see LoginViewModel Предоставление вьюмодели экрана логина, Singletone
+ * @see LoginViewModel Предоставление вьюмодели экрана логина
  */
 val uiModule = module {
     viewModelOf(::LoginViewModel)
