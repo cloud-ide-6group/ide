@@ -48,7 +48,7 @@ fun CodeTogetherTextField(
 
 @Preview
 @Composable
-fun CodeTogetherTextField() {
+fun CodeTogetherTextFieldPreview() {
     BackgroundPreview {
         CodeTogetherTextField(
             value = "Current value!!!!!!!!! world",
@@ -67,6 +67,9 @@ fun CodeTogetherTextField() {
 
             }
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         CodeTogetherTextField(
             modifier = Modifier,
             value = "",
