@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ fun CodeTogetherTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = CodeTogetherTheme.colors.primaryText,
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     hint: String = "",
     hintColor: Color = CodeTogetherTheme.colors.secondaryText,
     style: TextStyle = CodeTogetherTheme.typography.style,
@@ -36,7 +38,7 @@ fun CodeTogetherTextField(
                 color = hintColor
             )
         },
-        colors = OutlinedTextFieldDefaults.colors(
+        colors = colors.copy(
             focusedTextColor = textColor,
             unfocusedTextColor = textColor
         )
