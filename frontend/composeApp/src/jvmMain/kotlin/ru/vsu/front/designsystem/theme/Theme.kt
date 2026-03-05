@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontFamily
 
 @Composable
 fun CodeTogetherTheme(
-    themeVariant: CodeTogetherThemeVariant,
+    themeVariant: CodeTogetherThemeVariant = CodeTogetherThemeVariant.Omni,
     content: @Composable () -> Unit
 ) {
     val colors = when(themeVariant) {
