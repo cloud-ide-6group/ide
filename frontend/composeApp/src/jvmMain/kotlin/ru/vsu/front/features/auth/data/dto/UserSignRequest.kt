@@ -2,6 +2,7 @@
 
 package ru.vsu.front.features.auth.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,7 +14,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserSignRequest(
-    val name: String,
-    val email: String,
-    val password: String,
+    @SerialName("name") val name: String,
+    @SerialName("email") val email: String,
+    @SerialName("password") val password: String,
 )
