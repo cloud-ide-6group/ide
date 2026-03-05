@@ -1,7 +1,9 @@
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,11 +43,12 @@ fun CodeTogetherText(
 @Composable
 private fun CodeTogetherTextPreview() {
     CodeTogetherTheme {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(CodeTogetherTheme.colors.primaryBackground),
-            contentAlignment = Alignment.Center,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CodeTogetherText(
                 modifier = Modifier
@@ -53,19 +56,13 @@ private fun CodeTogetherTextPreview() {
                 text = "Hello World!",
                 textAlign = TextAlign.Center
             )
-        }
-    }
-}
 
-@Preview
-@Composable
-private fun CodeTogetherTextPreview2() {
-    CodeTogetherTheme {
-        CodeTogetherText(
-            modifier = Modifier
-                .fillMaxWidth(),
-            text = "Hello World!",
-            textAlign = TextAlign.Center
-        )
+            CodeTogetherText(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = "Hello World!Hello World!Hello World!Hello World!",
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
