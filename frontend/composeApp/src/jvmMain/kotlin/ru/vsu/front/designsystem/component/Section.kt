@@ -47,7 +47,7 @@ fun Section(
 
 @Preview
 @Composable
-fun SectionPreview() {
+private fun SectionPreview() {
     BackgroundPreview {
         Section(
             sectionName = "Email",
