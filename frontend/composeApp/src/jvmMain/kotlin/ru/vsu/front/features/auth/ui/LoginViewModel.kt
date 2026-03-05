@@ -12,8 +12,7 @@ import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
 import ru.vsu.front.features.auth.domain.usecase.SignUseCase
 
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase,
-    private val signUseCase: SignUseCase,
+    private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState>(UiState())
