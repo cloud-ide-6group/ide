@@ -37,7 +37,7 @@ fun CodeTogetherButton(
 
 @Preview
 @Composable
-fun CodeTogetherButtonPreview() {
+private fun CodeTogetherButtonPreview() {
     CodeTogetherTheme {
         Column(
             modifier = Modifier
