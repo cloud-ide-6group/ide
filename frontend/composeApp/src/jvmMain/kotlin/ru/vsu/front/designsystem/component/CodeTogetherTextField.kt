@@ -1,19 +1,16 @@
 package ru.vsu.front.designsystem.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 @Composable
@@ -49,36 +46,31 @@ fun CodeTogetherTextField(
 @Preview
 @Composable
 fun CodeTogetherTextField() {
-    CodeTogetherTheme {
-        Column(
+    BackgroundPreview {
+        CodeTogetherTextField(
+            value = "Current value!!!!!!!!! world",
+            onValueChange = {
+
+            }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        CodeTogetherTextField(
             modifier = Modifier
-                .fillMaxSize()
-                .background(CodeTogetherTheme.colors.primaryBackground),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CodeTogetherTextField(
-                value = "Current value!!!!!!!!! world",
-                onValueChange = {
+                .fillMaxWidth(),
+            value = "Very very very very very very very very very long word",
+            onValueChange = {
 
-                }
-            )
-            CodeTogetherTextField(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                value = "Very very very very very very very very very long word",
-                onValueChange = {
+            }
+        )
+        CodeTogetherTextField(
+            modifier = Modifier,
+            value = "",
+            hint = "I am long long long long Hint",
+            onValueChange = {
 
-                }
-            )
-            CodeTogetherTextField(
-                modifier = Modifier,
-                value = "",
-                hint = "I am long long long long Hint",
-                onValueChange = {
-
-                }
-            )
-        }
+            }
+        )
     }
 }

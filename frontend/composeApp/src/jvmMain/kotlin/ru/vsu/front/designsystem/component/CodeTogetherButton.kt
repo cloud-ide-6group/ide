@@ -48,41 +48,33 @@ fun CodeTogetherButton(
 @Preview
 @Composable
 private fun CodeTogetherButtonPreview() {
-    CodeTogetherTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(CodeTogetherTheme.colors.primaryBackground),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    BackgroundPreview {
+        IconButton(
+            onClick = {
+
+            },
+            modifier = Modifier,
+            shape = RoundedCornerShape(8.dp),
         ) {
-            IconButton(
-                onClick = {
+            Icon(
+                painter = painterResource(Res.drawable.close_24dp),
+                contentDescription = "",
+                tint = CodeTogetherTheme.colors.error
+            )
+        }
 
-                },
-                modifier = Modifier,
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.close_24dp),
-                    contentDescription = "",
-                    tint = CodeTogetherTheme.colors.error
-                )
-            }
+        IconButton(
+            onClick = {
 
-            IconButton(
-                onClick = {
-
-                },
-                modifier = Modifier,
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.close_24dp),
-                    contentDescription = "",
-                    tint = CodeTogetherTheme.colors.primary
-                )
-            }
+            },
+            modifier = Modifier,
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.close_24dp),
+                contentDescription = "",
+                tint = CodeTogetherTheme.colors.primary
+            )
         }
     }
 }

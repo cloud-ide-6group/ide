@@ -2,20 +2,18 @@
 
 package ru.vsu.front.designsystem.component
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
@@ -53,27 +51,21 @@ fun CodeTogetherText(
 @Preview
 @Composable
 private fun CodeTogetherTextPreview() {
-    CodeTogetherTheme {
-        Column(
+    BackgroundPreview {
+        CodeTogetherText(
             modifier = Modifier
-                .fillMaxSize()
-                .background(CodeTogetherTheme.colors.primaryBackground),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CodeTogetherText(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = "Hello World!",
-                textAlign = TextAlign.Center
-            )
+                .fillMaxWidth(),
+            text = "Hello World!",
+            textAlign = TextAlign.Center
+        )
 
-            CodeTogetherText(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                text = "Hello World!Hello World!Hello World!Hello World!",
-                textAlign = TextAlign.Center
-            )
-        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        CodeTogetherText(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = "Hello World!Hello World!Hello World!Hello World!",
+            textAlign = TextAlign.Center
+        )
     }
 }
