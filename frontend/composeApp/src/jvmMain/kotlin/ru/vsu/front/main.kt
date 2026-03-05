@@ -10,8 +10,20 @@ fun main() {
         Window(
             onCloseRequest = ::exitApplication,
             title = "front",
+            undecorated = true,
+            transparent = true
         ) {
-            App()
+            App(
+                onMinimizeClick = {
+
+                },
+                onMaximizeClick = {
+
+                },
+                onCloseClick = ::exitApplication
+            ) {
+
+            }
         }
     }
 }
