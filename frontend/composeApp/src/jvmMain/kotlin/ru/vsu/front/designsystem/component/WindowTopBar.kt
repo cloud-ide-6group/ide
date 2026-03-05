@@ -1,16 +1,14 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.window.WindowDraggableArea
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowScope
 import front.composeapp.generated.resources.Res
@@ -20,6 +18,14 @@ import front.composeapp.generated.resources.minimize_24dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Верхняя панель
+ *
+ * @param onMinimizeClick Коллбек, вызывающийся при клике на кнопку свернуть
+ * @param onMaximizeClick Коллбек, вызывающийся при клике на кнопку свернуть в окно
+ * @param onCloseClick Коллбек, вызывающийся при клике на кнопку закрыть
+ * @param content Слот для контента
+ */
 @Composable
 fun WindowScope.WindowTopBar(
     onMinimizeClick: () -> Unit,
