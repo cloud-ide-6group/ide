@@ -40,7 +40,8 @@ fun CodeTogetherTextField(
         },
         colors = colors.copy(
             focusedTextColor = textColor,
-            unfocusedTextColor = textColor
+            unfocusedTextColor = textColor,
+            focusedIndicatorColor = CodeTogetherTheme.colors.primary
         )
     )
 }
