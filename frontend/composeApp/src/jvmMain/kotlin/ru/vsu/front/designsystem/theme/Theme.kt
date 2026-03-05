@@ -5,6 +5,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 
+/**
+ * Composable Тема
+ *
+ * @param themeVariant Текущий вариант темы
+ * @param content Слот под контент
+ */
 @Composable
 fun CodeTogetherTheme(
     themeVariant: CodeTogetherThemeVariant = CodeTogetherThemeVariant.Omni,
