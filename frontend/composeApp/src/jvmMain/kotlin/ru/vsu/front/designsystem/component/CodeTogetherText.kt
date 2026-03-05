@@ -1,13 +1,12 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,8 +15,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Code Together текст
+ *
+ * @param text Текст текста
+ * @param modifier Modifier который будет применён к тексту
+ * @param color Цвет текста
+ * @param style Стиль текста
+ * @param textAlign Положение текста
+ * @param overflow Стратегия переполнения текста
+ * @param maxLines Максимальное количество строк
+ */
 @Composable
 fun CodeTogetherText(
     text: String,
