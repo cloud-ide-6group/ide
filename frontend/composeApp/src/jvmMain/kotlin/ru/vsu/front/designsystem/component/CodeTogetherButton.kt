@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
@@ -19,6 +21,14 @@ import front.composeapp.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Code Together кнопка
+ *
+ * @param onClick Коллбек, вызывающийся при клике на кнопку
+ * @param modifier Modifier который будет применён к кнопке
+ * @param shape Фигура, которая будет применена к кнопке
+ * @param content Слот под контент
+ */
 @Composable
 fun CodeTogetherButton(
     onClick: () -> Unit,
