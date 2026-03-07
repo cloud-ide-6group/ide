@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.layout.*
@@ -11,6 +13,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Секция в виде столбца с Text + TextField
+ *
+ * @param sectionName Текст для Text
+ * @param value Текст для TextField
+ * @param hint Текст подсказки
+ * @param onValueChange Коллбек, вызывающийся при изменении value
+ * @param modifier Modifier, который будет применён к секции
+ * @param textColor Цвет текста для Text и TextField
+ * @param textFieldColors Цвета текста для TextField
+ * @param style Стиль для Text
+ */
 @Composable
 fun Section(
     sectionName: String,
@@ -73,7 +87,7 @@ private fun SectionPreview() {
 
         Section(
             sectionName = "Email",
-            value = "example.examp...|",
+            value = "example.examp...",
             onValueChange = {
 
             },
