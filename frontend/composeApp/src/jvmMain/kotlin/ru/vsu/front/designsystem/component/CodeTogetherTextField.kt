@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -25,6 +26,8 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param textColor Цвет текста
  * @param colors Цвета текста
  * @param hint Текст подсказки
+ * @param trailingIcon Контент в конце TextField
+ * @param visualTransformation Визуальная трансформация текста
  * @param hintColor Цвет текста подсказки
  * @param style Стиль текста
  * @param singleLine В одну ли строку текст
@@ -37,6 +40,8 @@ fun CodeTogetherTextField(
     textColor: Color = CodeTogetherTheme.colors.primaryText,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     hint: String = "",
+    trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     hintColor: Color = CodeTogetherTheme.colors.secondaryText,
     style: TextStyle = CodeTogetherTheme.typography.style,
     singleLine: Boolean = true,
@@ -58,7 +63,9 @@ fun CodeTogetherTextField(
             focusedTextColor = textColor,
             unfocusedTextColor = textColor,
             focusedIndicatorColor = CodeTogetherTheme.colors.primary
-        )
+        ),
+        trailingIcon = trailingIcon,
+        visualTransformation = visualTransformation
     )
 }
 
