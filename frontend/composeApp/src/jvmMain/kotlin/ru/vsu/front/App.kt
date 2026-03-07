@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front
 
 import androidx.compose.foundation.background
@@ -11,6 +13,12 @@ import ru.vsu.front.designsystem.component.WindowTopBar
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.designsystem.theme.CodeTogetherThemeVariant
 
+/**
+ * @param onMinimizeClick Коллбек, вызывающийся при нажатии на кнопку "Свернуть"
+ * @param onMaximizeClick Коллбек, вызывающийся при нажатии на кнопку "Свернуть в окно"
+ * @param onCloseClick Коллбек, вызывающийся при нажатии на кнопку "Закрыть"
+ * @param content Слот под контент
+ */
 @Composable
 fun WindowScope.App(
     onMinimizeClick: () -> Unit,
