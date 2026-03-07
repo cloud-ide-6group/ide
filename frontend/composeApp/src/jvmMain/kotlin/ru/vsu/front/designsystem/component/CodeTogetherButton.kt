@@ -7,6 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
@@ -35,16 +39,20 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  *
  * @param onClick Коллбек, вызывающийся при клике на кнопку
  * @param modifier Modifier который будет применён к кнопке
+ * @param padding Расширение по краям
  * @param shape Фигура, которая будет применена к кнопке
  * @param hoverColor Цвет бекграунда, когда курсор на кнопке
+ * @param unhoverColor Цвет бекграунда, когда курсор не на кнопке
  * @param content Слот под контент
  */
 @Composable
 fun CodeTogetherButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    padding: PaddingValues = PaddingValues(),
     shape: Shape = RoundedCornerShape(8.dp),
-    hoverColor: Color = Color.White.copy(alpha = 0.10f),
+    hoverColor: Color = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
+    unhoverColor: Color = Color.Transparent,
     content: @Composable () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -52,14 +60,13 @@ fun CodeTogetherButton(
 
     Box(
         modifier = modifier
-            .size(40.dp)
             .clip(shape)
-            .background(if (isHovered) hoverColor else Color.Transparent)
+            .background(if (isHovered) hoverColor else unhoverColor)
             .clickable(
                 interactionSource = interactionSource,
-                indication = null,
                 onClick = onClick
-            ),
+            )
+            .padding(padding),
         contentAlignment = Alignment.Center
     ) {
         content()
@@ -70,31 +77,26 @@ fun CodeTogetherButton(
 @Composable
 private fun CodeTogetherButtonPreview() {
     BackgroundPreview {
-        IconButton(
+        CodeTogetherButton(
             onClick = {
-
             },
-            modifier = Modifier,
-            shape = RoundedCornerShape(8.dp),
-        ) {
-            Icon(
-                painter = painterResource(Res.drawable.close_24dp),
-                contentDescription = "",
-                tint = CodeTogetherTheme.colors.error
-            )
-        }
-
-        IconButton(
-            onClick = {
-
-            },
-            modifier = Modifier,
-            shape = RoundedCornerShape(8.dp),
         ) {
             Icon(
                 painter = painterResource(Res.drawable.close_24dp),
                 contentDescription = "",
                 tint = CodeTogetherTheme.colors.primary
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        CodeTogetherButton(
+            onClick = {
+            },
+            unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
+        ) {
+            Icon(
+                painter = painterResource(Res.drawable.close_24dp),
+                contentDescription = "",
+                tint = CodeTogetherTheme.colors.error
             )
         }
     }
