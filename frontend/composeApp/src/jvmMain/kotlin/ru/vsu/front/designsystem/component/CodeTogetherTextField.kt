@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Code Together текст
+ *
+ * @param value Текст текста
+ * @param onValueChange Коллбек, вызывающийся при изменении value
+ * @param modifier Modifier который будет применён к тексту
+ * @param textColor Цвет текста
+ * @param colors Цвета текста
+ * @param hint Текст подсказки
+ * @param hintColor Цвет текста подсказки
+ * @param style Стиль текста
+ * @param singleLine В одну ли строку текст
+ */
 @Composable
 fun CodeTogetherTextField(
     value: String,
