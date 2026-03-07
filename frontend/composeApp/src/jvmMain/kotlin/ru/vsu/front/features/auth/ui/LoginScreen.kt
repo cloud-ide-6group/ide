@@ -8,15 +8,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import front.composeapp.generated.resources.Res
+import front.composeapp.generated.resources.visibility_off_24dp
+import front.composeapp.generated.resources.visibility_on_24dp
+import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.component.CodeTogetherButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
@@ -30,7 +40,10 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    onSignUpClick: () -> Unit,
+    viewModel: LoginViewModel
 ) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     Row(
         modifier = modifier
             .background(CodeTogetherTheme.colors.secondaryBackground)
@@ -38,7 +51,24 @@ fun LoginScreen(
             .fillMaxSize()
     ) {
         LeftSide()
-        RightSide()
+        RightSide(
+            email = uiState.value.email,
+            password = uiState.value.password,
+            isPasswordVisible = uiState.value.isPasswordVisible,
+            onEmailChange = { email ->
+                viewModel.processCommand(LoginCommand.ChangeEmail(email))
+            },
+            onPasswordChange = { password ->
+                viewModel.processCommand(LoginCommand.ChangePassword(password))
+            },
+            onLoginClick = {
+                viewModel.processCommand(LoginCommand.ClickLogin)
+            },
+            onChangePasswordVisibilityClick = {
+                viewModel.processCommand(LoginCommand.ChangePasswordVisibility)
+            },
+            onSignUpClick = onSignUpClick,
+        )
     }
 }
 
@@ -81,9 +111,26 @@ private fun RowScope.LeftSide(
 @Composable
 private fun RowScope.RightSide(
     modifier: Modifier = Modifier,
+    email: String,
+    password: String,
+    isPasswordVisible: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onChangePasswordVisibilityClick: () -> Unit,
+    onSignUpClick: () -> Unit,
 ) {
     SideColumn(modifier = modifier) {
-        SignCard()
+        SignCard(
+            email = email,
+            password = password,
+            isPasswordVisible = isPasswordVisible,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange,
+            onLoginClick = onLoginClick,
+            onSignUpClick = onSignUpClick,
+            onChangePasswordVisibilityClick = onChangePasswordVisibilityClick
+        )
     }
 }
 
@@ -118,6 +165,14 @@ private fun RowScope.SideColumn(
 @Composable
 private fun SignCard(
     modifier: Modifier = Modifier,
+    email: String,
+    password: String,
+    isPasswordVisible: Boolean,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
+    onChangePasswordVisibilityClick: () -> Unit,
+    onSignUpClick: () -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -144,19 +199,31 @@ private fun SignCard(
             )
             Section(
                 sectionName = "Email",
-                value = "",
+                value = email,
                 hint = "Your Email",
-                onValueChange = {
-
-                }
+                onValueChange = onEmailChange
             )
             Section(
                 sectionName = "Password",
-                value = "qwerty123",
+                value = password,
                 hint = "Your Password",
-                onValueChange = {
-
-                }
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    val iconRes = when (isPasswordVisible) {
+                        true -> Res.drawable.visibility_off_24dp
+                        false -> Res.drawable.visibility_on_24dp
+                    }
+                    CodeTogetherButton(
+                        onClick = onChangePasswordVisibilityClick,
+                    ) {
+                        Icon(
+                            painter = painterResource(iconRes),
+                            contentDescription = "Change password visibility",
+                            tint = CodeTogetherTheme.colors.primary
+                        )
+                    }
+                },
+                onValueChange = onPasswordChange
             )
             CodeTogetherTextButton(
                 modifier = Modifier
@@ -169,9 +236,7 @@ private fun SignCard(
                 style = CodeTogetherTheme.typography.style.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                onClick = {
-
-                }
+                onClick = onLoginClick
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -185,9 +250,7 @@ private fun SignCard(
                     style = CodeTogetherTheme.typography.style.copy(
                         fontWeight = FontWeight.Bold
                     ),
-                    onClick = {
-
-                    }
+                    onClick = onSignUpClick
                 )
             }
         }
