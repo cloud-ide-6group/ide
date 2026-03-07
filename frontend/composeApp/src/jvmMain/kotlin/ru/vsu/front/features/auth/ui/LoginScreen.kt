@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import front.composeapp.generated.resources.Res
 import front.composeapp.generated.resources.visibility_off_24dp
 import front.composeapp.generated.resources.visibility_on_24dp
@@ -131,7 +130,7 @@ private fun RowScope.RightSide(
     onSignUpClick: () -> Unit,
 ) {
     SideColumn(modifier = modifier) {
-        SignCard(
+        LoginCard(
             email = email,
             password = password,
             isPasswordVisible = isPasswordVisible,
@@ -181,7 +180,7 @@ private fun RowScope.SideColumn(
  * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
  */
 @Composable
-private fun SignCard(
+private fun LoginCard(
     modifier: Modifier = Modifier,
     email: String,
     password: String,
