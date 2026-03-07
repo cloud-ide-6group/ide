@@ -21,20 +21,20 @@ class LoginViewModel(
     private val loginUseCase: LoginUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<UiState>(UiState())
-    val uiState: StateFlow<UiState>
-        get() = _uiState.asStateFlow()
+    private val _uiStateLogin = MutableStateFlow<UiStateLogin>(UiStateLogin())
+    val uiStateLogin: StateFlow<UiStateLogin>
+        get() = _uiStateLogin.asStateFlow()
 
     fun processCommand(command: LoginCommand) {
         when(val command = command) {
             is LoginCommand.ChangeEmail -> {
-                _uiState.update { previousState ->
+                _uiStateLogin.update { previousState ->
                     previousState.copy(email = command.email)
                 }
             }
 
             is LoginCommand.ChangePassword -> {
-                _uiState.update { previousState ->
+                _uiStateLogin.update { previousState ->
                     previousState.copy(password = command.password)
                 }
             }
@@ -42,14 +42,14 @@ class LoginViewModel(
             LoginCommand.ClickLogin -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     loginUseCase(
-                        email = _uiState.value.email,
-                        password = _uiState.value.password
+                        email = _uiStateLogin.value.email,
+                        password = _uiStateLogin.value.password
                     )
                 }
             }
 
             LoginCommand.ChangePasswordVisibility -> {
-                _uiState.update { previousState ->
+                _uiStateLogin.update { previousState ->
                     previousState.copy(isPasswordVisible = !previousState.isPasswordVisible)
                 }
             }
@@ -79,7 +79,7 @@ sealed interface LoginCommand {
  * @see password текущий пароль
  * @see isPasswordVisible Видимость пароля
  */
-data class UiState(
+data class UiStateLogin(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false

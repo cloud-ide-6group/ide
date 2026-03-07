@@ -4,10 +4,7 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,7 +14,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +26,9 @@ import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.features.auth.ui.component.AuthCard
+import ru.vsu.front.features.auth.ui.component.LeftSide
+import ru.vsu.front.features.auth.ui.component.SideColumn
 
 /**
  * Экран авторизации
@@ -44,7 +43,7 @@ fun LoginScreen(
     onSignUpClick: () -> Unit,
     viewModel: LoginViewModel
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiStateLogin.collectAsStateWithLifecycle()
     Row(
         modifier = modifier
             .background(CodeTogetherTheme.colors.secondaryBackground)
@@ -69,37 +68,6 @@ fun LoginScreen(
                 viewModel.processCommand(LoginCommand.ChangePasswordVisibility)
             },
             onSignUpClick = onSignUpClick,
-        )
-    }
-}
-
-/**
- * Левая часть экрана
- *
- * @param modifier Modifier, который будет применён к данной части
- */
-@Composable
-private fun RowScope.LeftSide(
-    modifier: Modifier = Modifier,
-) {
-    SideColumn(modifier = modifier) {
-        CodeTogetherText(
-            text = "Let's Code Together!",
-            style = CodeTogetherTheme.typography.style.copy(
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
-        )
-        Spacer(modifier = modifier.height(8.dp))
-        CodeTogetherText(
-            text = "Enjoy programming!",
-            color = CodeTogetherTheme.colors.primary,
-            style = CodeTogetherTheme.typography.style.copy(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
         )
     }
 }
@@ -144,29 +112,6 @@ private fun RowScope.RightSide(
 }
 
 /**
- * Устранение дублирования, функция для использования корневого столбца в левой и правой части
- *
- * @param modifier Modifier, который будет применён к данной части
- * @param content Слот под контент
- */
-@Composable
-private fun RowScope.SideColumn(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-            .weight(1f),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        content()
-    }
-}
-
-
-/**
  * Карточка авторизации
  *
  * @param modifier Modifier, который будет применён к данной части
@@ -191,15 +136,7 @@ private fun LoginCard(
     onChangePasswordVisibilityClick: () -> Unit,
     onSignUpClick: () -> Unit,
 ) {
-    Card(
-        modifier = modifier
-            .width(400.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = CodeTogetherTheme.colors.primaryBackground,
-        ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
-    ) {
+    AuthCard {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
