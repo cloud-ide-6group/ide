@@ -228,9 +228,9 @@ private fun SignCard(
                 onValueChange = onPasswordChange
             )
             Section(
-                sectionName = "Confirme Password",
+                sectionName = "Confirm Password",
                 value = confirmedPassword,
-                hint = "Confirme Password",
+                hint = "Confirm Password",
                 visualTransformation = if (isConfirmedPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val iconRes = when (isConfirmedPasswordVisible) {
