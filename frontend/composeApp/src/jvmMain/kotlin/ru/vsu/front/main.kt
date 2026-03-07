@@ -14,10 +14,12 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowScope
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import org.koin.compose.viewmodel.koinViewModel
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.features.auth.di.initKoin
 import ru.vsu.front.features.auth.ui.LoginScreen
+import ru.vsu.front.features.auth.ui.LoginViewModel
 import java.awt.Dimension
 
 /**
@@ -46,7 +48,8 @@ fun main() {
                 },
                 onCloseClick = ::exitApplication
             ) {
-
+                val loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+                LoginScreen(onSignUpClick = {}, viewModel = loginViewModel)
             }
         }
     }
