@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -19,6 +20,8 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param sectionName Текст для Text
  * @param value Текст для TextField
  * @param hint Текст подсказки
+ * @param trailingIcon Контент, который будет применён к концу TextField
+ * @param visualTransformation Визуальная трансформация текста в TextField
  * @param onValueChange Коллбек, вызывающийся при изменении value
  * @param modifier Modifier, который будет применён к секции
  * @param textColor Цвет текста для Text и TextField
@@ -30,6 +33,8 @@ fun Section(
     sectionName: String,
     value: String,
     hint: String,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = CodeTogetherTheme.colors.primaryText,
@@ -54,6 +59,9 @@ fun Section(
             textColor = textColor,
             colors = textFieldColors,
             hint = hint,
+            style = style,
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
             onValueChange = onValueChange
         )
     }
