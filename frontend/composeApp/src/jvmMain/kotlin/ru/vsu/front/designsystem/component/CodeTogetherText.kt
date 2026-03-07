@@ -35,7 +35,7 @@ fun CodeTogetherText(
     style: TextStyle = CodeTogetherTheme.typography.style,
     textAlign: TextAlign? = null,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-    maxLines: Int = Int.MAX_VALUE,
+    maxLines: Int = 1,
 ) {
     Text(
         text = text,
@@ -66,6 +66,16 @@ private fun CodeTogetherTextPreview() {
                 .fillMaxWidth(),
             text = "Hello World!Hello World!Hello World!Hello World!",
             textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        CodeTogetherText(
+            modifier = Modifier
+                .fillMaxWidth(),
+            text = "Hello World!",
+            textAlign = TextAlign.Center,
+            color = CodeTogetherTheme.colors.primary
         )
     }
 }
