@@ -35,7 +35,8 @@ fun CodeTogetherTextField(
         placeholder = {
             CodeTogetherText(
                 text = hint,
-                color = hintColor
+                color = hintColor,
+                style = CodeTogetherTheme.typography.style
             )
         },
         colors = colors.copy(
@@ -48,7 +49,7 @@ fun CodeTogetherTextField(
 
 @Preview
 @Composable
-fun CodeTogetherTextFieldPreview() {
+private fun CodeTogetherTextFieldPreview() {
     BackgroundPreview {
         CodeTogetherTextField(
             value = "Current value!!!!!!!!! world",
