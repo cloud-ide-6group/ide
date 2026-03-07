@@ -47,7 +47,7 @@ class SignViewModel(
             SignCommand.ClickSignUp -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val state = _uiStateSign.value
-                    if(state.password == state.email) {
+                    if(state.password == state.confirmedPassword) {
                         signUseCase(
                             name = _uiStateSign.value.name,
                             email = _uiStateSign.value.email,
