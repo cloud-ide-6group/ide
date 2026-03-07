@@ -2,6 +2,7 @@
 
 package ru.vsu.front.features.auth.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,8 @@ fun LoginScreen(
 ) {
     Row(
         modifier = modifier
+            .background(CodeTogetherTheme.colors.secondaryBackground)
+            .padding(32.dp)
             .fillMaxSize()
     ) {
         LeftSide()
