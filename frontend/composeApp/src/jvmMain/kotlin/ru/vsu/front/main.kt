@@ -17,6 +17,8 @@ import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.features.auth.di.initKoin
 import ru.vsu.front.features.auth.ui.LoginScreen
 import ru.vsu.front.features.auth.ui.LoginViewModel
+import ru.vsu.front.features.auth.ui.SignScreen
+import ru.vsu.front.features.auth.ui.SignViewModel
 import java.awt.Dimension
 
 /**
@@ -47,8 +49,10 @@ fun main() {
                 },
                 onCloseClick = ::exitApplication
             ) {
-                val loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
-                LoginScreen(onSignUpClick = {}, viewModel = loginViewModel)
+//                val loginViewModel: LoginViewModel = koinViewModel<LoginViewModel>()
+//                LoginScreen(onSignUpClick = {}, viewModel = loginViewModel)
+                val signViewModel: SignViewModel = koinViewModel<SignViewModel>()
+                SignScreen(onLoginClick = {}, viewModel = signViewModel)
             }
         }
     }
