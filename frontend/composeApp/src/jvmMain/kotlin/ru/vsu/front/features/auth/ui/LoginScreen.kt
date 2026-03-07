@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ru.vsu.front.features.auth.ui
 
 import androidx.compose.foundation.layout.*
@@ -19,6 +21,11 @@ import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Экран авторизации
+ *
+ * @param modifier Modifier, который будет применён к данному экрану
+ */
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -32,6 +39,11 @@ fun LoginScreen(
     }
 }
 
+/**
+ * Левая часть экрана
+ *
+ * @param modifier Modifier, который будет применён к данной части
+ */
 @Composable
 private fun RowScope.LeftSide(
     modifier: Modifier = Modifier,
@@ -58,6 +70,11 @@ private fun RowScope.LeftSide(
     }
 }
 
+/**
+ * Права часть экрана
+ *
+ * @param modifier Modifier, который будет применён к данной части
+ */
 @Composable
 private fun RowScope.RightSide(
     modifier: Modifier = Modifier,
@@ -67,6 +84,12 @@ private fun RowScope.RightSide(
     }
 }
 
+/**
+ * Устранение дублирования, функция для использования корневого столбца в левой и правой части
+ *
+ * @param modifier Modifier, который будет применён к данной части
+ * @param content Слот под контент
+ */
 @Composable
 private fun RowScope.SideColumn(
     modifier: Modifier = Modifier,
@@ -83,6 +106,12 @@ private fun RowScope.SideColumn(
     }
 }
 
+
+/**
+ * Карточка регистрации
+ *
+ * @param modifier Modifier, который будет применён к карточке
+ */
 @Composable
 private fun SignCard(
     modifier: Modifier = Modifier,
