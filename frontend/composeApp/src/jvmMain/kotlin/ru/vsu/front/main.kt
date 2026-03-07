@@ -46,11 +46,7 @@ fun main() {
                 },
                 onCloseClick = ::exitApplication
             ) {
-                LoginScreen(
-                    modifier = Modifier
-                        .background(CodeTogetherTheme.colors.secondaryBackground)
-                        .padding(32.dp)
-                )
+
             }
         }
     }
