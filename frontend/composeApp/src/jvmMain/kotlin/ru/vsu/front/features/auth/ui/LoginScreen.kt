@@ -167,7 +167,7 @@ private fun RowScope.SideColumn(
 
 
 /**
- * Карточка регистрации
+ * Карточка авторизации
  *
  * @param modifier Modifier, который будет применён к данной части
  * @param email Текущая почта
