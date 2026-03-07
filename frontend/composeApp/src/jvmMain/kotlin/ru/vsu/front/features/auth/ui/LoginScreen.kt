@@ -36,6 +36,8 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * Экран авторизации
  *
  * @param modifier Modifier, который будет применён к данному экрану
+ * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
+ * @param viewModel Вьюмодель
  */
 @Composable
 fun LoginScreen(
@@ -107,6 +109,14 @@ private fun RowScope.LeftSide(
  * Права часть экрана
  *
  * @param modifier Modifier, который будет применён к данной части
+ * @param email Текущая почта
+ * @param password Текущий пароль
+ * @param isPasswordVisible Текущее состояние видимости пароля
+ * @param onEmailChange Коллбек, вызывающийся при изменении почты
+ * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
+ * @param onLoginClick Коллбек, вызывающийся при клике на кнопку логин
+ * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
+ * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
  */
 @Composable
 private fun RowScope.RightSide(
@@ -160,7 +170,15 @@ private fun RowScope.SideColumn(
 /**
  * Карточка регистрации
  *
- * @param modifier Modifier, который будет применён к карточке
+ * @param modifier Modifier, который будет применён к данной части
+ * @param email Текущая почта
+ * @param password Текущий пароль
+ * @param isPasswordVisible Текущее состояние видимости пароля
+ * @param onEmailChange Коллбек, вызывающийся при изменении почты
+ * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
+ * @param onLoginClick Коллбек, вызывающийся при клике на кнопку логин
+ * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
+ * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
  */
 @Composable
 private fun SignCard(
