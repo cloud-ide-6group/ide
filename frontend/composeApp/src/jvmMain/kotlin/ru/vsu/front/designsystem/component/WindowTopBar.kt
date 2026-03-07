@@ -10,12 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.window.WindowScope
 import front.composeapp.generated.resources.Res
 import front.composeapp.generated.resources.close_24dp
 import front.composeapp.generated.resources.maximize_24dp
 import front.composeapp.generated.resources.minimize_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
@@ -31,7 +33,7 @@ fun WindowScope.WindowTopBar(
     onMinimizeClick: () -> Unit,
     onMaximizeClick: () -> Unit,
     onCloseClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit = {} 
+    content: @Composable RowScope.() -> Unit = {}
 ) {
     WindowDraggableArea(
         modifier = Modifier
@@ -53,26 +55,31 @@ fun WindowScope.WindowTopBar(
                     .align(Alignment.CenterEnd),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                CodeTogetherButton(onClick = onMinimizeClick) {
-                    Icon(
-                        painter = painterResource(Res.drawable.minimize_24dp),
-                        contentDescription = "Minimize",
-                        tint = CodeTogetherTheme.colors.primary,
-                    )
-                }
-                CodeTogetherButton(onClick = onMaximizeClick) {
-                    Icon(
-                        painter = painterResource(Res.drawable.maximize_24dp),
-                        contentDescription = "Maximize",
-                        tint = CodeTogetherTheme.colors.primary
-                    )
-                }
-                CodeTogetherButton(onClick = onCloseClick) {
-                    Icon(
-                        painter = painterResource(Res.drawable.close_24dp),
-                        contentDescription = "Close",
-                        tint = CodeTogetherTheme.colors.primary
-                    )
+                NecessaryAppButtons.entries.fastForEach { entry ->
+                    val (onClick, iconRes) = when (entry) {
+                        NecessaryAppButtons.Minimize -> {
+                            onMinimizeClick to Res.drawable.minimize_24dp
+                        }
+
+                        NecessaryAppButtons.Maximize -> {
+                            onMaximizeClick to Res.drawable.maximize_24dp
+                        }
+
+                        NecessaryAppButtons.Close -> {
+                            onCloseClick to Res.drawable.close_24dp
+                        }
+                    }
+
+                    CodeTogetherButton(
+                        modifier = Modifier.size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
+                        onClick = onClick
+                    ) {
+                        Icon(
+                            painter = painterResource(iconRes),
+                            contentDescription = entry.name,
+                            tint = CodeTogetherTheme.colors.primary,
+                        )
+                    }
                 }
             }
         }
