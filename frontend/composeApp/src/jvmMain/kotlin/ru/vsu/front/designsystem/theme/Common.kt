@@ -17,6 +17,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme.colors
  * @param secondaryText Вторичный цвет текста
  * @param secondaryBackground Вторичный цвет бекграунда
  * @param error Цвет ошибки
+ * @param black Чёрный цвет
  */
 data class CodeTogetherColors(
     val primary: Color,
@@ -24,7 +25,8 @@ data class CodeTogetherColors(
     val primaryBackground: Color,
     val secondaryText: Color,
     val secondaryBackground: Color,
-    val error: Color
+    val error: Color,
+    val black: Color
 )
 
 data class CodeTogetherTypography(
@@ -34,6 +36,7 @@ data class CodeTogetherTypography(
  * Тема
  *
  * @param colors Цвета текущей темы приложения
+ * @param typography Стиль текста приложения
  */
 object CodeTogetherTheme {
     val colors: CodeTogetherColors
