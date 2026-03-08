@@ -33,6 +33,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewModel)
+            implementation(libs.androidx.datastore.preferences)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -68,6 +69,6 @@ buildkonfig {
     packageName = "ru.vsu.front.config"
 
     defaultConfigs {
-        buildConfigField(STRING, "BASE_URL", "\"$serverUrl\"")
+        buildConfigField(STRING, "BASE_URL", serverUrl)
     }
 }
