@@ -8,7 +8,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.Url
 import io.ktor.http.contentType
 import ru.vsu.front.features.auth.data.HttpRoutes.LOGIN
 import ru.vsu.front.features.auth.data.HttpRoutes.SIGN
@@ -42,7 +41,7 @@ class AuthRepositoryImpl(
         password: String
     ): AuthResult<UserSession> {
         return try {
-            val response = httpClient.post(Url(LOGIN)) {
+            val response = httpClient.post(LOGIN) {
                 contentType(ContentType.Application.Json)
                 setBody(UserLoginRequest(
                     email = email,
@@ -83,7 +82,7 @@ class AuthRepositoryImpl(
         password: String
     ): AuthResult<UserSession> {
         return try {
-            val response = httpClient.post(Url(SIGN)) {
+            val response = httpClient.post(SIGN) {
                 contentType(ContentType.Application.Json)
                 setBody(UserSignRequest(
                     name = name,
