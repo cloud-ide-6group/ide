@@ -105,7 +105,7 @@ private fun WindowScope.setupWindow(density: Density) {
 }
 
 /**
- * Первоначальная настройка окна
+ * Изменение размера и положения окна
  *
  * @param density Коэффициент плотности пикселей
  * @param maximumWindowBounds Максимальный размер окна без учета любых панелей
@@ -124,5 +124,4 @@ private fun changeWindowSizeAndPosition(
 
     window.size = DpSize(width, height)
     window.position = WindowPosition(x, y)
-    window.placement = WindowPlacement.Floating
 }
