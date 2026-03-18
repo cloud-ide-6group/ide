@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.domain.entity
 
 /**
@@ -13,6 +11,7 @@ sealed interface AuthResult<out T> {
      * @param data Положительный результат
      */
     data class Success<T>(val data: T) : AuthResult<T>
+
     /**
      * @param errorData Отрицательный результат
      */

@@ -15,8 +15,8 @@ fun getAppPreferencesDirectory(): File {
     }
 
     if (!appDir.exists()) {
-        appDir.mkdirs() 
+        appDir.mkdirs()
     }
-    
+
     return appDir
 }

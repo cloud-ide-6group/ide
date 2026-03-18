@@ -16,7 +16,7 @@ fun CodeTogetherTheme(
     themeVariant: CodeTogetherThemeVariant = CodeTogetherThemeVariant.Omni,
     content: @Composable () -> Unit
 ) {
-    val colors = when(themeVariant) {
+    val colors = when (themeVariant) {
         CodeTogetherThemeVariant.Omni -> omniPalette
     }
 

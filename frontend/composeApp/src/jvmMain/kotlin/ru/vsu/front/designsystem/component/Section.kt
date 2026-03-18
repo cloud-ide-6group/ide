@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.layout.*
@@ -39,7 +37,8 @@ fun Section(
     modifier: Modifier = Modifier,
     textColor: Color = CodeTogetherTheme.colors.primaryText,
     textFieldColors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    style: TextStyle = CodeTogetherTheme.typography.style
+    style: TextStyle = CodeTogetherTheme.typography.style,
+    isError: Boolean = false,
 ) {
     Column(
         modifier = modifier
@@ -59,6 +58,7 @@ fun Section(
             textColor = textColor,
             colors = textFieldColors,
             hint = hint,
+            isError = isError,
             style = style,
             trailingIcon = trailingIcon,
             visualTransformation = visualTransformation,

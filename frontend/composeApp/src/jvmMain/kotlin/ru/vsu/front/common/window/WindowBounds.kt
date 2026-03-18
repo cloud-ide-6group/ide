@@ -1,10 +1,8 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.common.window
 
 /**
- * @param width Ширина окнаа
- * @param height Высота окнаа
+ * @param width Ширина окна
+ * @param height Высота окна
  * @param x Положение x окна
  * @param y Положение y окна
  */

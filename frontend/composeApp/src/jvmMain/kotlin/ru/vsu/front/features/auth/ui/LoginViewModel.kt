@@ -1,17 +1,9 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
@@ -22,13 +14,14 @@ import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
  * Вьюмодель экрана логина
  *
  * @param loginUseCase Юзкейс авторизации
+ * @param tokenStorage Хранилище токенов
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
     private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
-    private val _uiStateLogin = MutableStateFlow<UiStateLogin>(UiStateLogin())
+    private val _uiStateLogin = MutableStateFlow(UiStateLogin())
     val uiStateLogin: StateFlow<UiStateLogin>
         get() = _uiStateLogin.asStateFlow()
 
@@ -37,7 +30,7 @@ class LoginViewModel(
         get() = _events.asSharedFlow()
 
     fun processCommand(command: LoginCommand) {
-        when(val command = command) {
+        when (val command = command) {
             is LoginCommand.ChangeEmail -> {
                 _uiStateLogin.update { previousState ->
                     previousState.copy(email = command.email)
@@ -56,7 +49,7 @@ class LoginViewModel(
                         email = _uiStateLogin.value.email,
                         password = _uiStateLogin.value.password
                     )
-                    when(result) {
+                    when (result) {
                         is AuthResult.Error<*> -> {
                             _events.emit(LoginEffect.ShowError(result.errorData.message))
                         }
@@ -80,7 +73,7 @@ class LoginViewModel(
 }
 
 /**
- * Комманды для вьюмодели логина
+ * Команды для вьюмодели логина
  *
  * @see ChangeEmail Сменить почту
  * @see ChangePassword Сменить пароль

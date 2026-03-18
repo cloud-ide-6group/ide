@@ -1,6 +1,6 @@
 package ru.vsu.front.common.security
 
-import java.util.Base64
+import java.util.*
 import java.util.prefs.Preferences
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -19,7 +19,7 @@ class CryptoManager {
 
     init {
         val encodedKey = prefs.get(keyName, null)
-        
+
         if (encodedKey == null) {
             val keyGen = KeyGenerator.getInstance("AES")
             keyGen.init(256)

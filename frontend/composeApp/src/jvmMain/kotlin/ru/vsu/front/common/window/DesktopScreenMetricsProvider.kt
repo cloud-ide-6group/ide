@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.common.window
 
 import java.awt.GraphicsEnvironment

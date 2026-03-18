@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.layout.Spacer
@@ -45,6 +43,7 @@ fun CodeTogetherTextField(
     hintColor: Color = CodeTogetherTheme.colors.secondaryText,
     style: TextStyle = CodeTogetherTheme.typography.style,
     singleLine: Boolean = true,
+    isError: Boolean = false,
 ) {
     OutlinedTextField(
         value = value,
@@ -52,6 +51,7 @@ fun CodeTogetherTextField(
         modifier = modifier,
         textStyle = style,
         singleLine = singleLine,
+        isError = isError,
         placeholder = {
             CodeTogetherText(
                 text = hint,
@@ -62,7 +62,10 @@ fun CodeTogetherTextField(
         colors = colors.copy(
             focusedTextColor = textColor,
             unfocusedTextColor = textColor,
-            focusedIndicatorColor = CodeTogetherTheme.colors.primary
+            focusedIndicatorColor = CodeTogetherTheme.colors.primary,
+            errorTextColor = CodeTogetherTheme.colors.error,
+            errorIndicatorColor = CodeTogetherTheme.colors.error,
+            errorCursorColor = textColor
         ),
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation

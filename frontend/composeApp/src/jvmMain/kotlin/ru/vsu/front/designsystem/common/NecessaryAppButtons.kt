@@ -1,6 +1,7 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.common
+
+import ru.vsu.front.designsystem.common.NecessaryAppButtons.Companion.NECESSARY_BUTTON_SIZE_IN_DP
+
 
 /**
  * Необходимые кнопки на всех экранах

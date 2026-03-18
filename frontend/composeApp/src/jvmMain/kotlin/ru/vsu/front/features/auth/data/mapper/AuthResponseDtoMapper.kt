@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.data.mapper
 
 import ru.vsu.front.features.auth.data.dto.AuthResponseDto

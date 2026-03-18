@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.theme
 
 import androidx.compose.runtime.Composable
@@ -7,6 +5,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme.colors
+import ru.vsu.front.designsystem.theme.CodeTogetherTheme.typography
 
 /**
  * Цвета [В текущей реализации цвета только для экрана логина]
@@ -32,6 +31,7 @@ data class CodeTogetherColors(
 data class CodeTogetherTypography(
     val style: TextStyle
 )
+
 /**
  * Тема
  *

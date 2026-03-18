@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.domain.repository
 
 import ru.vsu.front.features.auth.domain.entity.AuthResult
@@ -16,6 +14,7 @@ interface AuthRepository {
      * @param password Пароль пользователя
      */
     suspend fun login(email: String, password: String): AuthResult<UserSession>
+
     /**
      * Функция регистрации
      *

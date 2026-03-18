@@ -1,23 +1,15 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.SignUseCase
-import ru.vsu.front.features.auth.ui.SignEffect.*
+import ru.vsu.front.features.auth.ui.SignEffect.ShowError
 
 /**
  * Вьюмодель экрана регистрации
@@ -30,7 +22,7 @@ class SignViewModel(
     private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
-    private val _uiStateSign = MutableStateFlow<UiStateSign>(UiStateSign())
+    private val _uiStateSign = MutableStateFlow(UiStateSign())
     val uiStateSign: StateFlow<UiStateSign>
         get() = _uiStateSign.asStateFlow()
 
@@ -112,7 +104,7 @@ class SignViewModel(
 }
 
 /**
- * Комманды для вьюмодели регистрации
+ * Команды для вьюмодели регистрации
  *
  * @see ChangeName Сменить имя
  * @see ChangeEmail Сменить почту

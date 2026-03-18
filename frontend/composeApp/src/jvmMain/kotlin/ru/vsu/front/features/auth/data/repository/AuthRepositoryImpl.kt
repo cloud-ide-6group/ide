@@ -1,14 +1,9 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.data.repository
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import ru.vsu.front.features.auth.data.HttpRoutes.LOGIN
 import ru.vsu.front.features.auth.data.HttpRoutes.SIGN
 import ru.vsu.front.features.auth.data.dto.AuthResponseDto
@@ -22,7 +17,7 @@ import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.repository.AuthRepository
 
 /**
- * Репозиториий ответственный за авторизацию и регистрацию
+ * Репозиторий ответственный за авторизацию и регистрацию
  *
  * @param httpClient HttpClient, ktor-client для работы с сетью
  */
@@ -43,13 +38,15 @@ class AuthRepositoryImpl(
         return try {
             val response = httpClient.post(LOGIN) {
                 contentType(ContentType.Application.Json)
-                setBody(UserLoginRequest(
-                    email = email,
-                    password = password
-                ))
+                setBody(
+                    UserLoginRequest(
+                        email = email,
+                        password = password
+                    )
+                )
             }
 
-            when(response.status) {
+            when (response.status) {
                 HttpStatusCode.OK -> {
                     val dto = response.body<AuthResponseDto>()
                     AuthResult.Success(dto.toEntity())
@@ -84,14 +81,16 @@ class AuthRepositoryImpl(
         return try {
             val response = httpClient.post(SIGN) {
                 contentType(ContentType.Application.Json)
-                setBody(UserSignRequest(
-                    name = name,
-                    email = email,
-                    password = password
-                ))
+                setBody(
+                    UserSignRequest(
+                        name = name,
+                        email = email,
+                        password = password
+                    )
+                )
             }
 
-            when(response.status) {
+            when (response.status) {
                 HttpStatusCode.Created -> {
                     val dto = response.body<AuthResponseDto>()
                     AuthResult.Success(dto.toEntity())

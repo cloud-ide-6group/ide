@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.theme
 
 import androidx.compose.ui.graphics.Color

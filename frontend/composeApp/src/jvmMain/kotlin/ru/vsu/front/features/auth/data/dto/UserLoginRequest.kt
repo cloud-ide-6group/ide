@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.features.auth.data.dto
 
 import kotlinx.serialization.SerialName

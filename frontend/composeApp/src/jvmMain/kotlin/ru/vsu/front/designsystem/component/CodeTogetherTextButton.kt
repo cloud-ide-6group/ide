@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.layout.Spacer
