@@ -5,11 +5,17 @@ package ru.vsu.front.features.auth.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.vsu.front.common.security.TokenStorage
+import ru.vsu.front.features.auth.domain.entity.AuthResult
+import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
 
 /**
@@ -18,12 +24,17 @@ import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
  * @param loginUseCase Юзкейс авторизации
  */
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
     private val _uiStateLogin = MutableStateFlow<UiStateLogin>(UiStateLogin())
     val uiStateLogin: StateFlow<UiStateLogin>
         get() = _uiStateLogin.asStateFlow()
+
+    private val _events = MutableSharedFlow<LoginEffect>()
+    val events: SharedFlow<LoginEffect>
+        get() = _events.asSharedFlow()
 
     fun processCommand(command: LoginCommand) {
         when(val command = command) {
@@ -41,10 +52,21 @@ class LoginViewModel(
 
             LoginCommand.ClickLogin -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    loginUseCase(
+                    val result = loginUseCase(
                         email = _uiStateLogin.value.email,
                         password = _uiStateLogin.value.password
                     )
+                    when(result) {
+                        is AuthResult.Error<*> -> {
+                            _events.emit(LoginEffect.ShowError(result.errorData.message))
+                        }
+
+                        is AuthResult.Success<UserSession> -> {
+                            val tokens = result.data.tokens
+                            tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
+                            tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
+                        }
+                    }
                 }
             }
 
@@ -84,3 +106,7 @@ data class UiStateLogin(
     val password: String = "",
     val isPasswordVisible: Boolean = false
 )
+
+sealed interface LoginEffect {
+    data class ShowError(val message: String) : LoginEffect
+}
