@@ -6,7 +6,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +32,7 @@ import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.features.auth.domain.validation.EmailMatcher
 import ru.vsu.front.features.auth.ui.component.AuthCard
 import ru.vsu.front.features.auth.ui.component.LeftSide
 import ru.vsu.front.features.auth.ui.component.SideColumn
@@ -44,43 +51,79 @@ fun SignScreen(
     viewModel: SignViewModel
 ) {
     val uiState = viewModel.uiStateSign.collectAsStateWithLifecycle()
-    Row(
+    val snackbarHostState = remember { SnackbarHostState() }
+    val isValidEmail = uiState.value.email.isEmpty() || EmailMatcher.isValid(uiState.value.email)
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is SignEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(message = event.message)
+                }
+            }
+        }
+    }
+
+    Scaffold(
         modifier = modifier
             .background(CodeTogetherTheme.colors.secondaryBackground)
             .padding(32.dp)
-            .fillMaxSize()
+            .fillMaxSize(),
+        containerColor = CodeTogetherTheme.colors.secondaryBackground,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState
+            ) {
+                CodeTogetherText(
+                    modifier = Modifier
+                        .background(CodeTogetherTheme.colors.black.copy(alpha = 0.1f))
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    text = it.visuals.message,
+                    style = CodeTogetherTheme.typography.style.copy(fontSize = 18.sp),
+                    textAlign = TextAlign.Center,
+                    color = CodeTogetherTheme.colors.error
+                )
+            }
+        }
     ) {
-        LeftSide()
-        RightSide(
-            name = uiState.value.name,
-            email = uiState.value.email,
-            password = uiState.value.password,
-            confirmedPassword = uiState.value.confirmedPassword,
-            isPasswordVisible = uiState.value.isPasswordVisible,
-            isConfirmedPasswordVisible = uiState.value.isConfirmedPasswordVisible,
-            onNameChange = { name ->
-                viewModel.processCommand(SignCommand.ChangeName(name))
-            },
-            onEmailChange = { email ->
-                viewModel.processCommand(SignCommand.ChangeEmail(email))
-            },
-            onPasswordChange = { password ->
-                viewModel.processCommand(SignCommand.ChangePassword(password))
-            },
-            onConfirmedPasswordChange = { confirmedPassword ->
-                viewModel.processCommand(SignCommand.ChangeConfirmedPassword(confirmedPassword))
-            },
-            onLoginClick = {
-                viewModel.processCommand(SignCommand.ClickSignUp)
-            },
-            onChangePasswordVisibilityClick = {
-                viewModel.processCommand(SignCommand.ChangePasswordVisibility)
-            },
-            onChangeConfirmedPasswordVisibilityClick = {
-                viewModel.processCommand(SignCommand.ChangeConfirmedPasswordVisibility)
-            },
-            onSignUpClick = onLoginClick,
-        )
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            LeftSide()
+            RightSide(
+                name = uiState.value.name,
+                email = uiState.value.email,
+                isNotValidEmail = !isValidEmail,
+                password = uiState.value.password,
+                confirmedPassword = uiState.value.confirmedPassword,
+                isPasswordVisible = uiState.value.isPasswordVisible,
+                isConfirmedPasswordVisible = uiState.value.isConfirmedPasswordVisible,
+                onNameChange = { name ->
+                    viewModel.processCommand(SignCommand.ChangeName(name))
+                },
+                onEmailChange = { email ->
+                    viewModel.processCommand(SignCommand.ChangeEmail(email))
+                },
+                onPasswordChange = { password ->
+                    viewModel.processCommand(SignCommand.ChangePassword(password))
+                },
+                onConfirmedPasswordChange = { confirmedPassword ->
+                    viewModel.processCommand(SignCommand.ChangeConfirmedPassword(confirmedPassword))
+                },
+                onSignUpClick = {
+                    viewModel.processCommand(SignCommand.ClickSignUp)
+                },
+                onChangePasswordVisibilityClick = {
+                    viewModel.processCommand(SignCommand.ChangePasswordVisibility)
+                },
+                onChangeConfirmedPasswordVisibilityClick = {
+                    viewModel.processCommand(SignCommand.ChangeConfirmedPasswordVisibility)
+                },
+                onLoginClick = onLoginClick,
+            )
+        }
     }
 }
 
@@ -108,6 +151,7 @@ private fun RowScope.RightSide(
     modifier: Modifier = Modifier,
     name: String,
     email: String,
+    isNotValidEmail: Boolean,
     password: String,
     confirmedPassword: String,
     isPasswordVisible: Boolean,
@@ -125,6 +169,7 @@ private fun RowScope.RightSide(
         SignCard(
             name = name,
             email = email,
+            isNotValidEmail = isNotValidEmail,
             password = password,
             confirmedPassword = confirmedPassword,
             isPasswordVisible = isPasswordVisible,
@@ -165,6 +210,7 @@ private fun SignCard(
     modifier: Modifier = Modifier,
     name: String,
     email: String,
+    isNotValidEmail: Boolean,
     password: String,
     confirmedPassword: String,
     isPasswordVisible: Boolean,
@@ -203,6 +249,7 @@ private fun SignCard(
                 sectionName = "Email",
                 value = email,
                 hint = "Your Email",
+                isError = isNotValidEmail,
                 onValueChange = onEmailChange
             )
             Section(
@@ -260,7 +307,7 @@ private fun SignCard(
                 style = CodeTogetherTheme.typography.style.copy(
                     fontWeight = FontWeight.Bold
                 ),
-                onClick = onLoginClick
+                onClick = onSignUpClick
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -274,7 +321,7 @@ private fun SignCard(
                     style = CodeTogetherTheme.typography.style.copy(
                         fontWeight = FontWeight.Bold
                     ),
-                    onClick = onSignUpClick
+                    onClick = onLoginClick
                 )
             }
         }

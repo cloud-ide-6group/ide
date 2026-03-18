@@ -5,33 +5,47 @@ package ru.vsu.front.features.auth.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.vsu.front.common.security.TokenStorage
+import ru.vsu.front.features.auth.domain.entity.AuthResult
+import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.SignUseCase
+import ru.vsu.front.features.auth.ui.SignEffect.*
 
 /**
  * Вьюмодель экрана регистрации
  *
  * @param signUseCase Юзкейс регистрации
+ * @param tokenStorage Хранилище токенов
  */
 class SignViewModel(
-    private val signUseCase: SignUseCase
+    private val signUseCase: SignUseCase,
+    private val tokenStorage: TokenStorage
 ) : ViewModel() {
 
     private val _uiStateSign = MutableStateFlow<UiStateSign>(UiStateSign())
     val uiStateSign: StateFlow<UiStateSign>
         get() = _uiStateSign.asStateFlow()
 
+    private val _events = MutableSharedFlow<SignEffect>()
+    val events: SharedFlow<SignEffect>
+        get() = _events.asSharedFlow()
+
     fun processCommand(command: SignCommand) {
-        when(val command = command) {
+        when (val command = command) {
             is SignCommand.ChangeName -> {
                 _uiStateSign.update { previousState ->
                     previousState.copy(name = command.name)
                 }
             }
+
             is SignCommand.ChangeEmail -> {
                 _uiStateSign.update { previousState ->
                     previousState.copy(email = command.email)
@@ -47,14 +61,27 @@ class SignViewModel(
             SignCommand.ClickSignUp -> {
                 viewModelScope.launch(Dispatchers.IO) {
                     val state = _uiStateSign.value
-                    if(state.password == state.confirmedPassword) {
-                        signUseCase(
+
+                    if (state.password == state.confirmedPassword) {
+                        val result = signUseCase(
                             name = _uiStateSign.value.name,
                             email = _uiStateSign.value.email,
                             password = _uiStateSign.value.password
                         )
+
+                        when (result) {
+                            is AuthResult.Error<*> -> {
+                                _events.emit(ShowError(result.errorData.message))
+                            }
+
+                            is AuthResult.Success<UserSession> -> {
+                                val tokens = result.data.tokens
+                                tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
+                                tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
+                            }
+                        }
                     } else {
-                        // TODO SHOW SOMETHING
+                        _events.emit(ShowError("Пароли не совпадают"))
                     }
                 }
             }
@@ -70,10 +97,15 @@ class SignViewModel(
                     previousState.copy(confirmedPassword = command.confirmedPassword)
                 }
             }
+
             SignCommand.ChangeConfirmedPasswordVisibility -> {
                 _uiStateSign.update { previousState ->
                     previousState.copy(isConfirmedPasswordVisible = !previousState.isConfirmedPasswordVisible)
                 }
+            }
+
+            SignCommand.ClickLogin -> {
+                // TODO NAVIGATE EVENT
             }
         }
     }
@@ -95,6 +127,7 @@ sealed interface SignCommand {
     data class ChangeEmail(val email: String) : SignCommand
     data class ChangePassword(val password: String) : SignCommand
     data class ChangeConfirmedPassword(val confirmedPassword: String) : SignCommand
+    data object ClickLogin : SignCommand
     data object ChangePasswordVisibility : SignCommand
     data object ChangeConfirmedPasswordVisibility : SignCommand
     data object ClickSignUp : SignCommand
@@ -118,3 +151,7 @@ data class UiStateSign(
     val isPasswordVisible: Boolean = false,
     val isConfirmedPasswordVisible: Boolean = false,
 )
+
+sealed interface SignEffect {
+    data class ShowError(val message: String) : SignEffect
+}
