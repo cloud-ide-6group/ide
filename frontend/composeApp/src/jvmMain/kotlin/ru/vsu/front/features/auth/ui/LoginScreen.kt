@@ -4,9 +4,10 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +15,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +29,7 @@ import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.features.auth.ui.component.AuthCard
+import ru.vsu.front.features.auth.ui.component.AuthScaffoldWrapper
 import ru.vsu.front.features.auth.ui.component.LeftSide
 import ru.vsu.front.features.auth.ui.component.SideColumn
 
@@ -44,31 +47,45 @@ fun LoginScreen(
     viewModel: LoginViewModel
 ) {
     val uiState = viewModel.uiStateLogin.collectAsStateWithLifecycle()
-    Row(
-        modifier = modifier
-            .background(CodeTogetherTheme.colors.secondaryBackground)
-            .padding(32.dp)
-            .fillMaxSize()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is LoginEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(message = event.message)
+                }
+            }
+        }
+    }
+
+    AuthScaffoldWrapper(
+        snackbarHostState = snackbarHostState
     ) {
-        LeftSide()
-        RightSide(
-            email = uiState.value.email,
-            password = uiState.value.password,
-            isPasswordVisible = uiState.value.isPasswordVisible,
-            onEmailChange = { email ->
-                viewModel.processCommand(LoginCommand.ChangeEmail(email))
-            },
-            onPasswordChange = { password ->
-                viewModel.processCommand(LoginCommand.ChangePassword(password))
-            },
-            onLoginClick = {
-                viewModel.processCommand(LoginCommand.ClickLogin)
-            },
-            onChangePasswordVisibilityClick = {
-                viewModel.processCommand(LoginCommand.ChangePasswordVisibility)
-            },
-            onSignUpClick = onSignUpClick,
-        )
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+        ) {
+            LeftSide()
+            RightSide(
+                email = uiState.value.email,
+                password = uiState.value.password,
+                isPasswordVisible = uiState.value.isPasswordVisible,
+                onEmailChange = { email ->
+                    viewModel.processCommand(LoginCommand.ChangeEmail(email))
+                },
+                onPasswordChange = { password ->
+                    viewModel.processCommand(LoginCommand.ChangePassword(password))
+                },
+                onLoginClick = {
+                    viewModel.processCommand(LoginCommand.ClickLogin)
+                },
+                onChangePasswordVisibilityClick = {
+                    viewModel.processCommand(LoginCommand.ChangePasswordVisibility)
+                },
+                onSignUpClick = onSignUpClick,
+            )
+        }
     }
 }
 

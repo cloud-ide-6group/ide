@@ -34,6 +34,7 @@ import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.features.auth.domain.validation.EmailMatcher
 import ru.vsu.front.features.auth.ui.component.AuthCard
+import ru.vsu.front.features.auth.ui.component.AuthScaffoldWrapper
 import ru.vsu.front.features.auth.ui.component.LeftSide
 import ru.vsu.front.features.auth.ui.component.SideColumn
 
@@ -64,28 +65,8 @@ fun SignScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier
-            .background(CodeTogetherTheme.colors.secondaryBackground)
-            .padding(32.dp)
-            .fillMaxSize(),
-        containerColor = CodeTogetherTheme.colors.secondaryBackground,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState
-            ) {
-                CodeTogetherText(
-                    modifier = Modifier
-                        .background(CodeTogetherTheme.colors.black.copy(alpha = 0.1f))
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    text = it.visuals.message,
-                    style = CodeTogetherTheme.typography.style.copy(fontSize = 18.sp),
-                    textAlign = TextAlign.Center,
-                    color = CodeTogetherTheme.colors.error
-                )
-            }
-        }
+    AuthScaffoldWrapper(
+        snackbarHostState = snackbarHostState,
     ) {
         Row(
             modifier = modifier
