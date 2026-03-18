@@ -2,30 +2,18 @@
 
 package ru.vsu.front
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.WindowPlacement
-import androidx.compose.ui.window.WindowPosition
-import androidx.compose.ui.window.WindowScope
-import androidx.compose.ui.window.WindowState
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
-import org.koin.compose.viewmodel.koinViewModel
+import androidx.compose.ui.window.*
+import androidx.navigation.compose.rememberNavController
+import ru.vsu.front.common.initKoin
 import ru.vsu.front.common.window.DesktopScreenMetricsProvider
 import ru.vsu.front.common.window.WindowBounds
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
-import ru.vsu.front.features.auth.di.initKoin
-import ru.vsu.front.features.auth.ui.SignScreen
-import ru.vsu.front.features.auth.ui.SignViewModel
+import ru.vsu.front.features.navigation.Navigation
 import java.awt.Dimension
 
 /**
@@ -80,7 +68,9 @@ fun main() {
                 },
                 onCloseClick = ::exitApplication
             ) {
-
+                Navigation(
+                    navController = rememberNavController()
+                )
             }
         }
     }
