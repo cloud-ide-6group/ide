@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import androidx.navigation.compose.rememberNavController
-import ru.vsu.front.common.initKoin
+import ru.vsu.front.common.di.initKoin
 import ru.vsu.front.common.window.DesktopScreenMetricsProvider
 import ru.vsu.front.common.window.WindowBounds
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
