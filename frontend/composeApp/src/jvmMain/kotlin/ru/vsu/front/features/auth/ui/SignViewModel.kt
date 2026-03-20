@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.vsu.front.common.di.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.UserSession
@@ -19,7 +20,8 @@ import ru.vsu.front.features.auth.ui.SignEffect.ShowError
  */
 class SignViewModel(
     private val signUseCase: SignUseCase,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _uiStateSign = MutableStateFlow(UiStateSign())
@@ -51,7 +53,7 @@ class SignViewModel(
             }
 
             SignCommand.ClickSignUp -> {
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(dispatcherProvider.default) {
                     val state = _uiStateSign.value
 
                     if (state.password == state.confirmedPassword) {

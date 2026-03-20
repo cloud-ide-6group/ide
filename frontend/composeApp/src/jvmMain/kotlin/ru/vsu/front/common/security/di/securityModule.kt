@@ -8,13 +8,13 @@ import ru.vsu.front.common.security.getAppPreferencesDirectory
 import java.io.File
 
 /**
- * Модуль приложения
+ * Модуль безопасности
  *
  * @see CryptoManager Предоставление класса шифрования
  * @see PreferenceDataStoreFactory Предоставление хранилища из библиотеки datastore.preferences
  * @see TokenStorage Предоставление хранилища токенов
  */
-val appModule = module {
+val securityModule = module {
 
     single {
         CryptoManager()

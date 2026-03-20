@@ -2,9 +2,11 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.vsu.front.common.di.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.UserSession
@@ -18,7 +20,8 @@ import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _uiStateLogin = MutableStateFlow(UiStateLogin())
@@ -44,7 +47,7 @@ class LoginViewModel(
             }
 
             LoginCommand.ClickLogin -> {
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(dispatcherProvider.default) {
                     val result = loginUseCase(
                         email = _uiStateLogin.value.email,
                         password = _uiStateLogin.value.password
