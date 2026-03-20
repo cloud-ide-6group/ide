@@ -97,10 +97,6 @@ class SignViewModel(
                     previousState.copy(isConfirmedPasswordVisible = !previousState.isConfirmedPasswordVisible)
                 }
             }
-
-            SignCommand.ClickLogin -> {
-                // TODO NAVIGATE EVENT
-            }
         }
     }
 }
@@ -121,7 +117,6 @@ sealed interface SignCommand {
     data class ChangeEmail(val email: String) : SignCommand
     data class ChangePassword(val password: String) : SignCommand
     data class ChangeConfirmedPassword(val confirmedPassword: String) : SignCommand
-    data object ClickLogin : SignCommand
     data object ChangePasswordVisibility : SignCommand
     data object ChangeConfirmedPasswordVisibility : SignCommand
     data object ClickSignUp : SignCommand
