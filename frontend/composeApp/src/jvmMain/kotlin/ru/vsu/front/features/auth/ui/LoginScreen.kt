@@ -26,6 +26,7 @@ import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.features.auth.domain.validation.EmailMatcher
 import ru.vsu.front.features.auth.ui.component.AuthCard
 import ru.vsu.front.features.auth.ui.component.AuthScaffoldWrapper
 import ru.vsu.front.features.auth.ui.component.LeftSide
@@ -46,6 +47,7 @@ fun LoginScreen(
 ) {
     val uiState = viewModel.uiStateLogin.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val isValidEmail = uiState.value.email.isEmpty() || EmailMatcher.isValid(uiState.value.email)
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->
@@ -68,6 +70,7 @@ fun LoginScreen(
             RightSide(
                 email = uiState.value.email,
                 password = uiState.value.password,
+                isNotValidEmail = !isValidEmail,
                 isPasswordVisible = uiState.value.isPasswordVisible,
                 onEmailChange = { email ->
                     viewModel.processCommand(LoginCommand.ChangeEmail(email))
@@ -105,6 +108,7 @@ private fun RowScope.RightSide(
     modifier: Modifier = Modifier,
     email: String,
     password: String,
+    isNotValidEmail: Boolean,
     isPasswordVisible: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -116,6 +120,7 @@ private fun RowScope.RightSide(
         LoginCard(
             email = email,
             password = password,
+            isNotValidEmail = isNotValidEmail,
             isPasswordVisible = isPasswordVisible,
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange,
@@ -132,6 +137,7 @@ private fun RowScope.RightSide(
  * @param modifier Modifier, который будет применён к данной части
  * @param email Текущая почта
  * @param password Текущий пароль
+ * @param isNotValidEmail Валидна ли почта
  * @param isPasswordVisible Текущее состояние видимости пароля
  * @param onEmailChange Коллбек, вызывающийся при изменении почты
  * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
@@ -144,6 +150,7 @@ private fun LoginCard(
     modifier: Modifier = Modifier,
     email: String,
     password: String,
+    isNotValidEmail: Boolean,
     isPasswordVisible: Boolean,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -170,7 +177,8 @@ private fun LoginCard(
                 sectionName = "Email",
                 value = email,
                 hint = "Your Email",
-                onValueChange = onEmailChange
+                onValueChange = onEmailChange,
+                isError = isNotValidEmail
             )
             Section(
                 sectionName = "Password",
