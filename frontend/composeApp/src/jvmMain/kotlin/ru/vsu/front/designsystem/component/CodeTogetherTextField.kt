@@ -16,19 +16,20 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Code Together текст
+ * Поле ввода текста приложения.
  *
- * @param value Текст текста
- * @param onValueChange Коллбек, вызывающийся при изменении value
- * @param modifier Modifier который будет применён к тексту
- * @param textColor Цвет текста
- * @param colors Цвета текста
- * @param hint Текст подсказки
- * @param trailingIcon Контент в конце TextField
- * @param visualTransformation Визуальная трансформация текста
- * @param hintColor Цвет текста подсказки
- * @param style Стиль текста
- * @param singleLine В одну ли строку текст
+ * @param value Текущий введенный текст.
+ * @param onValueChange Коллбек, вызываемый при каждом изменении текста.
+ * @param modifier Модификатор для настройки.
+ * @param textColor Цвет текста.
+ * @param colors Цветовая схема текста.
+ * @param hint Текст подсказки.
+ * @param trailingIcon Слот для иконки в конце поля.
+ * @param visualTransformation Визуальная трансформация текста.
+ * @param hintColor Цвет текста подсказки.
+ * @param style Стиль текста.
+ * @param singleLine Ограничивает поле ввода одной строкой.
+ * @param isError Флаг состояния ошибки. Если `true`, поле подсвечивается красным.
  */
 @Composable
 fun CodeTogetherTextField(

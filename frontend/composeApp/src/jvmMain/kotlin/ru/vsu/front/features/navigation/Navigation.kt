@@ -16,21 +16,26 @@ import ru.vsu.front.features.navigation.Route.Login
 import ru.vsu.front.features.navigation.Route.Sign
 
 /**
- * Общий интерфейс для экранов
- *
- * @see name Название экрана
- * @see Login Экран логина
- * @see Sign Экран регистрации
+ * Маршруты для навигации.
  */
 @Serializable
 sealed interface Route {
+    /**
+     * Название экрана.
+     */
     val name: String
 
+    /**
+     * Экран авторизации (входа в аккаунт).
+     */
     @Serializable
     data object Login : Route {
         override val name: String = "LoginScreen"
     }
 
+    /**
+     * Экран регистрации.
+     */
     @Serializable
     data object Sign : Route {
         override val name: String = "SignScreen"
@@ -38,9 +43,9 @@ sealed interface Route {
 }
 
 /**
- * Функция для навигации
+ * Главный граф навигации приложения.
  *
- * @see navController Компонент, отвечающий за навигацию
+ * @param navController Контроллер для управления стеком навигации.
  */
 @Composable
 fun Navigation(

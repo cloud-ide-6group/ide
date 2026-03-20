@@ -13,18 +13,19 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Секция в виде столбца с Text + TextField
+ * Компонент, представляющий собой связь [CodeTogetherText] и [CodeTogetherTextField] в столбик.
  *
- * @param sectionName Текст для Text
- * @param value Текст для TextField
- * @param hint Текст подсказки
- * @param trailingIcon Контент, который будет применён к концу TextField
- * @param visualTransformation Визуальная трансформация текста в TextField
- * @param onValueChange Коллбек, вызывающийся при изменении value
- * @param modifier Modifier, который будет применён к секции
- * @param textColor Цвет текста для Text и TextField
- * @param textFieldColors Цвета текста для TextField
- * @param style Стиль для Text
+ * @param sectionName Текст заголовка над полем ввода.
+ * @param value Текущий введенный текст в поле.
+ * @param hint Текст подсказки.
+ * @param trailingIcon Слот для иконки в конце поля ввода.
+ * @param visualTransformation Визуальная трансформация текста.
+ * @param onValueChange Коллбек, вызываемый при вводе текста.
+ * @param modifier Модификатор, применяемый ко всей секции.
+ * @param textColor Единый цвет текста.
+ * @param textFieldColors Цветовая схема введенного текста.
+ * @param style Единый стиль текста.
+ * @param isError Ошибка ли. Если `true`, поле ввода переходит в состояние ошибки.
  */
 @Composable
 fun Section(

@@ -33,11 +33,11 @@ import ru.vsu.front.features.auth.ui.component.LeftSide
 import ru.vsu.front.features.auth.ui.component.SideColumn
 
 /**
- * Экран авторизации
+ * Экран авторизации (входа в аккаунт).
  *
- * @param modifier Modifier, который будет применён к данному экрану
- * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
- * @param viewModel Вьюмодель
+ * @param modifier Модификатор для настройки.
+ * @param onSignUpClick Коллбек для перехода на экран регистрации.
+ * @param viewModel Вьюмодель.
  */
 @Composable
 fun LoginScreen(
@@ -91,17 +91,18 @@ fun LoginScreen(
 }
 
 /**
- * Права часть экрана
+ * Правая часть экрана.
  *
- * @param modifier Modifier, который будет применён к данной части
- * @param email Текущая почта
- * @param password Текущий пароль
- * @param isPasswordVisible Текущее состояние видимости пароля
- * @param onEmailChange Коллбек, вызывающийся при изменении почты
- * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
- * @param onLoginClick Коллбек, вызывающийся при клике на кнопку логин
- * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
- * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
+ * @param modifier Модификатор для настройки.
+ * @param email Введенная почта.
+ * @param password Введенный пароль.
+ * @param isNotValidEmail Введенная почта не прошла или прошла валидатор.
+ * @param isPasswordVisible Состояние видимости пароля.
+ * @param onEmailChange Коллбек изменения текста почты.
+ * @param onPasswordChange Коллбек изменения текста пароля.
+ * @param onLoginClick Коллбек попытки входа.
+ * @param onChangePasswordVisibilityClick Коллбек переключения видимости пароля.
+ * @param onSignUpClick Коллбек перехода к регистрации.
  */
 @Composable
 private fun RowScope.RightSide(
@@ -132,18 +133,18 @@ private fun RowScope.RightSide(
 }
 
 /**
- * Карточка авторизации
+ * Карточка с полями ввода и кнопками для авторизации.
  *
- * @param modifier Modifier, который будет применён к данной части
- * @param email Текущая почта
- * @param password Текущий пароль
- * @param isNotValidEmail Валидна ли почта
- * @param isPasswordVisible Текущее состояние видимости пароля
- * @param onEmailChange Коллбек, вызывающийся при изменении почты
- * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
- * @param onLoginClick Коллбек, вызывающийся при клике на кнопку логин
- * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
- * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку перехода на экран регистрации
+ * @param modifier Модификатор для настройки.
+ * @param email Введенная почта.
+ * @param password Введенный пароль.
+ * @param isNotValidEmail Введенная почта не прошла или прошла валидатор.
+ * @param isPasswordVisible Состояние видимости пароля.
+ * @param onEmailChange Коллбек изменения текста почты.
+ * @param onPasswordChange Коллбек изменения текста пароля.
+ * @param onLoginClick Коллбек попытки входа.
+ * @param onChangePasswordVisibilityClick Коллбек переключения видимости пароля.
+ * @param onSignUpClick Коллбек перехода к регистрации.
  */
 @Composable
 private fun LoginCard(

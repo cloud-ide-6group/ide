@@ -1,22 +1,29 @@
 package ru.vsu.front.designsystem.common
 
-import ru.vsu.front.designsystem.common.NecessaryAppButtons.Companion.NECESSARY_BUTTON_SIZE_IN_DP
-
-
 /**
- * Необходимые кнопки на всех экранах
- *
- * @see Minimize Кнопка "Свернуть"
- * @see Maximize Кнопка "Свернуть в окно"
- * @see Close Кнопка "Закрыть"
+ * Базовые системные кнопки для управления окном десктопного приложения.
  */
 enum class NecessaryAppButtons {
-    Minimize, Maximize, Close;
 
     /**
-     * @see NECESSARY_BUTTON_SIZE_IN_DP Минимальный размер (size) кнопки в dp
+     * Кнопка "Свернуть".
      */
+    Minimize,
+
+    /**
+     * Кнопка "Свернуть в окно".
+     */
+    Maximize,
+
+    /**
+     * Кнопка "Закрыть".
+     */
+    Close;
+
     companion object {
+        /**
+         * Фиксированный размер (ширина и высота) системной кнопки в dp.
+         */
         const val NECESSARY_BUTTON_SIZE_IN_DP = 40
     }
 }

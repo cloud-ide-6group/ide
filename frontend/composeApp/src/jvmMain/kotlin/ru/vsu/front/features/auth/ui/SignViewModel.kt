@@ -2,7 +2,6 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.di.dispatcher_provider.DispatcherProvider
@@ -13,10 +12,11 @@ import ru.vsu.front.features.auth.domain.usecase.SignUseCase
 import ru.vsu.front.features.auth.ui.SignEffect.ShowError
 
 /**
- * Вьюмодель экрана регистрации
+ * Вьюмодель экрана регистрации.
  *
- * @param signUseCase Юзкейс регистрации
- * @param tokenStorage Хранилище токенов
+ * @param signUseCase UseCase для запроса регистрации.
+ * @param tokenStorage Локальное хранилище для сохранения JWT-токенов.
+ * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class SignViewModel(
     private val signUseCase: SignUseCase,
@@ -102,35 +102,55 @@ class SignViewModel(
 }
 
 /**
- * Команды для вьюмодели регистрации
- *
- * @see ChangeName Сменить имя
- * @see ChangeEmail Сменить почту
- * @see ChangePassword Сменить пароль
- * @see ChangeConfirmedPassword Сменить подтвержденный пароль
- * @see ChangePasswordVisibility Сменить видимость пароля
- * @see ChangeConfirmedPasswordVisibility Сменить видимость подтвержденного пароля
- * @see ClickSignUp Нажатие на кнопку Login
+ * Набор команд экрана регистрации.
+ * Описывает все взаимодействия пользователя с формой.
  */
 sealed interface SignCommand {
+    /**
+     * Команда обновления введенного текста в поле "Имя".
+     * */
     data class ChangeName(val name: String) : SignCommand
+
+    /**
+     * Команда обновления введенного текста в поле "Почта".
+     * */
     data class ChangeEmail(val email: String) : SignCommand
+
+    /**
+     * Команда обновления введенного текста в основном поле "Пароль".
+     * */
     data class ChangePassword(val password: String) : SignCommand
+
+    /**
+     * Команда обновления введенного текста в поле "Подтверждение пароля".
+     * */
     data class ChangeConfirmedPassword(val confirmedPassword: String) : SignCommand
+
+    /**
+     * Команда переключения видимости основного пароля.
+     * */
     data object ChangePasswordVisibility : SignCommand
+
+    /**
+     * Команда переключения видимости подтвержденного пароля.
+     * */
     data object ChangeConfirmedPasswordVisibility : SignCommand
+
+    /**
+     * Команда отправки формы на сервер.
+     * */
     data object ClickSignUp : SignCommand
 }
 
 /**
- * Состояние экрана регистрации
+ * Состояние экрана регистрации.
  *
- * @see name Текущее имя
- * @see email Текущая почта
- * @see password Текущий пароль
- * @see confirmedPassword Текущий подтвержденный пароль
- * @see isPasswordVisible Видимость пароля
- * @see isConfirmedPasswordVisible Видимость подтвержденного пароля
+ * @property name Текущее введенное имя.
+ * @property email Текущая введенная почта.
+ * @property password Текущий введенный основной пароль.
+ * @property confirmedPassword Текущий введенный пароль-подтверждение.
+ * @property isPasswordVisible Видимость основного пароля.
+ * @property isConfirmedPasswordVisible Видимость пароля-подтверждения.
  */
 data class UiStateSign(
     val name: String = "",
@@ -141,6 +161,13 @@ data class UiStateSign(
     val isConfirmedPasswordVisible: Boolean = false,
 )
 
+/**
+ * События экрана регистрации.
+ */
 sealed interface SignEffect {
+    /**
+     * Событие показа уведомления об ошибке.
+     * @property message Сообщение ошибки.
+     */
     data class ShowError(val message: String) : SignEffect
 }

@@ -3,7 +3,7 @@ package ru.vsu.front.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Omni палитра [В текущей реализации цвета только для экрана логина и регистрации]
+ * Цветовая палитра "Omni".
  */
 val omniPalette = CodeTogetherColors(
     primary = Color(0xFFFF79C6),

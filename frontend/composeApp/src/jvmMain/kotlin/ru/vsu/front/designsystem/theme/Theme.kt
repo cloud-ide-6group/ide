@@ -6,10 +6,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 
 /**
- * Composable Тема
+ * Корневой Composable-компонент темы приложения.
  *
- * @param themeVariant Текущий вариант темы
- * @param content Слот под контент
+ * @param themeVariant Выбранный вариант темы.
+ * @param content Composable-элементы, к которым будет применена тема.
  */
 @Composable
 fun CodeTogetherTheme(

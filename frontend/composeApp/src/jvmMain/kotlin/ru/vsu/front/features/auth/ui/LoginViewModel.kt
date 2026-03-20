@@ -2,8 +2,6 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.di.dispatcher_provider.DispatcherProvider
@@ -13,10 +11,11 @@ import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
 
 /**
- * Вьюмодель экрана логина
+ * Вьюмодель экрана авторизации.
  *
- * @param loginUseCase Юзкейс авторизации
- * @param tokenStorage Хранилище токенов
+ * @param loginUseCase UseCase для запроса авторизации.
+ * @param tokenStorage Локальное хранилище для JWT-токенов.
+ * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class LoginViewModel(
     private val loginUseCase: LoginUseCase,
@@ -76,26 +75,37 @@ class LoginViewModel(
 }
 
 /**
- * Команды для вьюмодели логина
- *
- * @see ChangeEmail Сменить почту
- * @see ChangePassword Сменить пароль
- * @see ChangePasswordVisibility Сменить видимость пароля
- * @see ClickLogin Нажатие на кнопку Login
+ * Набор команд.
+ * Описывает все возможные действия пользователя на экране.
  */
 sealed interface LoginCommand {
+    /**
+     * Команда обновления введенного текста в поле "Почта".
+     * */
     data class ChangeEmail(val email: String) : LoginCommand
+
+    /**
+     * Команда обновления введенного текста в поле "Пароль".
+     * */
     data class ChangePassword(val password: String) : LoginCommand
+
+    /**
+     * Команда переключения видимости текста пароля.
+     * */
     data object ChangePasswordVisibility : LoginCommand
+
+    /**
+     * Команда попытки входа.
+     * */
     data object ClickLogin : LoginCommand
 }
 
 /**
- * Состояние экрана логина
+ * Состояние экрана авторизации.
  *
- * @see email Текущая почта
- * @see password текущий пароль
- * @see isPasswordVisible Видимость пароля
+ * @property email Текущий введенный текст в поле почты.
+ * @property password Текущий введенный текст в поле пароля.
+ * @property isPasswordVisible Видимость пароля.
  */
 data class UiStateLogin(
     val email: String = "",
@@ -103,6 +113,13 @@ data class UiStateLogin(
     val isPasswordVisible: Boolean = false
 )
 
+/**
+ * События экрана авторизации.
+ */
 sealed interface LoginEffect {
+    /**
+     * Событие показа уведомления с ошибкой.
+     * @property message Сообщение ошибки.
+     */
     data class ShowError(val message: String) : LoginEffect
 }

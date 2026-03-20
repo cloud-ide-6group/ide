@@ -1,10 +1,10 @@
 package ru.vsu.front.features.auth.domain.entity
 
 /**
- * Сессия пользователя
+ * Текущая сессия авторизованного пользователя.
  *
- * @param user Пользователь
- * @param tokens Токены пользователя
+ * @property user Пользователь.
+ * @property tokens JWT токены.
  */
 data class UserSession(
     val user: User,

@@ -15,7 +15,9 @@ import ru.vsu.front.features.navigation.Navigation
 import java.awt.Dimension
 
 /**
- * Точка входа в программу
+ * Точка входа в приложение.
+ * * Инициализирует DI.
+ * * Управляет глобальным состоянием окна.
  */
 fun main() {
     initKoin()
@@ -75,9 +77,10 @@ fun main() {
 }
 
 /**
- * Первоначальная настройка окна
+ * Задает минимально допустимые размеры окна.
+ * Рассчитывается исходя из размера базовых кастомных кнопок управления окном.
  *
- * @param density Коэффициент плотности пикселей
+ * @param density Коэффициент плотности пикселей монитора.
  */
 @Composable
 private fun WindowScope.setupWindow(density: Density) {
@@ -93,11 +96,11 @@ private fun WindowScope.setupWindow(density: Density) {
 }
 
 /**
- * Изменение размера и положения окна
+ * Вычисляет и применяет новые размеры и позицию для окна.
  *
- * @param density Коэффициент плотности пикселей
- * @param maximumWindowBounds Максимальный размер окна без учета любых панелей
- * @param window Состояник окна
+ * @param density Коэффициент плотности пикселей монитора.
+ * @param maximumWindowBounds Размеры рабочей области монитора.
+ * @param window Состояние окна, к которому применяются новые координаты.
  */
 private fun changeWindowSizeAndPosition(
     density: Density,

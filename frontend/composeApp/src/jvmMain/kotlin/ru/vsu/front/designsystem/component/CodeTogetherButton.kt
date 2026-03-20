@@ -23,15 +23,15 @@ import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Code Together кнопка
+ * Базовая кнопка приложения.
  *
- * @param onClick Коллбек, вызывающийся при клике на кнопку
- * @param modifier Modifier который будет применён к кнопке
- * @param padding Расширение по краям
- * @param shape Фигура, которая будет применена к кнопке
- * @param hoverColor Цвет бекграунда, когда курсор на кнопке
- * @param unhoverColor Цвет бекграунда, когда курсор не на кнопке
- * @param content Слот под контент
+ * @param onClick Коллбек, вызываемый при клике на кнопку.
+ * @param modifier Модификатор для настройки.
+ * @param padding Внутренние отступы контента.
+ * @param shape Форма кнопки.
+ * @param hoverColor Цвет фона при наведении курсора мыши.
+ * @param unhoverColor Цвет фона в обычном состоянии.
+ * @param content Слот для внутреннего контента кнопки.
  */
 @Composable
 fun CodeTogetherButton(

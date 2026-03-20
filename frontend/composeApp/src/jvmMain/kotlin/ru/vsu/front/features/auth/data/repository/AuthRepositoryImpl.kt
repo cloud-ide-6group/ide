@@ -17,19 +17,22 @@ import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.repository.AuthRepository
 
 /**
- * Репозиторий ответственный за авторизацию и регистрацию
+ * Реализация интерфейса [AuthRepository] для работы с сетевым API.
  *
- * @param httpClient HttpClient, ktor-client для работы с сетью
+ * @param httpClient Клиент Ktor для выполнения запросов.
  */
 class AuthRepositoryImpl(
     private val httpClient: HttpClient
 ) : AuthRepository {
 
     /**
-     * Функция авторизации
+     * Выполняет POST-запрос на эндпоинт авторизации ([LOGIN]).
      *
-     * @param email Почта пользователя
-     * @param password Пароль пользователя
+     * @param email Почта пользователя.
+     * @param password Пароль пользователя.
+     * @return [AuthResult.Success] при успешном входе (200).
+     * @return [AuthError.Forbidden] при неверных учетных данных (403).
+     * @return [AuthError.NetworkException] при ошибке сети.
      */
     override suspend fun login(
         email: String,
@@ -67,11 +70,14 @@ class AuthRepositoryImpl(
     }
 
     /**
-     * Функция регистрации
+     * Выполняет POST-запрос на эндпоинт регистрации ([SIGN]).
      *
-     * @param name Имя пользователя
-     * @param email Почта пользователя
-     * @param password Пароль пользователя
+     * @param name Имя пользователя.
+     * @param email Почта пользователя.
+     * @param password Пароль пользователя.
+     * @return [AuthResult.Success] при успешной регистрации (201).
+     * @return [AuthError.BadRequest] при ошибке валидации данных на сервере (400).
+     * @return [AuthError.NetworkException] при ошибке сети.
      */
     override suspend fun sign(
         name: String,

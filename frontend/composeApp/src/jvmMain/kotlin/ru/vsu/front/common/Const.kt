@@ -1,11 +1,13 @@
 package ru.vsu.front.common
 
-import ru.vsu.front.common.Const.APP_NAME
-
 
 /**
- * @see APP_NAME Название приложения
+ * Глобальные константы приложения.
  */
 object Const {
+
+    /**
+     * Название приложения.
+     */
     const val APP_NAME = "CodeTogether"
 }

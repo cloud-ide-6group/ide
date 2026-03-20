@@ -1,10 +1,10 @@
 package ru.vsu.front.features.auth.domain.entity
 
 /**
- * JWT токены доступа и обновления
+ * JWT токены.
  *
- * @param accessToken Токен доступа
- * @param refreshToken Токен обновления
+ * @property accessToken Короткоживущий токен доступа.
+ * @property refreshToken Долгоживущий токен для обновления [accessToken].
  */
 data class AuthTokens(
     val accessToken: String,

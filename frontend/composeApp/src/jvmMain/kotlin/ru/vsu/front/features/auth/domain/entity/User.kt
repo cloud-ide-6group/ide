@@ -1,11 +1,11 @@
 package ru.vsu.front.features.auth.domain.entity
 
 /**
- * Пользователь
+ * Модель данных пользователя.
  *
- * @param name Имя пользователя
- * @param email Почта пользователя
- * @param photoPath Путь до аватара пользователя [На сервере]
+ * @property name Имя пользователя.
+ * @property email Почта пользователя.
+ * @property photoPath Путь к аватару пользователя, хранящийся на сервере.
  */
 data class User(
     val name: String,

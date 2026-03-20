@@ -3,7 +3,9 @@ package ru.vsu.front.common.window
 import java.awt.GraphicsEnvironment
 
 /**
- * Провайдер для получения максимального размера окна на Desktop
+ * Desktop-реализация провайдера метрик экрана [ScreenMetricsProvider].
+ * * Использует Java AWT [GraphicsEnvironment] для вычисления доступной области
+ * экрана (без учета панели задач и системных меню).
  */
 object DesktopScreenMetricsProvider : ScreenMetricsProvider {
     override fun getMaximumWindowBounds(): WindowBounds {

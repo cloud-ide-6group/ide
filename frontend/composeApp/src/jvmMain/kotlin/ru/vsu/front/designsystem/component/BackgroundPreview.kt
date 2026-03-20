@@ -11,9 +11,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Бекграунд для превью функций
+ * Вспомогательный контейнер для отображения `@Preview`.
  *
- * @param content Слот под контент
+ * @param content Слот для UI-компонентов, которые нужно отобразить в превью.
  */
 @Composable
 fun BackgroundPreview(

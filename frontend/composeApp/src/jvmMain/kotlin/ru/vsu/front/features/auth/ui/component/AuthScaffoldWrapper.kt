@@ -15,6 +15,13 @@ import androidx.compose.ui.unit.sp
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
+/**
+ * Обёртка над Scaffold для экранов аутентификации.
+ *
+ * @param snackbarHostState Состояние для управления Snackbar.
+ * @param modifier Модификатор корневого контейнера.
+ * @param content Слот для основного контента экрана.
+ */
 @Composable
 internal fun AuthScaffoldWrapper(
     snackbarHostState: SnackbarHostState,

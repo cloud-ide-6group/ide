@@ -1,16 +1,16 @@
 package ru.vsu.front.features.auth.data
 
 /**
- * Http Маршруты
+ * Константы с эндпоинтами API для сетевых запросов к бэкенду.
  */
 object HttpRoutes {
     /**
-     * Эндпоинт авторизации
+     * Эндпоинт авторизации (вход в аккаунт).
      */
     const val LOGIN = "/login"
 
     /**
-     * Эндпоинт регистрации
+     * Эндпоинт регистрации.
      */
     const val SIGN = "/sign"
 }

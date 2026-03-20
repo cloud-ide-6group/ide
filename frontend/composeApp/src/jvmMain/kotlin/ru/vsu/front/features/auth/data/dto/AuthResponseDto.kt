@@ -4,13 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Ответ сервера при аутентификации
+ * DTO ответа сервера при успешной авторизации или регистрации.
  *
- * @param name Имя пользователя
- * @param email Почта пользователя
- * @param photoPath Путь до аватара пользователя [На сервере]
- * @param accessToken Токен доступа
- * @param refreshToken Токен обновления
+ * @property name Имя пользователя.
+ * @property email Почта пользователя.
+ * @property photoPath Путь до аватара пользователя на сервере.
+ * @property accessToken Короткоживущий JWT токен доступа.
+ * @property refreshToken Долгоживущий JWT токен обновления.
  */
 @Serializable
 data class AuthResponseDto(

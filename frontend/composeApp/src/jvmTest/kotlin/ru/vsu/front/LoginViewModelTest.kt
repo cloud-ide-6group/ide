@@ -24,6 +24,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Unit-тесты для [LoginViewModel].
+ * * Проверяют корректность обновления UI-состояния (`uiStateLogin`) при вводе данных.
+ * * Проверяют отправку одноразовых эффектов (`events`).
+ * * Тестируют [LoginUseCase] и сохранение токенов в [TokenStorage] при успешной авторизации.
+ */
 class LoginViewModelTest {
 
     private val loginUseCase = mockk<LoginUseCase>()

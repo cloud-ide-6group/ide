@@ -1,7 +1,7 @@
 package ru.vsu.front.features.auth.domain.validation
 
 /**
- * Валидатор почты
+ * Валидатор почты.
  */
 object EmailMatcher {
     private val EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,12}\$".toRegex()

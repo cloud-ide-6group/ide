@@ -15,15 +15,15 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Code Together текст
+ * Базовый текстовый компонент приложения.
  *
- * @param text Текст текста
- * @param modifier Modifier который будет применён к тексту
- * @param color Цвет текста
- * @param style Стиль текста
- * @param textAlign Положение текста
- * @param overflow Стратегия переполнения текста
- * @param maxLines Максимальное количество строк
+ * @param text Отображаемая строка текста.
+ * @param modifier Модификатор для настройки.
+ * @param color Цвет текста.
+ * @param style Стиль текста.
+ * @param textAlign Выравнивание текста.
+ * @param overflow Стратегия обработки переполнения.
+ * @param maxLines Максимально количество строк.
  */
 @Composable
 fun CodeTogetherText(

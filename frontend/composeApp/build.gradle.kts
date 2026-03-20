@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.buildkonfig)
     kotlin("plugin.serialization") version "2.3.10"
+    alias(libs.plugins.dokka)
 }
 
 kotlin {

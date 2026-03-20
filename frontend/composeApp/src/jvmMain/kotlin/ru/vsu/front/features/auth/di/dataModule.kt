@@ -7,10 +7,11 @@ import ru.vsu.front.features.auth.data.repository.AuthRepositoryImpl
 import ru.vsu.front.features.auth.domain.repository.AuthRepository
 
 /**
- * Модуль слоя data
- *
- * @see AuthRepositoryImpl Предоставление реализации репозитория, Singletone
- * @see httpClient Предоставление реализации httpClient, Singletone
+ * Модуль слоя data.
+ * * Отвечает за предоставление зависимостей для работы с сетью.
+ * * Что внутри:
+ * - [AuthRepository] - реализация репозитория через [AuthRepositoryImpl].
+ * - `HttpClient` - Ktor-клиент через функцию [httpClient].
  */
 val dataModule = module {
     single {

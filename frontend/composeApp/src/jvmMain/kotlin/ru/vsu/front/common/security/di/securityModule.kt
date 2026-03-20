@@ -8,11 +8,14 @@ import ru.vsu.front.common.security.getAppPreferencesDirectory
 import java.io.File
 
 /**
- * Модуль безопасности
- *
- * @see CryptoManager Предоставление класса шифрования
- * @see PreferenceDataStoreFactory Предоставление хранилища из библиотеки datastore.preferences
- * @see TokenStorage Предоставление хранилища токенов
+ * Koin-модуль безопасности и локального хранения данных.
+ * * Отвечает за предоставление зависимостей, связанных с криптографией
+ * и безопасным сохранением токенов на устройстве.
+ * * Предоставляет:
+ * - [CryptoManager] - класс для шифрования и дешифрования локальных данных.
+ * - `DataStore<Preferences>` — файловое хранилище токенов.
+ * - [TokenStorage] - сервис для безопасной записи и чтения JWT-токенов,
+ * использующий предоставленные DataStore и CryptoManager.
  */
 val securityModule = module {
 

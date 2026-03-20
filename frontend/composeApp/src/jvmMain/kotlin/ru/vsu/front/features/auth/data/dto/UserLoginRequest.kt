@@ -4,10 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Запрос на логин пользователя
+ * DTO тела POST-запроса на авторизацию пользователя.
  *
- * @param email Почта пользователя
- * @param password Пароль пользователя
+ * @property email Введенная почта пользователя.
+ * @property password Не зашифрованный пароль пользователя.
  */
 @Serializable
 data class UserLoginRequest(

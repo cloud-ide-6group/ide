@@ -19,12 +19,14 @@ import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Верхняя панель
+ * Верхняя панель управления.
+ * * Предоставляет область для перемещения окна ([WindowDraggableArea]) и содержит
+ * базовые системные кнопки управления ([NecessaryAppButtons]).
  *
- * @param onMinimizeClick Коллбек, вызывающийся при клике на кнопку свернуть
- * @param onMaximizeClick Коллбек, вызывающийся при клике на кнопку свернуть в окно
- * @param onCloseClick Коллбек, вызывающийся при клике на кнопку закрыть
- * @param content Слот для контента
+ * @param onMinimizeClick Коллбек, вызываемый при клике на кнопку "Свернуть".
+ * @param onMaximizeClick Коллбек, вызываемый при клике на кнопку "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызываемый при клике на кнопку "Закрыть".
+ * @param content Слот для добавления пользовательского контента в левую часть панели.
  */
 @Composable
 fun WindowScope.WindowTopBar(

@@ -5,17 +5,20 @@ import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.repository.AuthRepository
 
 /**
- * Юзкейс регистрации
+ * UseCase для регистрации пользователя.
  *
- * @param repository Репозиторий с реализацией логина, регистрации
+ * @property repository Интерфейс репозитория.
  */
 class SignUseCase(
     private val repository: AuthRepository,
 ) {
     /**
-     * @param name Имя пользователя
-     * @param email Почта пользователя
-     * @param password Пароль пользователя
+     * Создаёт аккаунта.
+     *
+     * @param name Имя пользователя.
+     * @param email Почта пользователя.
+     * @param password Не зашифрованный пароль пользователя.
+     * @return [AuthResult] с сессией пользователя при успехе, либо с ошибкой.
      */
     suspend operator fun invoke(
         name: String,

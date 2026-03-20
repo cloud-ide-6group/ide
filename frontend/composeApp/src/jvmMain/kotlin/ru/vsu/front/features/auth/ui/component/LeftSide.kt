@@ -13,9 +13,9 @@ import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Левая часть экранов авторизации и регистрации
+ * Левая часть экранов авторизации и регистрации.
  *
- * @param modifier Modifier, который будет применён к данной части
+ * @param modifier Модификатор для настройки.
  */
 @Composable
 internal fun RowScope.LeftSide(

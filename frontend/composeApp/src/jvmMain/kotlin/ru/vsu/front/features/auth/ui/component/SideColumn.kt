@@ -6,11 +6,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 /**
- * Устранение дублирования, функция для использования корневого столбца в левой и правой части экранов
- * авторизации и регистрации
+ * Вспомогательный контейнер столбик для распределения
+ * левой и правой половин на экранах авторизации.
  *
- * @param modifier Modifier, который будет применён к данной части
- * @param content Слот под контент
+ * @param modifier Модификатор для настройки.
+ * @param content Слот для внутреннего содержимого столбца.
  */
 @Composable
 internal fun RowScope.SideColumn(

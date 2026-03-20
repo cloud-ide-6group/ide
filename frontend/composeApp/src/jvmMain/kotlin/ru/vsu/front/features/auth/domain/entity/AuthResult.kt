@@ -1,19 +1,20 @@
 package ru.vsu.front.features.auth.domain.entity
 
 /**
- * Интерфейс ошибки
- *
- * @see Success Класс, представляющий собой положительный ответ сервера
- * @see Error Класс, представляющий собой отрицательный ответ сервера
+ * Обертка для результата выполнения аутентификации.
+ * Позволяет безопасно обрабатывать ответы.
  */
 sealed interface AuthResult<out T> {
+
     /**
-     * @param data Положительный результат
+     * Представляет успешное выполнение.
+     * @property data Какая-либо информация.
      */
     data class Success<T>(val data: T) : AuthResult<T>
 
     /**
-     * @param errorData Отрицательный результат
+     * Представляет ошибку выполнения.
+     * @property errorData Ошибка аутентификации.
      */
     data class Error<T>(val errorData: AuthError) : AuthResult<T>
 }

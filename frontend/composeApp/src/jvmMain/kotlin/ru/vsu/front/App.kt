@@ -12,10 +12,14 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.designsystem.theme.CodeTogetherThemeVariant
 
 /**
- * @param onMinimizeClick Коллбек, вызывающийся при нажатии на кнопку "Свернуть"
- * @param onMaximizeClick Коллбек, вызывающийся при нажатии на кнопку "Свернуть в окно"
- * @param onCloseClick Коллбек, вызывающийся при нажатии на кнопку "Закрыть"
- * @param content Слот под контент
+ * Корневой Composable-компонент, задающий общую структуру окна приложения.
+ * Оборачивает контент в глобальную тему [CodeTogetherTheme] и добавляет
+ * верхнюю панель управления окном ([WindowTopBar]).
+ *
+ * @param onMinimizeClick Коллбек, вызываемый при клике на кнопку "Свернуть".
+ * @param onMaximizeClick Коллбек, вызываемый при клике на кнопку "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызываемый при клике на кнопку "Закрыть".
+ * @param content Слот для основного содержимого.
  */
 @Composable
 fun WindowScope.App(

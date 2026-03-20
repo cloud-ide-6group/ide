@@ -17,15 +17,15 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Code Together  кнопка-текст
+ * Базовая текстовая кнопка приложения.
  *
- * @param text Текст кнопки
- * @param modifier Modifier который будет применён к кнопке
- * @param shape Фигура, которая будет применена к кнопке
- * @param style Стиль текста
- * @param colors Цвета кнопки
- * @param textColor Цвет текста
- * @param onClick Коллбек, вызывающийся при клике на кнопку
+ * @param text Строка, которая будет отображаться внутри кнопки.
+ * @param modifier Модификатор для настройки.
+ * @param shape Форма области клика.
+ * @param style Стиль текста.
+ * @param colors Цветовая схема кнопки.
+ * @param textColor Цвет текста.
+ * @param onClick Коллбек, вызываемый при клике на кнопку.
  */
 @Composable
 fun CodeTogetherTextButton(

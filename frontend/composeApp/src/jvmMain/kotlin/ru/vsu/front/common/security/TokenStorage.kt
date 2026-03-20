@@ -8,10 +8,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
- * Хранилище токенов
+ * Хранилище JWT-токенов на основе DataStore.
+ * Обеспечивает безопасное чтение, запись и удаление токенов с использованием локального шифрования.
  *
- * @param dataStore Хранилище из библиотеки datastore.preferences
- * @param cryptoManager Класс для работы с шифрованием
+ * @param dataStore Файловое хранилище настроек из библиотеки `datastore-preferences`.
+ * @param cryptoManager Утилита для шифрования и дешифрования строковых данных.
  */
 class TokenStorage(
     private val dataStore: DataStore<Preferences>,
@@ -23,7 +24,9 @@ class TokenStorage(
     }
 
     /**
-     * Подписка на изменение ключей в хранилище
+     * Горячий поток, эмитящий текущее состояние токенов из хранилища.
+     * * Возвращает пару `Pair(AccessToken, RefreshToken)` в расшифрованном виде.
+     * * Если хотя бы одного токена нет в хранилище, эмиттит `null`.
      */
     val tokenFlow: Flow<Pair<String?, String?>?> = dataStore.data.map { preferences ->
         val encryptedAccessToken = preferences[JWT_ACCESS_TOKEN_KEY]
@@ -38,8 +41,10 @@ class TokenStorage(
     }
 
     /**
-     * @param token Токен для сохранения
-     * @param isAccess True, если это access токен | False, если это refresh токен
+     * Зашифровывает и сохраняет переданный токен в локальное хранилище.
+     *
+     * @param token Строка-токен в не зашифрованном виде.
+     * @param isAccess Тип токена: `true` - Access-токен, `false` - Refresh-токен.
      */
     suspend fun saveToken(token: String, isAccess: Boolean) {
         val encryptedToken = cryptoManager.encrypt(token)
@@ -54,7 +59,7 @@ class TokenStorage(
     }
 
     /**
-     * Удаление токенов из хранилища
+     * Удаляет Access и Refresh токены из хранилища.
      */
     suspend fun clearTokens() {
         dataStore.edit { preferences ->

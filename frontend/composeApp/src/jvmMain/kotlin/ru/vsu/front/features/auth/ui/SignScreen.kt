@@ -33,11 +33,11 @@ import ru.vsu.front.features.auth.ui.component.LeftSide
 import ru.vsu.front.features.auth.ui.component.SideColumn
 
 /**
- * Экран регистрации
+ * Экран регистрации.
  *
- * @param modifier Modifier, который будет применён к данному экрану
- * @param onLoginClick Коллбек, вызывающийся при клике на кнопку перехода на экран авторизации
- * @param viewModel Вьюмодель
+ * @param modifier Модификатор для настройки.
+ * @param onLoginClick Коллбек для возврата на экран авторизации.
+ * @param viewModel Вьюмодель.
  */
 @Composable
 fun SignScreen(
@@ -103,23 +103,24 @@ fun SignScreen(
 }
 
 /**
- * Права часть экрана
+ * Правая часть экрана.
  *
- * @param modifier Modifier, который будет применён к данной части
- * @param name Имя пользователя
- * @param email Текущая почта
- * @param password Текущий пароль
- * @param confirmedPassword Текущий подтвержденный пароль
- * @param isPasswordVisible Текущее состояние видимости пароля
- * @param isConfirmedPasswordVisible Текущее состояние видимости подтвержденного пароля
- * @param onNameChange Коллбек, вызывающийся при изменении имени
- * @param onEmailChange Коллбек, вызывающийся при изменении почты
- * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
- * @param onConfirmedPasswordChange Коллбек, вызывающийся при изменении подтвержденного пароля
- * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку регистрации
- * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
- * @param onChangeConfirmedPasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости подтвержденного пароля
- * @param onLoginClick Коллбек, вызывающийся при клике на кнопку перехода на экран авторизации
+ * @param modifier Модификатор для настройки.
+ * @param name Введенное имя.
+ * @param email Введенная почта.
+ * @param isNotValidEmail Введенная почта прошла или не прошла проверку.
+ * @param password Введенный пароль.
+ * @param confirmedPassword Введенный пароль для подтверждения.
+ * @param isPasswordVisible Состояние видимости основного пароля.
+ * @param isConfirmedPasswordVisible Состояние видимости подтвержденного пароля.
+ * @param onNameChange Коллбек изменения имени.
+ * @param onEmailChange Коллбек изменения почты.
+ * @param onPasswordChange Коллбек изменения пароля.
+ * @param onConfirmedPasswordChange Коллбек изменения подтверждения пароля.
+ * @param onSignUpClick Коллбек попытки регистрации.
+ * @param onChangePasswordVisibilityClick Коллбек видимости основного пароля.
+ * @param onChangeConfirmedPasswordVisibilityClick Коллбек видимости подтвержденного пароля.
+ * @param onLoginClick Коллбек перехода к авторизации.
  */
 @Composable
 private fun RowScope.RightSide(
@@ -162,23 +163,24 @@ private fun RowScope.RightSide(
 }
 
 /**
- * Карточка регистрации
+ * Карточка с полями ввода и кнопками для регистрации.
  *
- * @param modifier Modifier, который будет применён к данной части
- * @param name Имя пользователя
- * @param email Текущая почта
- * @param password Текущий пароль
- * @param confirmedPassword Текущий подтвержденный пароль
- * @param isPasswordVisible Текущее состояние видимости пароля
- * @param isConfirmedPasswordVisible Текущее состояние видимости подтвержденного пароля
- * @param onNameChange Коллбек, вызывающийся при изменении имени
- * @param onEmailChange Коллбек, вызывающийся при изменении почты
- * @param onPasswordChange Коллбек, вызывающийся при изменении пароля
- * @param onConfirmedPasswordChange Коллбек, вызывающийся при изменении подтвержденного пароля
- * @param onSignUpClick Коллбек, вызывающийся при клике на кнопку регистрации
- * @param onChangePasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости пароля
- * @param onChangeConfirmedPasswordVisibilityClick Коллбек, вызывающийся при клике на смену видимости подтвержденного пароля
- * @param onLoginClick Коллбек, вызывающийся при клике на кнопку перехода на экран авторизации
+ * @param modifier Модификатор настройки.
+ * @param name Введенное имя.
+ * @param email Введенная почта.
+ * @param isNotValidEmail Введенная почта прошла или не прошла проверку.
+ * @param password Введенный пароль.
+ * @param confirmedPassword Введенный пароль для подтверждения.
+ * @param isPasswordVisible Состояние видимости основного пароля.
+ * @param isConfirmedPasswordVisible Состояние видимости подтвержденного пароля.
+ * @param onNameChange Коллбек ввода имени.
+ * @param onEmailChange Коллбек ввода почты.
+ * @param onPasswordChange Коллбек ввода пароля.
+ * @param onConfirmedPasswordChange Коллбек ввода подтверждения пароля.
+ * @param onSignUpClick Коллбек нажатия на кнопку регистрации.
+ * @param onChangePasswordVisibilityClick Коллбек нажатия на иконку видимости основного пароля.
+ * @param onChangeConfirmedPasswordVisibilityClick Коллбек нажатия на иконку видимости подтверждения пароля.
+ * @param onLoginClick Коллбек нажатия на кнопку возврата к авторизации.
  */
 @Composable
 private fun SignCard(

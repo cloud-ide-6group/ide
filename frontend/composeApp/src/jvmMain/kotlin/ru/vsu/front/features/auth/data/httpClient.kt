@@ -9,7 +9,12 @@ import kotlinx.serialization.json.Json
 import ru.vsu.front.config.BuildKonfig
 
 /**
- * HttpClient
+ * Создает и настраивает экземпляр [HttpClient].
+ * * Использует движок [CIO].
+ * * Автоматически сериализует/десериализует JSON.
+ * * Подставляет базовый URL из конфигурации сборки ([BuildKonfig.BASE_URL]).
+ *
+ * @return Готовый HTTP-клиент.
  */
 fun httpClient(): HttpClient {
     return HttpClient(CIO) {

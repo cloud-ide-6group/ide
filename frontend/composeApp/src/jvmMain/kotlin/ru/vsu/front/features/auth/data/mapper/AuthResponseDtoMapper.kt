@@ -6,7 +6,10 @@ import ru.vsu.front.features.auth.domain.entity.User
 import ru.vsu.front.features.auth.domain.entity.UserSession
 
 /**
- * Маппер AuthResponseDto -> UserSession
+ * Преобразует DTO-модель ([AuthResponseDto])
+ * в доменную сущность пользователя ([UserSession]).
+ * * * Изолирует модели бизнес-логики от аннотаций `@Serializable` и `@SerialName`.
+ * * @return Модель [UserSession], содержащая данные пользователя и токены.
  */
 fun AuthResponseDto.toEntity(): UserSession {
     return UserSession(

@@ -5,6 +5,10 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Unit-тесты для [EmailMatcher].
+ * * Проверяют корректность работы регулярного выражения.
+ */
 class EmailMatcherTest {
 
     @Test

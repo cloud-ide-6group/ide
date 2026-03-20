@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Ошибка
+ * DTO стандартного ответа сервера с ошибкой.
  *
- * @param message Сообщение об ошибке
+ * @property message Сообщение об ошибке.
  */
 @Serializable
 data class ErrorResponseDto(

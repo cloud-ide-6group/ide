@@ -1,28 +1,28 @@
 package ru.vsu.front.features.auth.domain.entity
 
 /**
- * @see AuthError Класс ошибки при аутентификации
+ * Базовый класс для представления ошибок, возникающих при аутентификации.
  *
- * @param message Сообщение об ошибке
+ * @property message Сообщение об ошибке.
  */
 sealed class AuthError(open val message: String) {
     /**
-     * @see Forbidden Класс ошибки 403
-     */
+     * 403: Доступ запрещен.
+     * */
     data class Forbidden(override val message: String) : AuthError(message)
 
     /**
-     * @see BadRequest Класс ошибки 400
-     */
+     * 400: Неверный запрос.
+     * */
     data class BadRequest(override val message: String) : AuthError(message)
 
     /**
-     * @see NetworkException Ошибка интернет соединения
-     */
+     * Ошибка сети (отсутствует интернет или сервер недоступен).
+     * */
     data class NetworkException(override val message: String = "Network Error") : AuthError(message)
 
-    /**
-     * @see UnknownError Неизвестная ошибка
-     */
+    /** 
+     * Непредвиденная ошибка.
+     * */
     data class UnknownError(override val message: String = "Unknown Error") : AuthError(message)
 }

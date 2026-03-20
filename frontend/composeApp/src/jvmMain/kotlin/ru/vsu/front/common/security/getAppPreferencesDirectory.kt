@@ -4,7 +4,12 @@ import ru.vsu.front.common.Const.APP_NAME
 import java.io.File
 
 /**
- * Возвращает путь для хранения данных
+ * Возвращает системный путь к директории для хранения локальных файлов приложения.
+ * * Поддерживает только Windows.
+ * * Если директория не существует, она будет создана автоматически.
+ *
+ * @return Объект [File], рабочая директория приложения.
+ * @throws IllegalStateException Если текущая операционная система не поддерживается.
  */
 fun getAppPreferencesDirectory(): File {
     val os = System.getProperty("os.name").lowercase()

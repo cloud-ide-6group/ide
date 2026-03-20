@@ -24,6 +24,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Unit-тесты для [SignViewModel].
+ * * Проверяют корректность обновления состояния при вводе данных пользователя.
+ * * Тестируют ([SignUseCase]) и обработку ответов.
+ * * Проверяют корректность сохранения JWT-токенов в [TokenStorage] при успешной регистрации.
+ */
 class SignViewModelTest {
     private val signUseCase = mockk<SignUseCase>()
     private val tokenStorage = mockk<TokenStorage>()

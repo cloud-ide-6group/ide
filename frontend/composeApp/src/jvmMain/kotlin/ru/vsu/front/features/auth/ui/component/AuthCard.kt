@@ -10,10 +10,10 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Базовая карточка-аутентификация (Логин и регистрация)
+ * Базовая карточка для форм авторизации и регистрации.
  *
- * @param modifier Modifier, который будет применён к карточке
- * @param content Слот под контент
+ * @param modifier Модификатор для настройки.
+ * @param content Слот для вложенного контента.
  */
 @Composable
 internal fun AuthCard(
