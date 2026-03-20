@@ -11,6 +11,9 @@ koin = "4.1.1"
 buildkonfig = "0.17.1"
 datastore = "1.1.1"
 navigation = "2.9.2"
+mockk = "1.14.9"
+coroutines-test = "1.10.2"
+turbine-test = "1.2.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -39,6 +42,11 @@ koin-compose-viewModel = { group = "io.insert-koin", name = "koin-compose-viewmo
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
+
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
+cash-turbine-test = { module = "app.cash.turbine:turbine", version.ref = "turbine-test" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }

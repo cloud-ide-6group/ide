@@ -35,6 +35,9 @@ kotlin {
             implementation(libs.koin.compose.viewModel)
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.jetbrains.navigation.compose)
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.cash.turbine.test)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
