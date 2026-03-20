@@ -69,7 +69,7 @@ fun Navigation(
             val signViewModel = koinViewModel<SignViewModel>()
             SignScreen(
                 onLoginClick = {
-                    navController.navigate(Login)
+                    navController.popBackStack()
                 },
                 viewModel = signViewModel
             )
