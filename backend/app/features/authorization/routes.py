@@ -50,10 +50,12 @@ def login():
               example: "pbkdf2:sha256:260000$xyz..."
       403:
         description: Неверные учетные данные, доступ запрещен
-        properties:
-            error:
-              type: string
-              example: "Неверные учетные данные"
+        schema:
+          type: object
+          properties:
+              error:
+                type: string
+                example: "Неверные учетные данные"
     """
     data = request.json
 
@@ -185,10 +187,12 @@ def refresh():
               example: "eyJhbGciOiJIUzI1NiIs..."
       401:
         description: Недействительный refresh-токен
-        properties:
-            error:
-              type: string
-              example: "Неверный пароль"
+        schema:
+          type: object
+          properties:
+              error:
+                type: string
+                example: "Неверный refresh токен"
     """
     data = request.json
     refresh_token = data["refresh_token"]

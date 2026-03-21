@@ -1,4 +1,8 @@
 from .extensions import db
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import validates
+import re
+from email_validator import validate_email, EmailNotValidError
 
 
 class Project(db.Model):
@@ -162,7 +166,25 @@ class User(db.Model):
     name = db.Column(db.Text, nullable=False)
     photo_path = db.Column(db.Text, default="users_imgs/default.png")
     password_hash = db.Column(db.Text, nullable=False)
-    email = db.Column(db.Text)
+    email = db.Column(db.Text, nullable=False, unique=True)
+
+    @validates("name")
+    def validate_name(self, key, name):
+        if not name or name == "":
+            raise ValueError("Имя не может быть пустым")
+
+        return name
+
+    @validates("email")
+    def validate_email(self, key, email):
+        if not email:
+            raise ValueError("Email не может быть пустым")
+
+        try:
+            valid = validate_email(email)
+            return valid.normalized
+        except EmailNotValidError as e:
+            raise ValueError("Email неверен") from e
 
 
 class UserInProject(db.Model):

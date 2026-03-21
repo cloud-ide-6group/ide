@@ -148,7 +148,13 @@ def create_user(email, name, password):
 
     user = user_repo.get_by_email(email)
     if user is None:
-        return user_repo.insert_user(email, get_password_hash(password), name), ResultsCodes.OK
+        try:
+            return (
+                user_repo.insert_user(email, get_password_hash(password), name),
+                ResultsCodes.OK,
+            )
+        except ValueError as e:
+            return None, str(e)
     else:
         return None, ResultsCodes.EMAIL_EXISTS
 
