@@ -22,6 +22,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param text Строка, которая будет отображаться внутри кнопки.
  * @param modifier Модификатор для настройки.
  * @param shape Форма области клика.
+ * @param enabled Доступность клика.
  * @param style Стиль текста.
  * @param colors Цветовая схема кнопки.
  * @param textColor Цвет текста.
@@ -32,6 +33,7 @@ fun CodeTogetherTextButton(
     text: String,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(8.dp),
+    enabled: Boolean = true,
     style: TextStyle = CodeTogetherTheme.typography.style,
     colors: ButtonColors = ButtonDefaults.textButtonColors(),
     textColor: Color = CodeTogetherTheme.colors.primaryText,
@@ -41,6 +43,7 @@ fun CodeTogetherTextButton(
         modifier = modifier,
         onClick = onClick,
         shape = shape,
+        enabled = enabled,
         colors = colors
     ) {
         CodeTogetherText(

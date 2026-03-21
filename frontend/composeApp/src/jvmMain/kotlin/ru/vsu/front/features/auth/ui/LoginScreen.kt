@@ -72,6 +72,7 @@ fun LoginScreen(
                 password = uiState.value.password,
                 isNotValidEmail = !isValidEmail,
                 isPasswordVisible = uiState.value.isPasswordVisible,
+                buttonEnabled = uiState.value.buttonEnabled,
                 onEmailChange = { email ->
                     viewModel.processCommand(LoginCommand.ChangeEmail(email))
                 },
@@ -93,7 +94,6 @@ fun LoginScreen(
 /**
  * Правая часть экрана.
  *
- * @param modifier Модификатор для настройки.
  * @param email Введенная почта.
  * @param password Введенный пароль.
  * @param isNotValidEmail Введенная почта не прошла или прошла валидатор.
@@ -103,10 +103,11 @@ fun LoginScreen(
  * @param onLoginClick Коллбек попытки входа.
  * @param onChangePasswordVisibilityClick Коллбек переключения видимости пароля.
  * @param onSignUpClick Коллбек перехода к регистрации.
+ * @param buttonEnabled Доступность клика на кнопку.
+ * @param modifier Модификатор для настройки.
  */
 @Composable
 private fun RowScope.RightSide(
-    modifier: Modifier = Modifier,
     email: String,
     password: String,
     isNotValidEmail: Boolean,
@@ -116,6 +117,8 @@ private fun RowScope.RightSide(
     onLoginClick: () -> Unit,
     onChangePasswordVisibilityClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    buttonEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     SideColumn(modifier = modifier) {
         LoginCard(
@@ -126,8 +129,9 @@ private fun RowScope.RightSide(
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange,
             onLoginClick = onLoginClick,
+            onChangePasswordVisibilityClick = onChangePasswordVisibilityClick,
             onSignUpClick = onSignUpClick,
-            onChangePasswordVisibilityClick = onChangePasswordVisibilityClick
+            buttonEnabled = buttonEnabled,
         )
     }
 }
@@ -135,7 +139,6 @@ private fun RowScope.RightSide(
 /**
  * Карточка с полями ввода и кнопками для авторизации.
  *
- * @param modifier Модификатор для настройки.
  * @param email Введенная почта.
  * @param password Введенный пароль.
  * @param isNotValidEmail Введенная почта не прошла или прошла валидатор.
@@ -145,10 +148,11 @@ private fun RowScope.RightSide(
  * @param onLoginClick Коллбек попытки входа.
  * @param onChangePasswordVisibilityClick Коллбек переключения видимости пароля.
  * @param onSignUpClick Коллбек перехода к регистрации.
+ * @param buttonEnabled Доступность клика на кнопку.
+ * @param modifier Модификатор для настройки.
  */
 @Composable
 private fun LoginCard(
-    modifier: Modifier = Modifier,
     email: String,
     password: String,
     isNotValidEmail: Boolean,
@@ -158,6 +162,8 @@ private fun LoginCard(
     onLoginClick: () -> Unit,
     onChangePasswordVisibilityClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    buttonEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     AuthCard {
         Column(
@@ -211,6 +217,7 @@ private fun LoginCard(
                     containerColor = CodeTogetherTheme.colors.primary.copy(0.1f),
                     contentColor = CodeTogetherTheme.colors.black.copy(0.005f)
                 ),
+                enabled = buttonEnabled,
                 style = CodeTogetherTheme.typography.style.copy(
                     fontWeight = FontWeight.Bold
                 ),

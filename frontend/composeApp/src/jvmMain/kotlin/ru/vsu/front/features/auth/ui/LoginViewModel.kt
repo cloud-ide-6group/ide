@@ -47,6 +47,9 @@ class LoginViewModel(
 
             LoginCommand.ClickLogin -> {
                 viewModelScope.launch(dispatcherProvider.default) {
+                    _uiStateLogin.update { previousState ->
+                        previousState.copy(buttonEnabled = false)
+                    }
                     val result = loginUseCase(
                         email = _uiStateLogin.value.email,
                         password = _uiStateLogin.value.password
@@ -61,6 +64,10 @@ class LoginViewModel(
                             tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
                             tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
                         }
+                    }
+
+                    _uiStateLogin.update { previousState ->
+                        previousState.copy(buttonEnabled = true)
                     }
                 }
             }
@@ -110,7 +117,8 @@ sealed interface LoginCommand {
 data class UiStateLogin(
     val email: String = "",
     val password: String = "",
-    val isPasswordVisible: Boolean = false
+    val isPasswordVisible: Boolean = false,
+    val buttonEnabled: Boolean = true
 )
 
 /**
