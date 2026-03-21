@@ -16,6 +16,7 @@ import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.AuthTokens
 import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.SignUseCase
+import ru.vsu.front.features.auth.ui.LoginCommand
 import ru.vsu.front.features.auth.ui.SignCommand
 import ru.vsu.front.features.auth.ui.SignEffect
 import ru.vsu.front.features.auth.ui.SignViewModel
@@ -202,6 +203,60 @@ class SignViewModelTest {
             val effect = awaitItem()
             assertTrue(effect is SignEffect.ShowError)
             assertEquals(errorMessage, effect.message)
+        }
+    }
+
+    @Test
+    fun `when button clicks, button is disabled`() = runTest {
+        val nameTest = "name_Test"
+        val emailTest = "email@email.com"
+        val passwordTest = "password@password"
+        val confirmedPasswordTest = "password@password"
+
+        coEvery { signUseCase(any(), emailTest, passwordTest) } returns AuthResult.Success(mockk(relaxed = true))
+        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
+
+        viewModel.uiStateSign.test {
+            val initialState = awaitItem()
+
+            assertTrue(initialState.buttonEnabled)
+
+            viewModel.processCommand(SignCommand.ChangeName(nameTest))
+            viewModel.processCommand(SignCommand.ChangeEmail(emailTest))
+            viewModel.processCommand(SignCommand.ChangePassword(passwordTest))
+            viewModel.processCommand(SignCommand.ChangeConfirmedPassword(confirmedPasswordTest))
+            viewModel.processCommand(SignCommand.ClickSignUp)
+
+            skipItems(4)
+
+            val stateDisabled = awaitItem()
+            assertFalse(stateDisabled.buttonEnabled)
+
+            val stateEnabled = awaitItem()
+            assertTrue(stateEnabled.buttonEnabled)
+        }
+    }
+
+    @Test
+    fun `when button clicks and passwords not equals SignEffect should be sent`() = runTest {
+        val nameTest = "name_Test"
+        val emailTest = "email@email.com"
+        val passwordTest = "12345"
+        val confirmedPasswordTest = "54321"
+
+        coEvery { signUseCase(any(), emailTest, passwordTest) } returns AuthResult.Success(mockk(relaxed = true))
+        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
+
+        viewModel.processCommand(SignCommand.ChangeName(nameTest))
+        viewModel.processCommand(SignCommand.ChangeEmail(emailTest))
+        viewModel.processCommand(SignCommand.ChangePassword(passwordTest))
+        viewModel.processCommand(SignCommand.ChangeConfirmedPassword(confirmedPasswordTest))
+
+        viewModel.events.test {
+            viewModel.processCommand(SignCommand.ClickSignUp)
+
+            val event = awaitItem()
+            assertTrue(event is SignEffect.ShowError)
         }
     }
 }

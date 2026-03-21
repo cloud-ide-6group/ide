@@ -147,4 +147,33 @@ class LoginViewModelTest {
             assertEquals(errorMessage, effect.message)
         }
     }
+
+    @Test
+    fun `when button clicks, button is disabled`() = runTest {
+        val emailTest = "email@email.com"
+        val passwordTest = "password@password"
+
+        coEvery { loginUseCase(emailTest, passwordTest) } returns AuthResult.Success(mockk(relaxed = true))
+        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
+
+        viewModel.uiStateLogin.test {
+            val initialState = awaitItem()
+
+            assertTrue(initialState.buttonEnabled)
+
+            viewModel.processCommand(LoginCommand.ChangeEmail(emailTest))
+            viewModel.processCommand(LoginCommand.ChangePassword(passwordTest))
+            viewModel.processCommand(LoginCommand.ClickLogin)
+
+            skipItems(2)
+
+            val newState = awaitItem()
+
+            assertFalse(newState.buttonEnabled)
+
+            val newState2 = awaitItem()
+
+            assertTrue(newState2.buttonEnabled)
+        }
+    }
 }
