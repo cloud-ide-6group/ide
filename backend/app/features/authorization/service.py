@@ -83,9 +83,9 @@ def create_token(id, key, token_lifetime, is_access):
     )
 
 
-def get_access_token(token, refresh_key, access_key):
+def get_access_refresh_tokens(token, refresh_key, access_key):
     """
-    Создает access-токен
+    Создает access-токен. Используется refresh token rotation(новый refresh каждый раз)
 
     Args:
         token (refresh_roken): Refresh-токен
@@ -93,16 +93,21 @@ def get_access_token(token, refresh_key, access_key):
         access_key (str): Секретный ключ для access
 
     Returns:
-        token: Сгенерерированный access-токен
+        access_token: Сгенерерированный access-токен
+        refresh_token: Сгенерерированный refresh-токен
 
     Example:
         >>> access = get_access_token("token", "r_key", "a_key")
     """
     data = jwt.decode(token, refresh_key, algorithms=["HS256"])
     if data["is_access"]:
-        return None
+        return {
+            "result": ResultsCodes.REFREESH_TOKEN_NEEDED,
+        }
     else:
-        return create_token(data["id"], access_key, timedelta(minutes=15), True)
+        access = create_token(data["id"], access_key, timedelta(minutes=15), True)
+        refresh = create_token(data["id"], refresh_key, timedelta(days=7), False)
+        return {"access": access, "refresh": refresh, "result": ResultsCodes.OK}
 
 
 def get_user_id(token, access_key):

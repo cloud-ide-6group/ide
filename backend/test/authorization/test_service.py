@@ -84,7 +84,7 @@ def test_get_access_token():
     ACCESS_KEY = "567"
 
     token = create_token(123, REFRESH_KEY, timedelta(minutes=5), False)
-    access = get_access_token(token, REFRESH_KEY, ACCESS_KEY)
+    access = get_access_refresh_tokens(token, REFRESH_KEY, ACCESS_KEY)
     data = jwt.decode(access, ACCESS_KEY, algorithms=["HS256"])
 
     assert data["is_access"] == True

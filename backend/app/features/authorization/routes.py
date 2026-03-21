@@ -178,11 +178,14 @@ def refresh():
               example: "eyJhbGciOiJIUzI1NiIs..."
     responses:
       200:
-        description: Новый access-токен
+        description: Новый access-токен и refresh-токен
         schema:
           type: object
           properties:
             access_token:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIs..."
+            refresh_token:
               type: string
               example: "eyJhbGciOiJIUzI1NiIs..."
       401:
@@ -198,14 +201,17 @@ def refresh():
     refresh_token = data["refresh_token"]
 
     if not refresh_token:
-        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 400
+        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 401
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
 
     try:
-        new_access = get_access_token(refresh_token, REFRESH_SECRET, ACCESS_SECRET)
-        return {"access_token": new_access}, 200
+        result = get_access_refresh_tokens(refresh_token, REFRESH_SECRET, ACCESS_SECRET)
+        if result["result"] == ResultsCodes.OK:
+            return {"access_token": result["access"], "refresh_token": result["refresh"]}, 200
+        else:
+            return {"error": result["result"]}, 401
 
     except jwt.ExpiredSignatureError:
         return {"error": ResultsCodes.REFRESH_TOKEN_EXPIRED}, 401
