@@ -6,41 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
-import ru.vsu.front.features.auth.ui.LoginScreen
-import ru.vsu.front.features.auth.ui.LoginViewModel
-import ru.vsu.front.features.auth.ui.SignScreen
-import ru.vsu.front.features.auth.ui.SignViewModel
-import ru.vsu.front.features.navigation.Route.Login
-import ru.vsu.front.features.navigation.Route.Sign
-
-/**
- * Маршруты для навигации.
- */
-@Serializable
-sealed interface Route {
-    /**
-     * Название экрана.
-     */
-    val name: String
-
-    /**
-     * Экран авторизации (входа в аккаунт).
-     */
-    @Serializable
-    data object Login : Route {
-        override val name: String = "LoginScreen"
-    }
-
-    /**
-     * Экран регистрации.
-     */
-    @Serializable
-    data object Sign : Route {
-        override val name: String = "SignScreen"
-    }
-}
+import ru.vsu.front.features.auth.ui.AuthScreen
+import ru.vsu.front.features.auth.ui.AuthViewModel
 
 /**
  * Главный граф навигации приложения.
@@ -53,30 +21,16 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Login,
+        startDestination = Route.Auth,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
         popEnterTransition = { EnterTransition.None },
         popExitTransition = { ExitTransition.None }
-
     ) {
-        composable<Login> {
-            val loginViewModel = koinViewModel<LoginViewModel>()
-            LoginScreen(
-                onSignUpClick = {
-                    navController.navigate(Sign)
-                },
-                viewModel = loginViewModel
-            )
-        }
-
-        composable<Sign> {
-            val signViewModel = koinViewModel<SignViewModel>()
-            SignScreen(
-                onLoginClick = {
-                    navController.popBackStack()
-                },
-                viewModel = signViewModel
+        composable<Route.Auth> {
+            val viewModel = koinViewModel<AuthViewModel>()
+            AuthScreen(
+                authViewModel = viewModel
             )
         }
     }

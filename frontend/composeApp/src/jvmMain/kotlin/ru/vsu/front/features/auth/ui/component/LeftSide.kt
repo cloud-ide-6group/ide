@@ -1,6 +1,5 @@
 package ru.vsu.front.features.auth.ui.component
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -18,7 +17,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param modifier Модификатор для настройки.
  */
 @Composable
-internal fun RowScope.LeftSide(
+internal fun LeftSide(
     modifier: Modifier = Modifier,
 ) {
     SideColumn(modifier = modifier) {
@@ -30,7 +29,7 @@ internal fun RowScope.LeftSide(
                 textAlign = TextAlign.Center,
             )
         )
-        Spacer(modifier = modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         CodeTogetherText(
             text = "Enjoy programming!",
             color = CodeTogetherTheme.colors.primary,
