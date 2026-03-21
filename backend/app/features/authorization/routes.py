@@ -61,10 +61,10 @@ def login():
     password = data["password"]
 
     user, error = get_user(email, password)
-    if error != ErrorCodes.OK:
+    if error != ResultsCodes.OK:
         return {"error": error}, 403
     if user is None:
-        return {"error": ErrorCodes.USER_NOT_FOUND}, 403
+        return {"error": ResultsCodes.USER_NOT_FOUND}, 403
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -136,10 +136,10 @@ def sign():
     data = request.json
 
     user, error = create_user(data["email"], data["name"], data["password"])
-    if error != ErrorCodes.OK:
+    if error != ResultsCodes.OK:
         return {"error": error}, 400
     if user is None:
-        return {"error": ErrorCodes.USER_NOT_FOUND}, 400
+        return {"error": ResultsCodes.USER_NOT_FOUND}, 400
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -194,7 +194,7 @@ def refresh():
     refresh_token = data["refresh_token"]
 
     if not refresh_token:
-        return {"error": ErrorCodes.REFREESH_TOKEN_NEEDED}, 400
+        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 400
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -204,8 +204,8 @@ def refresh():
         return {"access_token": new_access}, 200
 
     except jwt.ExpiredSignatureError:
-        return {"error": ErrorCodes.REFRESH_TOKEN_EXPIRED}, 401
+        return {"error": ResultsCodes.REFRESH_TOKEN_EXPIRED}, 401
     except jwt.InvalidTokenError as e:
         print(f"InvalidTokenError: {e}")
         print(f"Тип ошибки: {type(e).__name__}")
-        return {"error": ErrorCodes.REFREESH_TOKEN_NEEDED}, 401
+        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 401

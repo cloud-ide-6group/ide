@@ -4,7 +4,7 @@ from app.features.authorization.service import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import create_app
 from app.shared.dbmodels import User
-from app.shared.consts import ErrorCodes
+from app.shared.consts import ResultsCodes
 from config import DBTestConfig
 
 
@@ -95,10 +95,10 @@ def test_get_access_token():
     "email, password, name, expected_result",
     [
         ("user1@mail.ru", "test_password", "user_name1", "user1@mail.ru"),
-        ("user1@mail.ru", "test_pass", "user_na", ErrorCodes.EMAIL_EXISTS),
-        ("user@mail.ru", None, None, ErrorCodes.INCORRECT_USER_DATA),
-        (None, "test_password", None, ErrorCodes.INCORRECT_USER_DATA),
-        ("pochta@mail.ru", "test_password", None, ErrorCodes.INCORRECT_USER_DATA),
+        ("user1@mail.ru", "test_pass", "user_na", ResultsCodes.EMAIL_EXISTS),
+        ("user@mail.ru", None, None, ResultsCodes.INCORRECT_USER_DATA),
+        (None, "test_password", None, ResultsCodes.INCORRECT_USER_DATA),
+        ("pochta@mail.ru", "test_password", None, ResultsCodes.INCORRECT_USER_DATA),
     ],
 )
 def test_create_user(email, password, name, expected_result, app_context):
@@ -115,11 +115,11 @@ def test_create_user(email, password, name, expected_result, app_context):
     "email, password, expected_result",
     [
         ("user@mail.ru", "test_password", "user@mail.ru"),
-        ("user@mail.ru", "anti_password", ErrorCodes.INVALID_PASSWORD),
-        ("not_in_db@mail.ru", "not_in_db", ErrorCodes.USER_NOT_FOUND),
-        ("user@mail.ru", None, ErrorCodes.INVALID_PASSWORD),
-        (None, "test_password", ErrorCodes.INCORRECT_USER_DATA),
-        ("", "test_password", ErrorCodes.USER_NOT_FOUND),
+        ("user@mail.ru", "anti_password", ResultsCodes.INVALID_PASSWORD),
+        ("not_in_db@mail.ru", "not_in_db", ResultsCodes.USER_NOT_FOUND),
+        ("user@mail.ru", None, ResultsCodes.INVALID_PASSWORD),
+        (None, "test_password", ResultsCodes.INCORRECT_USER_DATA),
+        ("", "test_password", ResultsCodes.USER_NOT_FOUND),
     ],
 )
 def test_get_user(email, password, expected_result, app_context):

@@ -117,14 +117,14 @@ class Message(db.Model):
         text: Текст сообщения
         author_id: ID создавшего участника
         chat_id: ID чата-владельца
-        time: Время и дата создания
+        send_time: Время и дата отправки
 
     Example:
         >>> message = Message(
         ...     text="message 1",
         ...     author_id=10,
         ...     chat_id=7,
-        ...     time=""
+        ...     send_time=""
         ... )
     """
 
@@ -134,7 +134,7 @@ class Message(db.Model):
     text = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     chat_id = db.Column(db.Integer, db.ForeignKey("chat.id"), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
+    send_time = db.Column(db.DateTime, nullable=False)
 
 
 class User(db.Model):
@@ -195,12 +195,14 @@ class Notification(db.Model):
         project_id: ID проекта
         receiver_id: ID пользователя, которому отправлено уведомление
         sender_id: ID отправителя
+        send_time: Дата и время отправки уведомления
 
     Example:
         >>> notification = Notification(
         ...     project_id=12,
         ...     receiver_id=15,
         ...     sender_id=17
+        ...     send_time=""
         ... )
     """
 
@@ -210,3 +212,4 @@ class Notification(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    send_time = db.Column(db.DateTime, nullable=False)

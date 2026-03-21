@@ -2,7 +2,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from datetime import datetime, timedelta
 from .repository import user_repo
-from app.shared.consts import ErrorCodes
+from app.shared.consts import ResultsCodes
 
 
 def get_password_hash(password):
@@ -144,13 +144,13 @@ def create_user(email, name, password):
         >>> user, error = create_user("user@mail.ru, "username", "password")
     """
     if email is None or password is None or name is None:
-        return None, ErrorCodes.INCORRECT_USER_DATA
+        return None, ResultsCodes.INCORRECT_USER_DATA
 
     user = user_repo.get_by_email(email)
     if user is None:
-        return user_repo.insert_user(email, get_password_hash(password), name), ErrorCodes.OK
+        return user_repo.insert_user(email, get_password_hash(password), name), ResultsCodes.OK
     else:
-        return None, ErrorCodes.EMAIL_EXISTS
+        return None, ResultsCodes.EMAIL_EXISTS
 
 
 def get_user(email, password):
@@ -169,16 +169,16 @@ def get_user(email, password):
         >>> user, error = get_user("user@mail.ru, "password")
     """
     if password is None:
-        return None, ErrorCodes.INVALID_PASSWORD
+        return None, ResultsCodes.INVALID_PASSWORD
 
     if email is None:
-        return None, ErrorCodes.INCORRECT_USER_DATA
+        return None, ResultsCodes.INCORRECT_USER_DATA
 
     user = user_repo.get_by_email(email)
     if not user:
-        return None, ErrorCodes.USER_NOT_FOUND
+        return None, ResultsCodes.USER_NOT_FOUND
 
     if check_password_with_hash(user.password_hash, password):
-        return user, ErrorCodes.OK
+        return user, ResultsCodes.OK
     else:
-        return None, ErrorCodes.INVALID_PASSWORD
+        return None, ResultsCodes.INVALID_PASSWORD

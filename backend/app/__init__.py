@@ -51,12 +51,10 @@ def create_app(config_class=DebugConfig):
         print(f"Swagger UI started on {url}")
 
     from .features.test_feature.routes import test_bp
-    from .features.run_code.routes import run_bp
     from .features.authorization.routes import auth_bp
 
     app.register_blueprint(test_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(run_bp)
 
     with app.app_context():
         from .shared import dbmodels

@@ -17,3 +17,4 @@ documentation for details.
 
    modules/authorization
    modules/dbmodels
+   modules/consts
