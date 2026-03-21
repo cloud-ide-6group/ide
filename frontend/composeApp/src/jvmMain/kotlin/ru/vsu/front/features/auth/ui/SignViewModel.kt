@@ -9,6 +9,7 @@ import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.SignUseCase
+import ru.vsu.front.features.auth.domain.validation.EmailMatcher
 import ru.vsu.front.features.auth.ui.SignEffect.ShowError
 
 /**
@@ -56,26 +57,40 @@ class SignViewModel(
                 viewModelScope.launch(dispatcherProvider.default) {
                     val state = _uiStateSign.value
 
-                    if (state.password == state.confirmedPassword) {
-                        val result = signUseCase(
-                            name = _uiStateSign.value.name,
-                            email = _uiStateSign.value.email,
-                            password = _uiStateSign.value.password
-                        )
+                    if (!EmailMatcher.isValid(state.email)) {
+                        _events.emit(ShowError("Недопустимая почта"))
+                        return@launch
+                    }
 
-                        when (result) {
-                            is AuthResult.Error<*> -> {
-                                _events.emit(ShowError(result.errorData.message))
-                            }
-
-                            is AuthResult.Success<UserSession> -> {
-                                val tokens = result.data.tokens
-                                tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
-                                tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
-                            }
-                        }
-                    } else {
+                    if (state.password != state.confirmedPassword) {
                         _events.emit(ShowError("Пароли не совпадают"))
+                        return@launch
+                    }
+
+                    _uiStateSign.update { previousState ->
+                        previousState.copy(buttonEnabled = false)
+                    }
+
+                    val result = signUseCase(
+                        name = _uiStateSign.value.name,
+                        email = _uiStateSign.value.email,
+                        password = _uiStateSign.value.password
+                    )
+
+                    when (result) {
+                        is AuthResult.Error<*> -> {
+                            _events.emit(ShowError(result.errorData.message))
+                        }
+
+                        is AuthResult.Success<UserSession> -> {
+                            val tokens = result.data.tokens
+                            tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
+                            tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
+                        }
+                    }
+
+                    _uiStateSign.update { previousState ->
+                        previousState.copy(buttonEnabled = true)
                     }
                 }
             }
@@ -159,6 +174,7 @@ data class UiStateSign(
     val confirmedPassword: String = "",
     val isPasswordVisible: Boolean = false,
     val isConfirmedPasswordVisible: Boolean = false,
+    val buttonEnabled: Boolean = true
 )
 
 /**

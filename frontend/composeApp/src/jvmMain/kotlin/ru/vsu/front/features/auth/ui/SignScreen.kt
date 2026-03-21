@@ -75,6 +75,7 @@ fun SignScreen(
                 confirmedPassword = uiState.value.confirmedPassword,
                 isPasswordVisible = uiState.value.isPasswordVisible,
                 isConfirmedPasswordVisible = uiState.value.isConfirmedPasswordVisible,
+                buttonEnabled = uiState.value.buttonEnabled,
                 onNameChange = { name ->
                     viewModel.processCommand(SignCommand.ChangeName(name))
                 },
@@ -121,10 +122,10 @@ fun SignScreen(
  * @param onChangePasswordVisibilityClick Коллбек видимости основного пароля.
  * @param onChangeConfirmedPasswordVisibilityClick Коллбек видимости подтвержденного пароля.
  * @param onLoginClick Коллбек перехода к авторизации.
+ * @param buttonEnabled Доступность клика на кнопку.
  */
 @Composable
 private fun RowScope.RightSide(
-    modifier: Modifier = Modifier,
     name: String,
     email: String,
     isNotValidEmail: Boolean,
@@ -140,6 +141,8 @@ private fun RowScope.RightSide(
     onChangePasswordVisibilityClick: () -> Unit,
     onChangeConfirmedPasswordVisibilityClick: () -> Unit,
     onLoginClick: () -> Unit,
+    buttonEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     SideColumn(modifier = modifier) {
         SignCard(
@@ -158,6 +161,7 @@ private fun RowScope.RightSide(
             onChangePasswordVisibilityClick = onChangePasswordVisibilityClick,
             onChangeConfirmedPasswordVisibilityClick = onChangeConfirmedPasswordVisibilityClick,
             onLoginClick = onLoginClick,
+            buttonEnabled = buttonEnabled
         )
     }
 }
@@ -181,10 +185,10 @@ private fun RowScope.RightSide(
  * @param onChangePasswordVisibilityClick Коллбек нажатия на иконку видимости основного пароля.
  * @param onChangeConfirmedPasswordVisibilityClick Коллбек нажатия на иконку видимости подтверждения пароля.
  * @param onLoginClick Коллбек нажатия на кнопку возврата к авторизации.
+ * @param buttonEnabled Доступность клика на кнопку.
  */
 @Composable
 private fun SignCard(
-    modifier: Modifier = Modifier,
     name: String,
     email: String,
     isNotValidEmail: Boolean,
@@ -200,6 +204,8 @@ private fun SignCard(
     onChangePasswordVisibilityClick: () -> Unit,
     onChangeConfirmedPasswordVisibilityClick: () -> Unit,
     onLoginClick: () -> Unit,
+    buttonEnabled: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     AuthCard {
         Column(
@@ -281,6 +287,7 @@ private fun SignCard(
                     containerColor = CodeTogetherTheme.colors.primary.copy(0.1f),
                     contentColor = CodeTogetherTheme.colors.black.copy(0.005f)
                 ),
+                enabled = buttonEnabled,
                 style = CodeTogetherTheme.typography.style.copy(
                     fontWeight = FontWeight.Bold
                 ),

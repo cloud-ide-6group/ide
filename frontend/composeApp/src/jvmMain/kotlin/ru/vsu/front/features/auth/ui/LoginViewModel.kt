@@ -2,6 +2,7 @@ package ru.vsu.front.features.auth.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.di.dispatcher_provider.DispatcherProvider
@@ -9,6 +10,7 @@ import ru.vsu.front.common.security.TokenStorage
 import ru.vsu.front.features.auth.domain.entity.AuthResult
 import ru.vsu.front.features.auth.domain.entity.UserSession
 import ru.vsu.front.features.auth.domain.usecase.LoginUseCase
+import ru.vsu.front.features.auth.domain.validation.EmailMatcher
 
 /**
  * Вьюмодель экрана авторизации.
@@ -47,13 +49,21 @@ class LoginViewModel(
 
             LoginCommand.ClickLogin -> {
                 viewModelScope.launch(dispatcherProvider.default) {
+                    val state = _uiStateLogin.value
+                    if (!EmailMatcher.isValid(state.email)) {
+                        _events.emit(LoginEffect.ShowError("Недопустимая почта"))
+                        return@launch
+                    }
+
                     _uiStateLogin.update { previousState ->
                         previousState.copy(buttonEnabled = false)
                     }
+
                     val result = loginUseCase(
                         email = _uiStateLogin.value.email,
                         password = _uiStateLogin.value.password
                     )
+
                     when (result) {
                         is AuthResult.Error<*> -> {
                             _events.emit(LoginEffect.ShowError(result.errorData.message))
