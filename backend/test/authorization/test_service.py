@@ -84,10 +84,13 @@ def test_get_access_token():
     ACCESS_KEY = "567"
 
     token = create_token(123, REFRESH_KEY, timedelta(minutes=5), False)
-    access = get_access_refresh_tokens(token, REFRESH_KEY, ACCESS_KEY)
+    result = get_access_refresh_tokens(token, REFRESH_KEY, ACCESS_KEY)
+    access = result["access"]
+    refresh = result["refresh"]
     data = jwt.decode(access, ACCESS_KEY, algorithms=["HS256"])
 
     assert data["is_access"] == True
+    assert refresh != None
     assert data["id"] == 123
 
 
@@ -95,20 +98,26 @@ def test_get_access_token():
     "email, password, name, expected_result",
     [
         ("user1@mail.ru", "test_password", "user_name1", "user1@mail.ru"),
-        ("user1@mail.ru", "test_pass", "user_na", ResultsCodes.EMAIL_EXISTS),
+        ("user@mail.ru", "test_pass", "user_na", ResultsCodes.EMAIL_EXISTS),
         ("user@mail.ru", None, None, ResultsCodes.INCORRECT_USER_DATA),
         (None, "test_password", None, ResultsCodes.INCORRECT_USER_DATA),
         ("pochta@mail.ru", "test_password", None, ResultsCodes.INCORRECT_USER_DATA),
+        ("", "test_password", "namik", ResultsCodes.INVALID_EMAIL),
+        ("pochta@mail.ru", "test_password", "", ResultsCodes.INCORRECT_USER_NAME),
     ],
 )
 def test_create_user(email, password, name, expected_result, app_context):
     """Тест проверки создания пользователя"""
 
     result, error = create_user(email, name, password)
-    if result:
-        assert result.email == expected_result
-    else:
-        assert error == expected_result
+    try:
+        if result:
+            assert result.email == expected_result
+        else:
+            assert error == expected_result
+    finally:
+        if result:
+            user_repo.delete_user_by_id(result.id)
 
 
 @pytest.mark.parametrize(

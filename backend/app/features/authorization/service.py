@@ -93,8 +93,8 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
         access_key (str): Секретный ключ для access
 
     Returns:
-        access_token: Сгенерерированный access-токен
-        refresh_token: Сгенерерированный refresh-токен
+        access: Сгенерерированный access-токен
+        refresh: Сгенерерированный refresh-токен
 
     Example:
         >>> access = get_access_token("token", "r_key", "a_key")

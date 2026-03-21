@@ -1,7 +1,7 @@
 from .extensions import db
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
-import re
+from .consts import ResultsCodes
 from email_validator import validate_email, EmailNotValidError
 
 
@@ -171,20 +171,20 @@ class User(db.Model):
     @validates("name")
     def validate_name(self, key, name):
         if not name or name == "":
-            raise ValueError("Имя не может быть пустым")
+            raise ValueError(ResultsCodes.INCORRECT_USER_NAME)
 
         return name
 
     @validates("email")
     def validate_email(self, key, email):
         if not email:
-            raise ValueError("Email не может быть пустым")
+            raise ValueError(ResultsCodes.INVALID_EMAIL)
 
         try:
             valid = validate_email(email)
             return valid.normalized
         except EmailNotValidError as e:
-            raise ValueError("Email неверен") from e
+            raise ValueError(ResultsCodes.INVALID_EMAIL) from e
 
 
 class UserInProject(db.Model):
