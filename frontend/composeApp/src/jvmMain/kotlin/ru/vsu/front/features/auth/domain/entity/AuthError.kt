@@ -19,10 +19,10 @@ sealed class AuthError(open val message: String) {
     /**
      * Ошибка сети (отсутствует интернет или сервер недоступен).
      * */
-    data class NetworkException(override val message: String = "Network Error") : AuthError(message)
+    data class NetworkException(override val message: String = "Ошибка сети") : AuthError(message)
 
     /** 
-     * Непредвиденная ошибка.
+     * Неизвестная ошибка.
      * */
-    data class UnknownError(override val message: String = "Unknown Error") : AuthError(message)
+    data class UnknownError(override val message: String = "Неизвестная ошибка") : AuthError(message)
 }
