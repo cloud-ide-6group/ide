@@ -28,7 +28,7 @@ class UserRepository:
             >>> repo = UserRepository()
             >>> users = repo.get_all()
         """
-        return User.query.all()
+        return db.session.query(User).all()
 
     def get_by_id(self, user_id):
         """
@@ -44,7 +44,7 @@ class UserRepository:
             >>> repo = UserRepository()
             >>> user = repo.get_by_id(123)
         """
-        return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
     def get_by_email(self, email):
         """
@@ -60,7 +60,7 @@ class UserRepository:
             >>> repo = UserRepository()
             >>> user = repo.get_by_email("email@mail.ru")
         """
-        return User.query.filter_by(email=email).first()
+        return db.session.query(User).filter(User.email == email).first()
 
     def insert_user(self, email, password_hash, name):
         """
