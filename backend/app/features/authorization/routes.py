@@ -53,7 +53,7 @@ def login():
         schema:
           type: object
           properties:
-              error:
+              message:
                 type: string
                 example: "Неверные учетные данные"
     """
@@ -64,9 +64,9 @@ def login():
 
     user, error = get_user(email, password)
     if error != ResultsCodes.OK:
-        return {"error": error}, 403
+        return {"message": error}, 403
     if user is None:
-        return {"error": ResultsCodes.USER_NOT_FOUND}, 403
+        return {"message": ResultsCodes.USER_NOT_FOUND}, 403
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -131,7 +131,7 @@ def sign():
         schema:
           type: object
           properties:
-            error:
+            message:
               type: string
               example: "Неверный пароль"
     """
@@ -139,9 +139,9 @@ def sign():
 
     user, error = create_user(data["email"], data["name"], data["password"])
     if error != ResultsCodes.OK:
-        return {"error": error}, 400
+        return {"message": error}, 400
     if user is None:
-        return {"error": ResultsCodes.USER_NOT_FOUND}, 400
+        return {"message": ResultsCodes.USER_NOT_FOUND}, 400
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -193,7 +193,7 @@ def refresh():
         schema:
           type: object
           properties:
-              error:
+              message:
                 type: string
                 example: "Неверный refresh токен"
     """
@@ -201,7 +201,7 @@ def refresh():
     refresh_token = data["refresh_token"]
 
     if not refresh_token:
-        return {"error": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
+        return {"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -209,13 +209,16 @@ def refresh():
     try:
         result = get_access_refresh_tokens(refresh_token, REFRESH_SECRET, ACCESS_SECRET)
         if result["result"] == ResultsCodes.OK:
-            return {"access_token": result["access"], "refresh_token": result["refresh"]}, 200
+            return {
+                "access_token": result["access"],
+                "refresh_token": result["refresh"],
+            }, 200
         else:
-            return {"error": result["result"]}, 401
+            return {"message": result["result"]}, 401
 
-    except jwt.ExpiredSignatureError:
-        return {"error": ResultsCodes.REFRESH_TOKEN_EXPIRED}, 401
+    except jwt.ExpiredSignaturemessage:
+        return {"message": ResultsCodes.REFRESH_TOKEN_EXPIRED}, 401
     except jwt.InvalidTokenError as e:
-        print(f"InvalidTokenError: {e}")
+        print(f"InvalidTokenmessage: {e}")
         print(f"Тип ошибки: {type(e).__name__}")
-        return {"error": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
+        return {"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401

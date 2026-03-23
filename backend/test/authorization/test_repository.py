@@ -48,7 +48,7 @@ def test_get_by_email(app_context):
 
     assert user == test_user
 
-
+# TODO: fix this test
 def test_insert_user(app_context):
     password = "Afdgh"
     name = "the_user"
