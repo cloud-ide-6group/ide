@@ -17,4 +17,5 @@ documentation for details.
 
    modules/authorization
    modules/dbmodels
+   modules/jwt_token
    modules/consts

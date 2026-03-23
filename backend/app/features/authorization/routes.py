@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from app.shared.features.jwt_token.service import create_token
 
 from . import auth_bp

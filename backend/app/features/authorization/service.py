@@ -1,6 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-from datetime import datetime, timedelta
 from .repository import user_repo
 from app.shared.consts import ResultsCodes
 
