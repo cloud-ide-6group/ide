@@ -102,7 +102,7 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     data = jwt.decode(token, refresh_key, algorithms=["HS256"])
     if data["is_access"]:
         return {
-            "result": ResultsCodes.REFREESH_TOKEN_NEEDED,
+            "result": ResultsCodes.REFRESH_TOKEN_NEEDED,
         }
     else:
         access = create_token(data["id"], access_key, timedelta(minutes=15), True)

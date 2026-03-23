@@ -201,7 +201,7 @@ def refresh():
     refresh_token = data["refresh_token"]
 
     if not refresh_token:
-        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 401
+        return {"error": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
 
     ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
@@ -218,4 +218,4 @@ def refresh():
     except jwt.InvalidTokenError as e:
         print(f"InvalidTokenError: {e}")
         print(f"Тип ошибки: {type(e).__name__}")
-        return {"error": ResultsCodes.REFREESH_TOKEN_NEEDED}, 401
+        return {"error": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401

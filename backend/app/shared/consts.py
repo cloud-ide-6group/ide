@@ -9,6 +9,6 @@ class ResultsCodes:
     USER_NOT_FOUND = "Пользователь не найден"
     INVALID_PASSWORD = "Неверный пароль"
     INVALID_EMAIL = "Неверный email"
-    REFREESH_TOKEN_NEEDED = "Неверный refresh токен"
+    REFRESH_TOKEN_NEEDED = "Неверный refresh токен"
     REFRESH_TOKEN_EXPIRED = "Refresh токен истек"
     INCORRECT_USER_NAME="Неверное имя пользователя"
