@@ -9,10 +9,10 @@ class Project(db.Model):
     """Модель проекта в IDE.
 
     Attributes:
-        id: Уникальный идентификатор проекта
-        name: Название проекта. Должно быть уникальным в системе
-        owner_id: ID пользователя-владельца (внешний ключ к user.id)
-        language_id: ID языка программирования проекта
+        id (int): Уникальный идентификатор проекта
+        name (str): Название проекта. Должно быть уникальным в системе
+        owner_id (int): ID пользователя-владельца (внешний ключ к user.id)
+        language_id (int): ID языка программирования проекта
 
     Example:
         >>> project = Project(
@@ -25,27 +25,20 @@ class Project(db.Model):
     __tablename__ = "project"
 
     id = db.Column(db.Integer, primary_key=True)
-    """int: Уникальный идентификатор проекта (первичный ключ)"""
-
     name = db.Column(db.Text, unique=True, nullable=False)
-    """str: Уникальное название проекта. Обязательное поле."""
-
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    """int: ID владельца проекта. Внешний ключ к таблице user."""
-
-    language_id = db.Column(db.Integer, nullable=False)
-    """int: ID языка программирования. Обязательное поле."""
+    language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
 
 
 class File(db.Model):
     """Модель файла или папки в проекте.
 
     Attributes:
-        id: Уникальный идентификатор файла
-        name: Имя файла или папки
-        parent_id: ID родительской папки (null если в корне)
-        project_id: ID проекта-владельца
-        is_folder: True = папка, False = файл
+        id (int): Уникальный идентификатор файла
+        name (str): Имя файла или папки
+        parent_id (int): ID родительской папки (null если в корне) (внешний ключ к File.id)
+        project_id (int): ID проекта-владельца
+        is_folder (bool): True = папка, False = файл
 
     Example:
         >>> file = File(
@@ -69,10 +62,10 @@ class Language(db.Model):
     """Модель языка программирования.
 
     Attributes:
-        id: Уникальный идентификатор языка
-        name: Имя языка
-        description: Описание языка
-        image_name: Docker образ для создания контейнера
+        id (int): Уникальный идентификатор языка
+        name (str): Имя языка
+        description (str): Описание языка
+        image_name (str): Docker образ для создания контейнера
 
     Example:
         >>> lang = Language(
@@ -95,9 +88,9 @@ class Chat(db.Model):
     """Модель чата. Может быть в разных файлах, но в одном проекте.
 
     Attributes:
-        id: Уникальный идентификатор
-        author_id: ID создавшего участника
-        project_id: ID проекта-владельца
+        id (int): Уникальный идентификатор
+        author_id (int): ID создавшего участника (внешний ключ к User.id)
+        project_id (int): ID проекта-владельца
 
     Example:
         >>> chat = Chat(
@@ -117,11 +110,11 @@ class Message(db.Model):
     """Модель сообщения в чате.
 
     Attributes:
-        id: Уникальный идентификатор
-        text: Текст сообщения
-        author_id: ID создавшего участника
-        chat_id: ID чата-владельца
-        send_time: Время и дата отправки
+        id (int): Уникальный идентификатор
+        text (str): Текст сообщения
+        author_id (int): ID создавшего участника (внешний ключ к User.id)
+        chat_id (int): ID чата-владельца
+        send_time (datetime): Время и дата отправки
 
     Example:
         >>> message = Message(
@@ -145,11 +138,11 @@ class User(db.Model):
     """Модель пользователя.
 
     Attributes:
-        id: Уникальный идентификатор
-        name: Имя пользователя
-        photo_path: Путь к фотографии профиля
-        password_hash: Хэш пароля
-        email: Почта-логин
+        id (int): Уникальный идентификатор
+        name (str): Имя пользователя
+        photo_path (str): Путь к фотографии профиля
+        password_hash (str): Хэш пароля
+        email (str): Почта-логин
 
     Example:
         >>> user = User(
@@ -191,9 +184,9 @@ class UserInProject(db.Model):
     """Таблица связи пользователя и проекта для реализации связи многие-ко-многим.
 
     Attributes:
-        id: Уникальный идентификатор
-        project_id: ID проекта
-        user_id: ID пользователя
+        id (int): Уникальный идентификатор
+        project_id (int): ID проекта
+        user_id (int): ID пользователя
 
     Example:
         >>> user_in_project = UserInProject(
@@ -213,11 +206,11 @@ class Notification(db.Model):
     """Модель уведомлений.
 
     Attributes:
-        id: Уникальный идентификатор
-        project_id: ID проекта
-        receiver_id: ID пользователя, которому отправлено уведомление
-        sender_id: ID отправителя
-        send_time: Дата и время отправки уведомления
+        id (int): Уникальный идентификатор
+        project_id (int): ID проекта
+        receiver_id (int): ID пользователя, которому отправлено уведомление (внешний ключ к User.id)
+        sender_id (int): ID отправителя (внешний ключ к User.id)
+        send_time (str): Дата и время отправки уведомления
 
     Example:
         >>> notification = Notification(
