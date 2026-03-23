@@ -5,10 +5,6 @@ plugins {
 
 group = "ru.vsu"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.koin.core)
