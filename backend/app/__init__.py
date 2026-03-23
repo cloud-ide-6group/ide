@@ -52,9 +52,11 @@ def create_app(config_class=DebugConfig):
 
     from .features.test_feature.routes import test_bp
     from .features.authorization.routes import auth_bp
+    from .shared.features.jwt_token import jwt_token_bp
 
     app.register_blueprint(test_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(jwt_token_bp)
 
     with app.app_context():
         from .shared import dbmodels
