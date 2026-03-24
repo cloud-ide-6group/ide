@@ -62,6 +62,8 @@ compose.desktop {
             windows {
                 iconFile.set(project.file("src/jvmMain/resources/app_icon.ico"))
                 menuGroup = "Code Together"
+                shortcut = true
+                dirChooser = true
             }
         }
 
