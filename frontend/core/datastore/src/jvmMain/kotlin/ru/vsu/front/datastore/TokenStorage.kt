@@ -1,38 +1,29 @@
 package ru.vsu.front.datastore
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import java.util.prefs.Preferences
 
 /**
- * Хранилище JWT-токенов на основе DataStore.
+ * Хранилище JWT-токенов.
  * Обеспечивает безопасное чтение, запись и удаление токенов с использованием локального шифрования.
  *
- * @param dataStore Файловое хранилище настроек из библиотеки `datastore-preferences`.
  * @param cryptoManager Утилита для шифрования и дешифрования строковых данных.
+ * @param prefs Хранилище.
  */
 class TokenStorage(
-    private val dataStore: DataStore<Preferences>,
-    private val cryptoManager: CryptoManager
+    private val cryptoManager: CryptoManager,
+    private val prefs: Preferences
 ) {
     companion object {
-        private val JWT_ACCESS_TOKEN_KEY = stringPreferencesKey("jwt_access_token")
-        private val JWT_REFRESH_TOKEN_KEY = stringPreferencesKey("jwt_refresh_token")
+        private const val JWT_ACCESS_TOKEN_KEY = "jwt_access_token"
+        private const val JWT_REFRESH_TOKEN_KEY = "jwt_refresh_token"
     }
 
-    /**
-     * Поток (Flow), считывающий текущие токены из хранилища.
-     * * Содержит пару `Pair(AccessToken, RefreshToken)` в расшифрованном виде.
-     * * Если хотя бы одного токена нет в хранилище, содержит `null`.
-     */
-    val tokenFlow: Flow<Pair<String?, String?>?> = dataStore.data.map { preferences ->
-        val encryptedAccessToken = preferences[JWT_ACCESS_TOKEN_KEY]
-        val encryptedRefreshToken = preferences[JWT_REFRESH_TOKEN_KEY]
-        if (encryptedAccessToken != null && encryptedRefreshToken != null) {
+
+    private fun getTokensSync(): Pair<String?, String?>? {
+        val encryptedAccessToken = prefs.get(JWT_ACCESS_TOKEN_KEY, null)
+        val encryptedRefreshToken = prefs.get(JWT_REFRESH_TOKEN_KEY, null)
+
+        return if (encryptedAccessToken != null && encryptedRefreshToken != null) {
             with(cryptoManager) {
                 decrypt(encryptedAccessToken) to decrypt(encryptedRefreshToken)
             }
@@ -47,18 +38,7 @@ class TokenStorage(
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
     suspend fun getTokens(): Pair<String?, String?>? {
-        val preferences = dataStore.data.first()
-
-        val encryptedAccessToken = preferences[JWT_ACCESS_TOKEN_KEY]
-        val encryptedRefreshToken = preferences[JWT_REFRESH_TOKEN_KEY]
-
-        return if (encryptedAccessToken != null && encryptedRefreshToken != null) {
-            with(cryptoManager) {
-                decrypt(encryptedAccessToken) to decrypt(encryptedRefreshToken)
-            }
-        } else {
-            null
-        }
+        return getTokensSync()
     }
 
     /**
@@ -69,13 +49,11 @@ class TokenStorage(
      */
     suspend fun saveToken(token: String, isAccess: Boolean) {
         val encryptedToken = cryptoManager.encrypt(token)
-        dataStore.edit { preferences ->
-            if (isAccess) {
-                preferences[JWT_ACCESS_TOKEN_KEY] = encryptedToken
 
-            } else {
-                preferences[JWT_REFRESH_TOKEN_KEY] = encryptedToken
-            }
+        if (isAccess) {
+            prefs.put(JWT_ACCESS_TOKEN_KEY, encryptedToken)
+        } else {
+            prefs.put(JWT_REFRESH_TOKEN_KEY, encryptedToken)
         }
     }
 
@@ -83,9 +61,7 @@ class TokenStorage(
      * Удаляет Access и Refresh токены из хранилища.
      */
     suspend fun clearTokens() {
-        dataStore.edit { preferences ->
-            preferences.remove(JWT_ACCESS_TOKEN_KEY)
-            preferences.remove(JWT_REFRESH_TOKEN_KEY)
-        }
+        prefs.remove(JWT_ACCESS_TOKEN_KEY)
+        prefs.remove(JWT_REFRESH_TOKEN_KEY)
     }
 }

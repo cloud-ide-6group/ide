@@ -10,16 +10,17 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * Класс для шифрования и дешифрования локальных данных.
  * * Использует алгоритм AES (256 бит). Мастер-ключ генерируется автоматически при первом запуске
- * и сохраняется в хранилище через [Preferences] в папке `ru.vsu.front.keys`.
+ * и сохраняется в хранилище через [Preferences].
+ * * @param prefs Хранилище.
  */
-class CryptoManager {
-    private val prefs = Preferences.userRoot().node("ru.vsu.front.keys")
+class CryptoManager(
+    private val prefs: Preferences
+) {
     private val keyName = "aes_master_key"
     private val secretKey: SecretKey
 
     init {
         val encodedKey = prefs.get(keyName, null)
-
         if (encodedKey == null) {
             val keyGen = KeyGenerator.getInstance("AES")
             keyGen.init(256)
