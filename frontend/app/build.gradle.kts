@@ -60,7 +60,7 @@ compose.desktop {
             packageVersion = "1.0.0"
 
             windows {
-                iconFile.set(project.file("src/jvmMain/resources/icon.ico"))
+                iconFile.set(project.file("src/jvmMain/resources/app_icon.ico"))
                 menuGroup = "Code Together"
             }
         }
