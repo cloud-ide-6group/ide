@@ -3,3 +3,7 @@
 -keepdirectories META-INF/**
 -keep class kotlinx.coroutines.** { *; }
 -keep class org.slf4j.** { *; }
+-keep class androidx.datastore.** { *; }
+-keep class com.google.protobuf.** { *; }
+-keep class okio.** { *; }
+-dontwarn okio.**
