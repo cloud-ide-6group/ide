@@ -1,0 +1,5 @@
+-keep class io.ktor.** { *; }
+-keeppackagenames io.ktor.**
+-keepdirectories META-INF/**
+-keep class kotlinx.coroutines.** { *; }
+-keep class org.slf4j.** { *; }

@@ -87,7 +87,10 @@ private fun WindowScope.setupWindow(density: Density) {
     LaunchedEffect(density) {
         window.minimumSize = with(density) {
             Dimension(
-                (NecessaryAppButtons.entries.size * NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP).dp.toPx()
+                /**
+                 * Иконка приложения так же находится в верхней панели, но это не кнопка, так что + 1
+                 */
+                ((NecessaryAppButtons.entries.size + 1) * NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP).dp.toPx()
                     .toInt(),
                 NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp.toPx().toInt(),
             )

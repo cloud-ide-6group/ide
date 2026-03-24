@@ -7,11 +7,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.window.WindowScope
 import front.core.designsystem.generated.resources.Res
 import front.core.designsystem.generated.resources.close_24dp
+import front.core.designsystem.generated.resources.app_icon_without_background
 import front.core.designsystem.generated.resources.maximize_24dp
 import front.core.designsystem.generated.resources.minimize_24dp
 import org.jetbrains.compose.resources.painterResource
@@ -52,9 +54,20 @@ fun WindowScope.WindowTopBar(
 
             Row(
                 modifier = Modifier
-                    .align(Alignment.CenterEnd),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val appIconRes = Res.drawable.app_icon_without_background
+                Icon(
+                    modifier = Modifier
+                        .size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
+                    painter = painterResource(appIconRes),
+                    contentDescription = "Code Together",
+                    tint = Color.Unspecified
+                )
+
+                Spacer(Modifier.weight(1f))
+
                 NecessaryAppButtons.entries.fastForEach { entry ->
                     val (onClick, iconRes) = when (entry) {
                         NecessaryAppButtons.Minimize -> {
@@ -71,7 +84,8 @@ fun WindowScope.WindowTopBar(
                     }
 
                     CodeTogetherButton(
-                        modifier = Modifier.size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
+                        modifier = Modifier
+                            .size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
                         onClick = onClick
                     ) {
                         Icon(
