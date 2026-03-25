@@ -13,6 +13,7 @@ import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.di.initKoin
 import ru.vsu.front.navigation.Navigation
 import java.awt.Dimension
+import kotlin.math.abs
 
 /**
  * Точка входа в приложение.
@@ -32,9 +33,6 @@ fun main() {
             undecorated = true,
             transparent = true
         ) {
-            var isMaximized by remember {
-                mutableStateOf(false)
-            }
             var previousSize by remember {
                 mutableStateOf(DpSize.Unspecified)
             }
@@ -43,6 +41,7 @@ fun main() {
             }
 
             val density = LocalDensity.current
+
             setupWindow(density)
 
             App(
@@ -50,21 +49,27 @@ fun main() {
                     windowState.isMinimized = true
                 },
                 onMaximizeClick = {
-                    when (isMaximized) {
-                        true -> {
-                            windowState.position = previousPosition
-                            windowState.size = previousSize
-                        }
+                    val bounds = DesktopScreenMetricsProvider.getMaximumWindowBounds()
 
-                        false -> {
-                            previousSize = windowState.size
-                            previousPosition = windowState.position
-                            val bounds = DesktopScreenMetricsProvider.getMaximumWindowBounds()
-                            changeWindowSizeAndPosition(density, bounds, windowState)
-                        }
+                    val maxWidth = bounds.width.dp
+                    val maxHeight = bounds.height.dp
+                    val maxX = bounds.x.dp
+                    val maxY = bounds.y.dp
+
+                    val isCurrentlyMaximized =
+                        maxWidth.value - windowState.size.width.value < 1.5f &&
+                                maxHeight.value - windowState.size.height.value < 1.5f
+
+                    if (isCurrentlyMaximized) {
+                        windowState.position = previousPosition
+                        windowState.size = previousSize
+                    } else {
+                        previousSize = windowState.size
+                        previousPosition = windowState.position
+
+                        windowState.position = WindowPosition(maxX, maxY)
+                        windowState.size = DpSize(maxWidth, maxHeight)
                     }
-
-                    isMaximized = !isMaximized
                 },
                 onCloseClick = ::exitApplication
             ) {
@@ -84,38 +89,13 @@ fun main() {
  */
 @Composable
 private fun WindowScope.setupWindow(density: Density) {
-    LaunchedEffect(density) {
-        window.minimumSize = with(density) {
-            Dimension(
-                /**
-                 * Иконка приложения так же находится в верхней панели, но это не кнопка, так что + 1
-                 */
-                ((NecessaryAppButtons.entries.size + 1) * NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP).dp.toPx()
-                    .toInt(),
-                NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp.toPx().toInt(),
-            )
-        }
+    LaunchedEffect(Unit) {
+        /**
+         * Иконка приложения так же находится в верхней панели, но это не кнопка, так что + 1
+         */
+        window.minimumSize = Dimension(
+            ((NecessaryAppButtons.entries.size + 1) * NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP),
+            NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP
+        )
     }
-}
-
-/**
- * Вычисляет и применяет новые размеры и позицию для окна.
- *
- * @param density Коэффициент плотности пикселей монитора.
- * @param maximumWindowBounds Размеры рабочей области монитора.
- * @param window Состояние окна, к которому применяются новые координаты.
- */
-private fun changeWindowSizeAndPosition(
-    density: Density,
-    maximumWindowBounds: WindowBounds,
-    window: WindowState
-) {
-    val width = with(density) { maximumWindowBounds.width.toDp() }
-    val height = with(density) { maximumWindowBounds.height.toDp() }
-
-    val x = with(density) { maximumWindowBounds.x.toDp() }
-    val y = with(density) { maximumWindowBounds.y.toDp() }
-
-    window.size = DpSize(width, height)
-    window.position = WindowPosition(x, y)
 }
