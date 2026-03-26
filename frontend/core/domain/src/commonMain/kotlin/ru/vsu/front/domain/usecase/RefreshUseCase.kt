@@ -13,7 +13,7 @@ class RefreshUseCase(
     private val repository: AuthRepository,
 ) {
     /**
-     * Создаёт аккаунта.
+     * Обновляет токены.
      *
      * @param accessToken Токен доступа.
      * @param refreshToken Токен обновления.
