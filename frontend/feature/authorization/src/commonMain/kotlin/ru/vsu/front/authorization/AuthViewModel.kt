@@ -6,9 +6,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
-import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
+import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserData
 

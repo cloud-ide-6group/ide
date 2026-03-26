@@ -11,11 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.window.WindowScope
-import front.core.designsystem.generated.resources.Res
-import front.core.designsystem.generated.resources.close_24dp
-import front.core.designsystem.generated.resources.app_icon_without_background
-import front.core.designsystem.generated.resources.maximize_24dp
-import front.core.designsystem.generated.resources.minimize_24dp
+import front.core.designsystem.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme

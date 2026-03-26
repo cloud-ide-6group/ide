@@ -1,7 +1,7 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import java.io.FileInputStream
-import java.util.Properties
-import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.*
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)

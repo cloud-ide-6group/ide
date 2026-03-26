@@ -16,9 +16,9 @@ import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
+import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.UserData
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,7 +1,7 @@
 package ru.vsu.front.domain.repository
 
-import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.AuthTokens
+import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserData
 
 /**
