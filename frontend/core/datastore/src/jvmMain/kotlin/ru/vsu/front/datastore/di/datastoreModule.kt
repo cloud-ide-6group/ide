@@ -11,6 +11,7 @@ import java.util.prefs.Preferences
  * и безопасным сохранением токенов на устройстве.
  *
  * * Что внутри:
+ * - [Preferences] - хранилище.
  * - [CryptoManager] - класс для шифрования и дешифрования локальных данных.
  * - [TokenStorage] - инструмент для записи и чтения JWT-токенов,
  * использующий [Preferences] и [CryptoManager].
