@@ -46,10 +46,7 @@ fun main() {
                 mutableStateOf<WindowPosition>(WindowPosition.PlatformDefault)
             }
 
-            val density = LocalDensity.current
-
-            setupWindow(density)
-
+            setupWindow()
             App(
                 onMinimizeClick = {
                     windowState.isMinimized = true
@@ -89,12 +86,10 @@ fun main() {
 
 /**
  * Задает минимально допустимые размеры окна.
- * Рассчитывается исходя из размера базовых кастомных кнопок управления окном.
- *
- * @param density Коэффициент плотности пикселей монитора.
+ * Рассчитывается исходя из размера базовых кастомных кнопок управления окном и иконки приложения.
  */
 @Composable
-private fun WindowScope.setupWindow(density: Density) {
+private fun WindowScope.setupWindow() {
     LaunchedEffect(Unit) {
         /**
          * Иконка приложения так же находится в верхней панели, но это не кнопка, так что + 1
