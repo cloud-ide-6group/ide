@@ -32,4 +32,13 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-include(":composeApp")
+include(":app")
+include(":feature:authorization")
+include(":core:designsystem")
+include("core:common")
+include("core:domain")
+include("core:data")
+include("core:model")
+include("core:network")
+include("core:navigation")
+include("core:datastore")
