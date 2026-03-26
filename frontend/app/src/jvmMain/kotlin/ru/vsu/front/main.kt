@@ -1,12 +1,17 @@
 package ru.vsu.front
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import androidx.navigation.compose.rememberNavController
+import front.app.generated.resources.Res
+import front.app.generated.resources.app_icon
+import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.window.DesktopScreenMetricsProvider
 import ru.vsu.front.window.WindowBounds
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
@@ -28,7 +33,8 @@ fun main() {
         }
         Window(
             onCloseRequest = ::exitApplication,
-            title = "front",
+            title = "Code Together",
+            icon = painterResource(Res.drawable.app_icon),
             state = windowState,
             undecorated = true,
             transparent = true
