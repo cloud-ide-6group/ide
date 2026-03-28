@@ -18,4 +18,24 @@ object HttpRoutes {
      * Эндпоинт обновления токенов.
      */
     const val REFRESH_TOKENS = "/refresh"
+
+    /**
+     * Эндпоинт получения профиля.
+     */
+    const val PROFILE = "/profile"
+
+    /**
+     * Эндпоинт создания проекта.
+     */
+    const val CREATE_PROJECT = "/project/create"
+
+    /**
+     * Эндпоинт удаления проекта.
+     */
+    const val DELETE_PROJECT = "/project/create"
+
+    /**
+     * Эндпоинт обновления профиля.
+     */
+    const val UPDATE_PROFILE = "/profile/update"
 }
