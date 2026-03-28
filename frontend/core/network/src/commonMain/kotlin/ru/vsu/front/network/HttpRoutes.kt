@@ -32,7 +32,7 @@ object HttpRoutes {
     /**
      * Эндпоинт удаления проекта.
      */
-    const val DELETE_PROJECT = "/project/create"
+    const val DELETE_PROJECT = "/project/delete"
 
     /**
      * Эндпоинт обновления профиля.
