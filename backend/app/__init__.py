@@ -4,6 +4,23 @@ from config import DebugConfig
 from .shared.extensions import db, migrate
 
 
+def register_features(app):
+    from .features.test_feature.routes import test_bp
+    from .features.authorization.routes import auth_bp
+    from .features.profile.routes import profile_bp
+    from .shared.features.jwt_token import jwt_token_bp
+
+    app.register_blueprint(test_bp)
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(profile_bp)
+
+
+def register_shared_features(app):
+    from .shared.features.jwt_token import jwt_token_bp
+
+    app.register_blueprint(jwt_token_bp)
+
+
 def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -50,13 +67,8 @@ def create_app(config_class=DebugConfig):
         url = app.config["SWAGGER_URL_PREFIX"]
         print(f"Swagger UI started on {url}")
 
-    from .features.test_feature.routes import test_bp
-    from .features.authorization.routes import auth_bp
-    from .shared.features.jwt_token import jwt_token_bp
-
-    app.register_blueprint(test_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(jwt_token_bp)
+    register_features(app)
+    register_shared_features(app)
 
     with app.app_context():
         from .shared import dbmodels
