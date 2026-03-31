@@ -2,6 +2,10 @@ from datetime import datetime, timedelta
 
 import jwt
 from ...consts import ResultsCodes
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def create_token(id, key, token_lifetime, is_access):
@@ -38,7 +42,7 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     Создает access-токен. Используется refresh token rotation(новый refresh каждый раз)
 
     Args:
-        token (refresh_roken): Refresh-токен
+        token (refresh_token): Refresh-токен
         refresh_key (str): Секретный ключ для refresh
         access_key (str): Секретный ключ для access
 
@@ -58,3 +62,27 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
         access = create_token(data["id"], access_key, timedelta(minutes=15), True)
         refresh = create_token(data["id"], refresh_key, timedelta(days=7), False)
         return {"access": access, "refresh": refresh, "result": ResultsCodes.OK}
+
+
+def get_id(token):
+    """
+    Получает id из access токена.
+
+    Args:
+        token (access_token): Access-токен
+
+    Returns:
+        user_id (int): Id пользователя
+        result_code (ResultCodes): Результат выполнения
+
+    Example:
+        >>> id, result = get_access_token("token")
+    """
+    ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
+
+    try:
+        decoded_token = jwt.decode(token, ACCESS_SECRET, algorithms=["HS256"])
+        user_id = decoded_token.get("id")
+        return user_id, ResultsCodes.OK
+    except jwt.ExpiredSignatureError:
+        return None, ResultsCodes.ACCESS_TOKEN_EXPIRED
