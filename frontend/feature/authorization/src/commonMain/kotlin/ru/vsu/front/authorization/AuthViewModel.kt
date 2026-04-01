@@ -11,6 +11,7 @@ import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserData
+import kotlin.io.encoding.Base64
 
 /**
  * Вьюмодель экрана авторизации и регистрации.
@@ -119,8 +120,15 @@ class AuthViewModel(
 
             is Response.Success<UserData> -> {
                 val tokens = result.data.tokens
+
                 tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
                 tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
+
+                val userId = tokenStorage.getUserIdFromToken(tokens.accessToken)
+
+                userId?.let {
+                    _events.emit(AuthEffect.SuccessAuth(userId))
+                }
             }
         }
 
@@ -160,4 +168,5 @@ data class UiStateAuth(
  */
 sealed interface AuthEffect {
     data class ShowError(val message: String) : AuthEffect
+    data class SuccessAuth(val userId: Int) : AuthEffect
 }
