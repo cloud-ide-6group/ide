@@ -9,6 +9,7 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.koin.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(projects.core.common)
     implementation(projects.core.domain)
     implementation(projects.core.network)
     implementation(projects.core.model)
