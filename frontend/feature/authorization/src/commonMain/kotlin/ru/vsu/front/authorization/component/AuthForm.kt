@@ -25,6 +25,7 @@ import ru.vsu.front.designsystem.component.CodeTogetherButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
+import ru.vsu.front.designsystem.component.VisibilityButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.domain.validation.EmailMatcher
 
@@ -87,17 +88,10 @@ internal fun AuthForm(
                     hint = "Your Password",
                     visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        val iconRes =
-                            if (state.isPasswordVisible) Res.drawable.visibility_off_24dp else Res.drawable.visibility_on_24dp
-                        CodeTogetherButton(
+                        VisibilityButton(
+                            isVisible = state.isPasswordVisible,
                             onClick = { authViewModel.processCommand(AuthCommand.ChangePasswordVisibility) }
-                        ) {
-                            Icon(
-                                painter = painterResource(iconRes),
-                                contentDescription = "Toggle password visibility",
-                                tint = CodeTogetherTheme.colors.primary
-                            )
-                        }
+                        )
                     },
                     onValueChange = { authViewModel.processCommand(AuthCommand.ChangePassword(it)) }
                 )
@@ -114,17 +108,10 @@ internal fun AuthForm(
                         hint = "Confirm Password",
                         visualTransformation = if (state.isConfirmedPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
-                            val iconRes =
-                                if (state.isConfirmedPasswordVisible) Res.drawable.visibility_off_24dp else Res.drawable.visibility_on_24dp
-                            CodeTogetherButton(
+                            VisibilityButton(
+                                isVisible = state.isConfirmedPasswordVisible,
                                 onClick = { authViewModel.processCommand(AuthCommand.ChangeConfirmedPasswordVisibility) }
-                            ) {
-                                Icon(
-                                    painter = painterResource(iconRes),
-                                    contentDescription = "Toggle confirm password visibility",
-                                    tint = CodeTogetherTheme.colors.primary
-                                )
-                            }
+                            )
                         },
                         onValueChange = { authViewModel.processCommand(AuthCommand.ChangeConfirmedPassword(it)) }
                     )
