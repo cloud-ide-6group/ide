@@ -16,7 +16,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param content Слот для вложенного контента.
  */
 @Composable
-fun AuthCard(
+internal fun AuthCard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {

@@ -1,9 +1,8 @@
-package ru.vsu.front.authorization
+package ru.vsu.front.authorization.component
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,13 +14,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import front.feature.authorization.generated.resources.Res
-import front.feature.authorization.generated.resources.visibility_off_24dp
-import front.feature.authorization.generated.resources.visibility_on_24dp
-import org.jetbrains.compose.resources.painterResource
-import ru.vsu.front.authorization.component.AuthCard
-import ru.vsu.front.authorization.component.SideColumn
-import ru.vsu.front.designsystem.component.CodeTogetherButton
+import ru.vsu.front.authorization.AuthCommand
+import ru.vsu.front.authorization.AuthViewModel
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section

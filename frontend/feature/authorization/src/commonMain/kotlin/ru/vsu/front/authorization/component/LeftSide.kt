@@ -17,7 +17,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param modifier Модификатор для настройки.
  */
 @Composable
-fun LeftSide(
+internal fun LeftSide(
     modifier: Modifier = Modifier,
 ) {
     SideColumn(modifier = modifier) {
