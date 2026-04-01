@@ -16,6 +16,7 @@ turbine-test = "1.2.1"
 dokka = "2.1.0"
 coroutines = "1.10.2"
 kotlinx-serialization = "1.10.0"
+coil = "3.0.0-alpha10"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -45,6 +46,9 @@ koin-compose-viewModel = { group = "io.insert-koin", name = "koin-compose-viewmo
 jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation" }
 
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines-test" }
