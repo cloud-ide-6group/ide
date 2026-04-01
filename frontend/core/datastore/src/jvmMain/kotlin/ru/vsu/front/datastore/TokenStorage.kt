@@ -1,5 +1,8 @@
 package ru.vsu.front.datastore
 
+import kotlinx.serialization.json.Json
+import ru.vsu.front.datastore.entity.JwtPayload
+import java.util.Base64
 import java.util.prefs.Preferences
 
 /**
@@ -11,7 +14,8 @@ import java.util.prefs.Preferences
  */
 class TokenStorage(
     private val cryptoManager: CryptoManager,
-    private val prefs: Preferences
+    private val prefs: Preferences,
+    private val json: Json
 ) {
     companion object {
         private const val JWT_ACCESS_TOKEN_KEY = "jwt_access_token"
@@ -67,5 +71,22 @@ class TokenStorage(
     suspend fun clearTokens() {
         prefs.remove(JWT_ACCESS_TOKEN_KEY)
         prefs.remove(JWT_REFRESH_TOKEN_KEY)
+    }
+
+    /**
+     *
+     *
+     *
+     */
+    fun getUserIdFromToken(token: String): Int? {
+        return try {
+            val payloadBase64 = token.split(".")[1]
+            val decodedBytes = Base64.getUrlDecoder().decode(payloadBase64)
+            val decodedString = String(decodedBytes, Charsets.UTF_8)
+
+            json.decodeFromString<JwtPayload>(decodedString).id
+        } catch (_: Exception) {
+            null
+        }
     }
 }
