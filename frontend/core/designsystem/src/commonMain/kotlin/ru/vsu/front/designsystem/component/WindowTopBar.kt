@@ -79,7 +79,7 @@ fun WindowScope.WindowTopBar(
                         }
                     }
 
-                    CodeTogetherButton(
+                    CodeTogetherIconButton(
                         modifier = Modifier
                             .size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
                         onClick = onClick
