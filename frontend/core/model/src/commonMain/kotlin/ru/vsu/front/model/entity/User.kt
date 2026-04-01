@@ -6,9 +6,11 @@ package ru.vsu.front.model.entity
  * @property name Имя пользователя.
  * @property email Почта пользователя.
  * @property photoPath Путь к аватару пользователя, хранящийся на сервере.
+ * @property projects Проекты, в которых состоит пользователь.
  */
 data class User(
     val name: String,
     val email: String,
     val photoPath: String,
+    val projects: List<Project>
 )
