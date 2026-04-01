@@ -31,6 +31,7 @@ kotlin {
             implementation(libs.jetbrains.navigation.compose)
 
             implementation(projects.feature.authorization)
+            implementation(projects.feature.profile)
             implementation(projects.core.designsystem)
             implementation(projects.core.network)
             implementation(projects.core.data)
