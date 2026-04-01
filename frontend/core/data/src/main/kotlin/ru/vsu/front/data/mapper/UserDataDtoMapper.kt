@@ -16,7 +16,8 @@ fun UserDataDto.toEntity(): UserData {
         user = User(
             name = name,
             email = email,
-            photoPath = photoPath
+            photoPath = photoPath,
+            projects = emptyList()
         ),
         tokens = AuthTokens(
             accessToken = accessToken,
