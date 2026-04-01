@@ -13,6 +13,12 @@ import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.User
 import java.time.temporal.TemporalAdjusters.previous
 
+/**
+ * Вьюмодель экрана авторизации и регистрации.
+ *
+ * @param userId Айди пользователя.
+ * @param getProfileUseCase UseCase для получения профиля.
+ */
 class ProfileViewModel(
     private val userId: Int,
     private val getProfileUseCase: GetProfileUseCase
