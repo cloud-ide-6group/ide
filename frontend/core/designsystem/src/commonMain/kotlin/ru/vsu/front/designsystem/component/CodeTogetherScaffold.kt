@@ -1,4 +1,4 @@
-package ru.vsu.front.authorization.component
+package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,45 +9,49 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
- * Обёртка над Scaffold для экранов аутентификации.
+ * Базовый Scaffold приложения.
  *
- * @param snackbarHostState Состояние для управления Snackbar.
+ * @param backgroundColor Цвет бекграунда.
  * @param modifier Модификатор корневого контейнера.
+ * @param snackbarHostState Состояние для управления Snackbar.
  * @param content Слот для основного контента экрана.
  */
 @Composable
-fun AuthScaffoldWrapper(
-    snackbarHostState: SnackbarHostState,
+fun CodeTogetherScaffold(
     modifier: Modifier = Modifier,
+    backgroundColor: Color = CodeTogetherTheme.colors.secondaryBackground,
+    snackbarHostState: SnackbarHostState? = null,
     content: @Composable () -> Unit
 ) {
     Scaffold(
         modifier = modifier
-            .background(CodeTogetherTheme.colors.secondaryBackground)
+            .background(backgroundColor)
             .padding(32.dp)
             .fillMaxSize(),
-        containerColor = CodeTogetherTheme.colors.secondaryBackground,
+        containerColor = backgroundColor,
         snackbarHost = {
-            SnackbarHost(
-                hostState = snackbarHostState
-            ) {
-                CodeTogetherText(
-                    modifier = Modifier
-                        .background(CodeTogetherTheme.colors.black.copy(alpha = 0.1f))
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    text = it.visuals.message,
-                    style = CodeTogetherTheme.typography.style.copy(fontSize = 18.sp),
-                    textAlign = TextAlign.Center,
-                    color = CodeTogetherTheme.colors.error
-                )
+            snackbarHostState?.let {
+                SnackbarHost(
+                    hostState = snackbarHostState
+                ) {
+                    CodeTogetherText(
+                        modifier = Modifier
+                            .background(CodeTogetherTheme.colors.black.copy(alpha = 0.1f))
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        text = it.visuals.message,
+                        style = CodeTogetherTheme.typography.style.copy(fontSize = 18.sp),
+                        textAlign = TextAlign.Center,
+                        color = CodeTogetherTheme.colors.error
+                    )
+                }
             }
         }
     ) {
