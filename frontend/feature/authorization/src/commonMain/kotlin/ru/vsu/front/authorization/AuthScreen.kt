@@ -13,7 +13,8 @@ import androidx.compose.ui.layout.ContentScale
 import front.feature.authorization.generated.resources.Res
 import front.feature.authorization.generated.resources.app_icon_without_background
 import org.jetbrains.compose.resources.painterResource
-import ru.vsu.front.authorization.component.AuthScaffoldWrapper
+import ru.vsu.front.authorization.component.AuthForm
+import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 import ru.vsu.front.authorization.component.LeftSide
 
 /**
@@ -24,6 +25,7 @@ import ru.vsu.front.authorization.component.LeftSide
  */
 @Composable
 fun AuthScreen(
+    onSuccessAuth: (Int) -> Unit,
     authViewModel: AuthViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -33,11 +35,12 @@ fun AuthScreen(
         authViewModel.events.collect { event ->
             when (event) {
                 is AuthEffect.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is AuthEffect.SuccessAuth -> onSuccessAuth(event.userId)
             }
         }
     }
 
-    AuthScaffoldWrapper(
+    CodeTogetherScaffold(
         modifier = modifier,
         snackbarHostState = snackbarHostState
     ) {
