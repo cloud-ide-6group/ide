@@ -34,6 +34,7 @@ plugins {
 
 include(":app")
 include(":feature:authorization")
+include(":feature:profile")
 include(":core:designsystem")
 include("core:common")
 include("core:domain")
