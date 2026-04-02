@@ -68,6 +68,7 @@ internal fun ProjectsSection(
                 exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + fadeOut()
             ) {
                 Projects(
+                    modifier = Modifier.weight(1f),
                     projects = projects,
                     state = projectsState,
                     onProjectClick = onProjectClick

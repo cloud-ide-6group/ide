@@ -129,8 +129,9 @@ fun ProfileScreen(
                     }
 
                     ProjectsSection(
+                        modifier = Modifier.weight(1f),
                         projects = loadedState.projects,
-                        projectsAreVisible = loadedState.projectsAreVisible,
+                        projectsAreVisible = loadedState.areProjectsVisible,
                         onChangeVisibleClick = {
                             viewModel.processCommand(ProfileCommand.ChangeProjectsVisibility)
                         },

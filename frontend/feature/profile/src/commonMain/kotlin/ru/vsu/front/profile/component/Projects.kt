@@ -28,24 +28,18 @@ internal fun Projects(
     modifier: Modifier = Modifier,
     onProjectClick: (Int) -> Unit
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
+    LazyColumn(
+        state = state,
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        LazyColumn(
-            state = state,
-            modifier = modifier
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(items = projects, key = { it.id }) {
-                ProjectItem(
-                    project = it,
-                    onProjectClick = {
-                        onProjectClick(it.id)
-                    }
-                )
-            }
+        items(items = projects, key = { it.id }) {
+            ProjectItem(
+                project = it,
+                onProjectClick = {
+                    onProjectClick(it.id)
+                }
+            )
         }
     }
 }
