@@ -54,7 +54,7 @@ class ProfileViewModel(
                 updateLoadedState { it.copy(isNewPasswordVisible = !it.isNewPasswordVisible) }
 
             ProfileCommand.ChangeProjectsVisibility ->
-                updateLoadedState { it.copy(projectsAreVisible = !it.projectsAreVisible) }
+                updateLoadedState { it.copy(areProjectsVisible = !it.areProjectsVisible) }
 
             is ProfileCommand.ChangeProgramingLanguage ->
                 updateLoadedState { it.copy(projectProgramingLanguage = command.programingLanguage) }
@@ -76,13 +76,6 @@ class ProfileViewModel(
                             email = profileInstance.email,
                             photoPath = profileInstance.photoPath,
                             projects = profileInstance.projects,
-                            currentPassword = "",
-                            newPassword = "",
-                            isCurrentPasswordVisible = false,
-                            isNewPasswordVisible = false,
-                            projectsAreVisible = true,
-                            projectName = "",
-                            projectProgramingLanguage = defaultProgramingLanguages.first()
                         )
                     )
                 }
@@ -120,18 +113,19 @@ sealed interface ProfileCommand {
  * Состояние экрана.
  */
 data class UiStateProfileLoaded(
-    val name: String,
-    val email: String,
-    val photoPath: String,
-    val projects: List<Project>,
-    val currentPassword: String,
-    val newPassword: String,
-    val isCurrentPasswordVisible: Boolean,
-    val isNewPasswordVisible: Boolean,
-    val projectsAreVisible: Boolean,
-    val projectName: String,
-    val projectProgramingLanguage: ProgramingLanguage,
-    val projectLanguages: List<ProgramingLanguage> = defaultProgramingLanguages
+    val name: String = "",
+    val email: String = "",
+    val photoPath: String = "",
+    val projects: List<Project> = emptyList(),
+    val currentPassword: String = "",
+    val newPassword: String = "",
+    val isCurrentPasswordVisible: Boolean = false,
+    val isNewPasswordVisible: Boolean = false,
+    val areProjectsVisible: Boolean = true,
+    val projectName: String = "",
+    val projectProgramingLanguage: ProgramingLanguage = defaultProgramingLanguages.first(),
+    val projectLanguages: List<ProgramingLanguage> = defaultProgramingLanguages,
+    val isProjectsListExpanded: Boolean = false
 )
 
 /**
@@ -147,40 +141,52 @@ sealed interface UiStatusProfile {
 
 // Тестовые данные
 private val defaultProgramingLanguages = buildList {
-    add(ProgramingLanguage(
-        id = 1,
-        name = "Python",
-        description = "",
-        imageName = "python"
-    ))
-    add(ProgramingLanguage(
-        id = 2,
-        name = "Empty Python",
-        description = "",
-        imageName = "python"
-    ))
-    add(ProgramingLanguage(
-        id = 3,
-        name = "JavaScript",
-        description = "",
-        imageName = "JavaScript"
-    ))
-    add(ProgramingLanguage(
-        id = 4,
-        name = "Java 21",
-        description = "",
-        imageName = "Java-21"
-    ))
-    add(ProgramingLanguage(
-        id = 5,
-        name = "Java 17",
-        description = "",
-        imageName = "Java-17"
-    ))
-    add(ProgramingLanguage(
-        id = 6,
-        name = "Lua",
-        description = "",
-        imageName = "Lua"
-    ))
+    add(
+        ProgramingLanguage(
+            id = 1,
+            name = "Python",
+            description = "",
+            imageName = "python"
+        )
+    )
+    add(
+        ProgramingLanguage(
+            id = 2,
+            name = "Empty Python",
+            description = "",
+            imageName = "python"
+        )
+    )
+    add(
+        ProgramingLanguage(
+            id = 3,
+            name = "JavaScript",
+            description = "",
+            imageName = "JavaScript"
+        )
+    )
+    add(
+        ProgramingLanguage(
+            id = 4,
+            name = "Java 21",
+            description = "",
+            imageName = "Java-21"
+        )
+    )
+    add(
+        ProgramingLanguage(
+            id = 5,
+            name = "Java 17",
+            description = "",
+            imageName = "Java-17"
+        )
+    )
+    add(
+        ProgramingLanguage(
+            id = 6,
+            name = "Lua",
+            description = "",
+            imageName = "Lua"
+        )
+    )
 }
