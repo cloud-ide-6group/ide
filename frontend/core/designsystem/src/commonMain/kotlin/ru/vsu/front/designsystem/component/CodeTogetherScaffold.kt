@@ -1,6 +1,7 @@
 package ru.vsu.front.designsystem.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,10 +19,10 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 /**
  * Базовый Scaffold приложения.
  *
- * @param backgroundColor Цвет бекграунда.
  * @param modifier Модификатор корневого контейнера.
+ * @param backgroundColor Цвет бекграунда.
  * @param snackbarHostState Состояние для управления Snackbar.
- * @param content Слот для основного контента экрана.
+ * @param content Слот для контента.
  */
 @Composable
 fun CodeTogetherScaffold(
@@ -33,7 +34,6 @@ fun CodeTogetherScaffold(
     Scaffold(
         modifier = modifier
             .background(backgroundColor)
-            .padding(32.dp)
             .fillMaxSize(),
         containerColor = backgroundColor,
         snackbarHost = {
@@ -54,7 +54,9 @@ fun CodeTogetherScaffold(
                 }
             }
         }
-    ) {
-        content()
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            content()
+        }
     }
 }
