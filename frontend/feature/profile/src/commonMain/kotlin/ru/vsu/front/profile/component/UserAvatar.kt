@@ -39,9 +39,7 @@ internal fun UserAvatar(
     photoPath: String,
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = RoundedCornerShape(8.dp),
-    onClick: () -> Unit = {
-
-    }
+    onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()

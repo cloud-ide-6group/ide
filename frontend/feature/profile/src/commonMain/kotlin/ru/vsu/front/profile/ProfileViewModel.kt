@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.GetProfileUseCase
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Project
@@ -21,14 +22,15 @@ import ru.vsu.front.model.entity.User
  */
 class ProfileViewModel(
     private val userId: Int,
-    private val getProfileUseCase: GetProfileUseCase
+    private val getProfileUseCase: GetProfileUseCase,
+    private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiStatusProfile>(UiStatusProfile.Loading)
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcherProvider.io) {
             loadProfileInfo(userId)
         }
     }

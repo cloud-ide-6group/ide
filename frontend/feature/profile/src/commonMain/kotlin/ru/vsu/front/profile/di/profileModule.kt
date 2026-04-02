@@ -12,6 +12,6 @@ import ru.vsu.front.profile.ProfileViewModel
  */
 val profileModule = module {
     viewModel { (userId: Int) ->
-        ProfileViewModel(userId = userId, get())
+        ProfileViewModel(userId = userId, get(), get())
     }
 }

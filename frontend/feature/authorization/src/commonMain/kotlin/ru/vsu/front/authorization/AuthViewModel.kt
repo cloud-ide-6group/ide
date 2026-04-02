@@ -68,7 +68,7 @@ class AuthViewModel(
     }
 
     private fun login() {
-        viewModelScope.launch(dispatcherProvider.default) {
+        viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
             if (!EmailMatcher.isValid(state.email)) {
                 _events.emit(AuthEffect.ShowError("Недопустимая почта"))
@@ -87,7 +87,7 @@ class AuthViewModel(
     }
 
     private fun signUp() {
-        viewModelScope.launch(dispatcherProvider.default) {
+        viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
 
             if (!EmailMatcher.isValid(state.email)) {
