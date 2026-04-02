@@ -22,6 +22,7 @@ import ru.vsu.front.authorization.component.LeftSide
 /**
  * Экран авторизации и регистрации.
  *
+ * @param onSuccessAuth Коллбек, срабатывающий при успешной аутентификации.
  * @param authViewModel Вьюмодель для входа и регистрации.
  * @param modifier Модификатор для настройки.
  */
