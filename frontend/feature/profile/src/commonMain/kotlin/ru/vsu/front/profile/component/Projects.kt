@@ -38,7 +38,7 @@ internal fun Projects(
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(items = projects, key = { it }) {
+            items(items = projects, key = { it.id }) {
                 ProjectItem(
                     project = it,
                     onProjectClick = {

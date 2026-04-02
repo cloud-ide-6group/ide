@@ -20,6 +20,7 @@ import front.feature.profile.generated.resources.add_2_24dp
 import front.feature.profile.generated.resources.code_horizontal_24dp
 import front.feature.profile.generated.resources.code_vertical_24dp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.skiko.hostArch
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -63,6 +64,7 @@ internal fun ProjectsButton(
 
             CodeTogetherIconButton(
                 onClick = onCreateProjectClick,
+                hoverColor = Color.White.copy(alpha = 0.0025f)
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.add_2_24dp),
@@ -73,6 +75,7 @@ internal fun ProjectsButton(
 
             CodeTogetherIconButton(
                 onClick = onChangeVisibleClick,
+                hoverColor = Color.White.copy(alpha = 0.0025f)
             ) {
                 Icon(
                     painter = painterResource(
