@@ -11,18 +11,3 @@ data class ProgramingLanguage(
     val description: String,
     val imageName: String
 )
-
-val defaultProgramingLanguages = buildList {
-    add(ProgramingLanguage(
-        id = 1,
-        name = "Java",
-        description = "",
-        imageName = "Java-17"
-    ))
-    add(ProgramingLanguage(
-        id = 2,
-        name = "C++",
-        description = "",
-        imageName = "C++"
-    ))
-}

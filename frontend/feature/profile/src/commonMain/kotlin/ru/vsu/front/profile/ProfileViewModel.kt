@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.vsu.front.domain.usecase.GetProfileUseCase
+import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Project
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.User
-import java.time.temporal.TemporalAdjusters.previous
 
 /**
  * Вьюмодель экрана авторизации и регистрации.
@@ -55,6 +55,12 @@ class ProfileViewModel(
 
             ProfileCommand.ChangeProjectsVisibility ->
                 updateLoadedState { it.copy(projectsAreVisible = !it.projectsAreVisible) }
+
+            is ProfileCommand.ChangeProgramingLanguage ->
+                updateLoadedState { it.copy(projectProgramingLanguage = command.programingLanguage) }
+
+            is ProfileCommand.ChangeProjectName ->
+                updateLoadedState { it.copy(projectName = command.projectName) }
         }
     }
 
@@ -74,7 +80,9 @@ class ProfileViewModel(
                             newPassword = "",
                             isCurrentPasswordVisible = false,
                             isNewPasswordVisible = false,
-                            projectsAreVisible = true
+                            projectsAreVisible = true,
+                            projectName = "",
+                            projectProgramingLanguage = defaultProgramingLanguages.first()
                         )
                     )
                 }
@@ -92,6 +100,10 @@ class ProfileViewModel(
         }
     }
 }
+
+/**
+ * Команды.
+ */
 sealed interface ProfileCommand {
     data class ChangeName(val name: String) : ProfileCommand
     data class ChangeEmail(val email: String) : ProfileCommand
@@ -100,7 +112,13 @@ sealed interface ProfileCommand {
     data object ChangeCurrentPasswordVisibility : ProfileCommand
     data object ChangeNewPasswordVisibility : ProfileCommand
     data object ChangeProjectsVisibility : ProfileCommand
+    data class ChangeProjectName(val projectName: String) : ProfileCommand
+    data class ChangeProgramingLanguage(val programingLanguage: ProgramingLanguage) : ProfileCommand
 }
+
+/**
+ * Состояние экрана.
+ */
 data class UiStateProfileLoaded(
     val name: String,
     val email: String,
@@ -110,10 +128,59 @@ data class UiStateProfileLoaded(
     val newPassword: String,
     val isCurrentPasswordVisible: Boolean,
     val isNewPasswordVisible: Boolean,
-    val projectsAreVisible: Boolean
+    val projectsAreVisible: Boolean,
+    val projectName: String,
+    val projectProgramingLanguage: ProgramingLanguage,
+    val projectLanguages: List<ProgramingLanguage> = defaultProgramingLanguages
 )
 
+/**
+ * Текущий статус экрана.
+ *
+ * [Loading] - Данные загружаются.
+ * [Loaded] - Данные загружены.
+ */
 sealed interface UiStatusProfile {
     data object Loading : UiStatusProfile
     data class Loaded(val uiStateProfileLoaded: UiStateProfileLoaded) : UiStatusProfile
+}
+
+// Тестовые данные
+private val defaultProgramingLanguages = buildList {
+    add(ProgramingLanguage(
+        id = 1,
+        name = "Python",
+        description = "",
+        imageName = "python"
+    ))
+    add(ProgramingLanguage(
+        id = 2,
+        name = "Empty Python",
+        description = "",
+        imageName = "python"
+    ))
+    add(ProgramingLanguage(
+        id = 3,
+        name = "JavaScript",
+        description = "",
+        imageName = "JavaScript"
+    ))
+    add(ProgramingLanguage(
+        id = 4,
+        name = "Java 21",
+        description = "",
+        imageName = "Java-21"
+    ))
+    add(ProgramingLanguage(
+        id = 5,
+        name = "Java 17",
+        description = "",
+        imageName = "Java-17"
+    ))
+    add(ProgramingLanguage(
+        id = 6,
+        name = "Lua",
+        description = "",
+        imageName = "Lua"
+    ))
 }
