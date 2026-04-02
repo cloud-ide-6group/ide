@@ -14,7 +14,7 @@ import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.User
 
 /**
- * Вьюмодель экрана авторизации и регистрации.
+ * Вьюмодель экрана профиля.
  *
  * @param userId Айди пользователя.
  * @param getProfileUseCase UseCase для получения профиля.
