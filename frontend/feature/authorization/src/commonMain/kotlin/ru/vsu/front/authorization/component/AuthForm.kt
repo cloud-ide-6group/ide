@@ -117,10 +117,7 @@ internal fun AuthForm(
                         .padding(bottom = 16.dp),
                     text = if (isSignUpMode) "Sign Up" else "Log In",
                     enabled = state.buttonEnabled,
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = CodeTogetherTheme.colors.primary.copy(0.1f),
-                        contentColor = CodeTogetherTheme.colors.black.copy(0.005f)
-                    ),
+                    unHoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
                     style = CodeTogetherTheme.typography.style.copy(fontWeight = FontWeight.Bold),
                     onClick = {
                         if (isSignUpMode) {
@@ -139,9 +136,6 @@ internal fun AuthForm(
                     CodeTogetherTextButton(
                         text = if (isSignUpMode) "Log In" else "Sign Up",
                         textColor = CodeTogetherTheme.colors.primary,
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = CodeTogetherTheme.colors.primary.copy(0.1f)
-                        ),
                         style = CodeTogetherTheme.typography.style.copy(fontWeight = FontWeight.Bold),
                         onClick = { isSignUpMode = !isSignUpMode }
                     )

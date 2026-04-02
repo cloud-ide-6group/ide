@@ -155,8 +155,8 @@ sealed interface AuthCommand {
  */
 data class UiStateAuth(
     val name: String = "",
-    val email: String = "",
-    val password: String = "",
+    val email: String = "name@mail.ru",
+    val password: String = "name",
     val confirmedPassword: String = "",
     val isPasswordVisible: Boolean = false,
     val isConfirmedPasswordVisible: Boolean = false,
