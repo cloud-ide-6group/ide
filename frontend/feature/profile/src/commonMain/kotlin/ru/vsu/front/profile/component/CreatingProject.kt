@@ -23,6 +23,20 @@ import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.model.entity.ProgramingLanguage
 
+/**
+ * Карточка создания нового проекта.
+ *
+ * @param projectName Текущее введенное имя проекта.
+ * @param selectedProgramingLanguage Текущий выбранный язык программирования.
+ * @param programingLanguagesListExpanded Флаг раскрытия списка языков.
+ * @param programingLanguages Список языков программирования.
+ * @param modifier Модификатор для настройки.
+ * @param onProjectNameChange Коллбек изменения текста в поле "Project Name".
+ * @param onProgramingLanguageClick Коллбек, срабатывающий при выборе языка из списка.
+ * @param onSelectedProgramingLanguageClick Коллбек, срабатывающий при клике по выбранному языку.
+ * @param onCreateProjectClick Коллбек нажатия на кнопку "Create".
+ * @param onDismissRequest Коллбек закрытия диалога.
+ */
 @Composable
 internal fun CreatingProject(
     projectName: String,
