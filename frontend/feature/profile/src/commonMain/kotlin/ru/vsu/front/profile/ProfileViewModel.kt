@@ -2,11 +2,11 @@ package ru.vsu.front.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.GetProfileUseCase
 import ru.vsu.front.model.entity.ProgramingLanguage
@@ -30,9 +30,7 @@ class ProfileViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch(dispatcherProvider.io) {
-            loadProfileInfo(userId)
-        }
+        loadUserInfo(userId)
     }
 
     fun processCommand(command: ProfileCommand) {
@@ -66,18 +64,26 @@ class ProfileViewModel(
         }
     }
 
-    private suspend fun loadProfileInfo(userId: Int) {
-        _uiState.update {
-            when (val profile = getProfileUseCase(userId)) {
-                is Response.Error<*> -> TODO()
-                is Response.Success<User> -> {
-                    val profileInstance = profile.data
+    private fun loadUserInfo(userId: Int) {
+        viewModelScope.launch(dispatcherProvider.io) {
+            val result = getProfileUseCase(userId)
+            handleAuthResult(result)
+        }
+    }
+
+    private fun handleAuthResult(result: Response<User>) {
+        when (result) {
+            is Response.Error<*> -> TODO()
+
+            is Response.Success<User> -> {
+                val user = result.data
+                _uiState.update {
                     UiStatusProfile.Loaded(
                         uiStateProfileLoaded = UiStateProfileLoaded(
-                            name = profileInstance.name,
-                            email = profileInstance.email,
-                            photoPath = profileInstance.photoPath,
-                            projects = profileInstance.projects,
+                            name = user.name,
+                            email = user.email,
+                            photoPath = user.photoPath,
+                            projects = user.projects,
                         )
                     )
                 }
