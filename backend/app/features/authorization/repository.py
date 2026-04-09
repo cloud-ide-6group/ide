@@ -17,35 +17,6 @@ class UserRepository:
         'username1'
     """
 
-    def get_all(self):
-        """
-        Получить всех пользователей.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> users = repo.get_all()
-        """
-        return db.session.query(User).all()
-
-    def get_by_id(self, user_id):
-        """
-        Получить пользователя по id.
-
-        Args:
-            user_id (int): Id пользователя.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
-        """
-        return db.session.get(User, user_id)
-
     def get_by_email(self, email):
         """
         Получить пользователя по email.

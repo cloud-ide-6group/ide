@@ -13,3 +13,4 @@ class ResultsCodes:
     REFRESH_TOKEN_EXPIRED = "Refresh токен истек"
     INCORRECT_USER_NAME = "Неверное имя пользователя"
     ACCESS_TOKEN_EXPIRED = "Access токен истек"
+    USER_ID_NULL = "User id равен null"

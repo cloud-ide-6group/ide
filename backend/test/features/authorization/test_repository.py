@@ -26,27 +26,13 @@ def app_context(app):
     with app.app_context():
         yield
 
-
-def test_get_all(app_context):
-    repo_users = user_repo.get_all()
-    db_users = db.session.query(User).all()
-
-    assert len(repo_users) == len(db_users)
-    assert {u.id for u in repo_users} == {u.id for u in db_users}
-
-
-def test_get_by_id(app_context):
-    user = user_repo.get_all()[0]
-    test_user = db.session.query(User).filter(User.id == user.id).first()
-
-    assert user == test_user
-
-
+# TODO: fix this test
 def test_get_by_email(app_context):
     user = user_repo.get_all()[0]
     test_user = db.session.query(User).filter(User.email == user.email).first()
 
     assert user == test_user
+
 
 # TODO: fix this test
 def test_insert_user(app_context):
@@ -61,7 +47,7 @@ def test_insert_user(app_context):
     user_repo.insert_user(email, hash, name)
 
     user = user_repo.get_by_email(email)
-    
+
     assert user != None
     assert user.email == email
     assert user.name == name

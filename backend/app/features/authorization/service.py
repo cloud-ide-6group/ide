@@ -58,7 +58,7 @@ def get_user_id(token, access_key):
     Получает id из токена
 
     Args:
-        token (access_roken): Access-токен
+        token (access_token): Access-токен
         access_key (str): Секретный ключ для access
 
     Returns:
