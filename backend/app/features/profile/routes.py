@@ -30,9 +30,11 @@ def profile():
             name:
               type: string
               example: "username"
-            photo_path:
+            photo:
               type: string
-              example: "users_imgs/default.png"
+              format: byte
+              description: "Фото в формате base64"
+              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
             email:
               type: string
               example: "user@mail.ru"
@@ -69,4 +71,6 @@ def profile():
     if result != ResultsCodes.OK:
         return {"message": result}, 404
 
-    return {"name": user.name, "photo_path": user.photo_path, "email": user.email}, 200
+    photo = get_photo_base_64(user.photo_path)
+
+    return {"name": user.name, "photo": photo, "email": user.email}, 200

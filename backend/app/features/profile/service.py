@@ -1,5 +1,10 @@
+import base64
 from .repository import user_repo
 from ...shared.consts import ResultsCodes
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def get_user_data(id):
@@ -24,3 +29,27 @@ def get_user_data(id):
         return user, ResultsCodes.USER_NOT_FOUND
 
     return user, ResultsCodes.OK
+
+
+def get_photo_base_64(image_path):
+    """
+    Преобразует фото в base64 строку.
+
+    Args:
+        image_path (str): Относительный путь к файлу внутри IMAGES_PATH
+
+    Returns:
+        str: Строка в формате base64
+
+    Example:
+        >>> base64_str = get_photo_base_64('path/image.jpg')
+
+    Note:
+        Переменная окружения IMAGES_PATH должна указывать на корневую папку с фото.
+    """
+    images_dir = os.getenv("IMAGES_PATH")
+
+    with open(os.path.join(images_dir, image_path), "rb") as img_file:
+        photo_base64 = base64.b64encode(img_file.read()).decode("utf-8")
+
+    return photo_base64

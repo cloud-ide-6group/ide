@@ -1,3 +1,6 @@
+import os
+
+
 class ResultsCodes:
     """
     Возможные результаты.
