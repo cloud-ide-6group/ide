@@ -37,15 +37,6 @@ def login():
         schema:
           type: object
           properties:
-            name:
-              type: string
-              example: "username"
-            photo_path:
-              type: string
-              example: "users_imgs/default.png"
-            email:
-              type: string
-              example: "user@mail.ru"
             access_token:
               type: string
               example: "pbkdf2:sha256:260000$xyz..."
@@ -78,9 +69,6 @@ def login():
     refresh_token = create_token(user.id, REFRESH_SECRET, timedelta(days=7), False)
 
     return {
-        "name": user.name,
-        "photo_path": user.photo_path,
-        "email": user.email,
         "access_token": access_token,
         "refresh_token": refresh_token,
     }, 200
