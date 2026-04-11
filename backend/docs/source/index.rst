@@ -16,6 +16,7 @@ documentation for details.
    :caption: Contents:
 
    modules/authorization
+   modules/profile
    modules/dbmodels
    modules/jwt_token
    modules/consts
