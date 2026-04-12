@@ -38,7 +38,7 @@ def profile():
             email:
               type: string
               example: "user@mail.ru"
-      403:
+      401:
         description: Неверный access токен, доступ запрещен
         schema:
           type: object
@@ -63,7 +63,7 @@ def profile():
 
     id, result = get_id(token)
     if result != ResultsCodes.OK:
-        return {"message": result}, 403
+        return {"message": result}, 401
 
     user, result = get_user_data(id)
     if user == None:
