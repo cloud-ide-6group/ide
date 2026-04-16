@@ -12,6 +12,9 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.auth)
+            implementation(projects.core.datastore)
+            implementation(projects.core.domain)
         }
 
         val jvmMain by getting {

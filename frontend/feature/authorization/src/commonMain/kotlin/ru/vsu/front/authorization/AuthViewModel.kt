@@ -9,8 +9,8 @@ import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
+import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserData
 import kotlin.io.encoding.Base64
 
 /**
@@ -112,19 +112,19 @@ class AuthViewModel(
         }
     }
 
-    private suspend fun handleAuthResult(result: Response<UserData>) {
+    private suspend fun handleAuthResult(result: Response<AuthTokens>) {
         when (result) {
             is Response.Error<*> -> {
                 _events.emit(AuthEffect.ShowError(result.requestError.message))
             }
 
-            is Response.Success<UserData> -> {
-                val tokens = result.data.tokens
+            is Response.Success<AuthTokens> -> {
+                val tokens = result.data
 
                 tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
                 tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
 
-                val userId = tokenStorage.getUserIdFromToken(tokens.accessToken)
+                val userId = tokenStorage.getUserIdFromToken()
 
                 userId?.let {
                     _events.emit(AuthEffect.SuccessAuth(userId))

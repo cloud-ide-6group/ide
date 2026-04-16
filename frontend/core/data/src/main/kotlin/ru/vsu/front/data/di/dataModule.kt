@@ -1,5 +1,6 @@
 package ru.vsu.front.data.di
 
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.vsu.front.data.repository.DefaultAuthRepository
@@ -16,10 +17,10 @@ import ru.vsu.front.domain.repository.ProfileRepository
  */
 val dataModule = module {
     single {
-        DefaultAuthRepository(get())
+        DefaultAuthRepository(get(named("authHttpClient")))
     }.bind<AuthRepository>()
 
     single {
-        DefaultProfileRepository(get(), get())
+        DefaultProfileRepository(get(named("mainHttpClient")), get())
     }.bind<ProfileRepository>()
 }

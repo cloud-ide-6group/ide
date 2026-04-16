@@ -5,9 +5,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +30,7 @@ import ru.vsu.front.designsystem.component.VisibilityButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.profile.component.CreatingProject
 import ru.vsu.front.profile.component.CustomDialog
+import ru.vsu.front.profile.component.ProfileSections
 import ru.vsu.front.profile.component.ProjectsSection
 import ru.vsu.front.profile.component.UserAvatar
 
@@ -53,79 +58,50 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(32.dp),
+                        .padding(start = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(
                         modifier = Modifier
-                            .height(IntrinsicSize.Min),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         UserAvatar(
-                            photoPath = loadedState.photoPath,
+                            modifier = Modifier.size(348.dp),
+                            photoBase64 = loadedState.photo,
                             onClick = {
 
                             }
                         )
-                        Column(
-                            modifier = Modifier.padding(horizontal = 32.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Section(
-                                sectionName = "Name",
-                                value = loadedState.name,
-                                hint = "Name",
-                                onValueChange = {
-                                    viewModel.processCommand(ProfileCommand.ChangeName(it))
-                                }
-                            )
-
-                            Section(
-                                sectionName = "Email",
-                                value = loadedState.email,
-                                hint = "Email",
-                                onValueChange = {
-                                    viewModel.processCommand(ProfileCommand.ChangeEmail(it))
-                                }
-                            )
-
-                            Section(
-                                sectionName = "Current Password",
-                                value = loadedState.currentPassword,
-                                hint = "Your Current Password",
-                                onValueChange = {
-                                    viewModel.processCommand(ProfileCommand.ChangeCurrentPassword(it))
-                                },
-                                visualTransformation = if (loadedState.isCurrentPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                trailingIcon = {
-                                    VisibilityButton(
-                                        isVisible = loadedState.isCurrentPasswordVisible,
-                                        onClick = {
-                                            viewModel.processCommand(ProfileCommand.ChangeCurrentPasswordVisibility)
-                                        }
-                                    )
-                                }
-                            )
-
-                            Section(
-                                sectionName = "New Password",
-                                value = loadedState.newPassword,
-                                hint = "Your New Password",
-                                onValueChange = {
-                                    viewModel.processCommand(ProfileCommand.ChangeNewPassword(it))
-                                },
-                                visualTransformation = if (loadedState.isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                trailingIcon = {
-                                    VisibilityButton(
-                                        isVisible = loadedState.isNewPasswordVisible,
-                                        onClick = {
-                                            viewModel.processCommand(ProfileCommand.ChangeNewPasswordVisibility)
-                                        }
-                                    )
-                                }
-                            )
-                        }
+                        ProfileSections(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 32.dp),
+                            name = loadedState.name,
+                            email = loadedState.email,
+                            currentPassword = loadedState.currentPassword,
+                            newPassword = loadedState.newPassword,
+                            isCurrentPasswordVisible = loadedState.isCurrentPasswordVisible,
+                            isNewPasswordVisible = loadedState.isNewPasswordVisible,
+                            onNameChange = {
+                                viewModel.processCommand(ProfileCommand.ChangeName(it))
+                            },
+                            onEmailChange = {
+                                viewModel.processCommand(ProfileCommand.ChangeEmail(it))
+                            },
+                            onCurrentPasswordChange = {
+                                viewModel.processCommand(ProfileCommand.ChangeCurrentPassword(it))
+                            },
+                            onNewPasswordChange = {
+                                viewModel.processCommand(ProfileCommand.ChangeNewPassword(it))
+                            },
+                            onChangeCurrentPasswordVisibility = {
+                                viewModel.processCommand(ProfileCommand.ChangeCurrentPasswordVisibility)
+                            },
+                            onChangeNewPasswordVisibility = {
+                                viewModel.processCommand(ProfileCommand.ChangeNewPasswordVisibility)
+                            },
+                        )
                     }
 
                     ProjectsSection(

@@ -19,7 +19,6 @@ import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -27,9 +26,6 @@ import kotlin.test.assertTrue
 
 /**
  * Тесты для [AuthViewModel].
- * * Тестируют логику авторизации ([LoginUseCase]) и регистрации ([SignUseCase]).
- * * Проверяют сохранение JWT-токенов в [TokenStorage].
- * * Проверяют отправку сайд-эффектов.
  */
 class AuthViewModelTest {
 
@@ -142,11 +138,9 @@ class AuthViewModelTest {
             every { accessToken } returns accessTokenTest
             every { refreshToken } returns refreshTokenTest
         }
-        val mockUserData = mockk<UserData> {
-            every { tokens } returns mockTokens
-        }
 
-        coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockUserData)
+        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
+        coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockTokens)
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
         viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
@@ -181,6 +175,7 @@ class AuthViewModelTest {
         val emailTest = "email@email.com"
         val passwordTest = "password@password"
 
+        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
         coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockk(relaxed = true))
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
@@ -211,11 +206,9 @@ class AuthViewModelTest {
             every { accessToken } returns accessTokenTest
             every { refreshToken } returns refreshTokenTest
         }
-        val mockUserData = mockk<UserData> {
-            every { tokens } returns mockTokens
-        }
 
-        coEvery { signUseCase(nameTest, emailTest, passwordTest) } returns Response.Success(mockUserData)
+        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
+        coEvery { signUseCase(nameTest, emailTest, passwordTest) } returns Response.Success(mockTokens)
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
         viewModel.processCommand(AuthCommand.ChangeName(nameTest))

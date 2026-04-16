@@ -8,4 +8,4 @@ import kotlinx.serialization.Serializable
  *
  */
 @Serializable
-data class JwtPayload(val id: Int)
+data class IdFromPayload(val id: Int)

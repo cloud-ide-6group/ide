@@ -10,7 +10,6 @@ import ru.vsu.front.domain.repository.AuthRepository
 import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserData
 import ru.vsu.front.network.HttpRoutes.LOGIN
 import ru.vsu.front.network.HttpRoutes.REFRESH_TOKENS
 import ru.vsu.front.network.HttpRoutes.SIGN
@@ -18,10 +17,10 @@ import ru.vsu.front.network.HttpRoutes.SIGN
 /**
  * Реализация интерфейса [AuthRepository] для работы с сетевым API.
  *
- * @param httpClient Клиент Ktor для выполнения запросов.
+ * @param authHttpClient Клиент Ktor для выполнения запросов аутентификации.
  */
 class DefaultAuthRepository(
-    private val httpClient: HttpClient
+    private val authHttpClient: HttpClient
 ) : AuthRepository {
 
     /**
@@ -37,9 +36,9 @@ class DefaultAuthRepository(
     override suspend fun login(
         email: String,
         password: String
-    ): Response<UserData> {
+    ): Response<AuthTokens> {
         return try {
-            val response = httpClient.post(LOGIN) {
+            val response = authHttpClient.post(LOGIN) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UserLoginRequest(
@@ -51,7 +50,7 @@ class DefaultAuthRepository(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    val dto = response.body<UserDataDto>()
+                    val dto = response.body<AuthTokensDto>()
                     Response.Success(dto.toEntity())
                 }
 
@@ -84,9 +83,9 @@ class DefaultAuthRepository(
         name: String,
         email: String,
         password: String
-    ): Response<UserData> {
+    ): Response<AuthTokens> {
         return try {
-            val response = httpClient.post(SIGN) {
+            val response = authHttpClient.post(SIGN) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UserSignRequest(
@@ -99,7 +98,7 @@ class DefaultAuthRepository(
 
             when (response.status) {
                 HttpStatusCode.Created -> {
-                    val dto = response.body<UserDataDto>()
+                    val dto = response.body<AuthTokensDto>()
                     Response.Success(dto.toEntity())
                 }
 
@@ -132,7 +131,7 @@ class DefaultAuthRepository(
         refreshToken: String
     ): Response<AuthTokens> {
         return try {
-            val response = httpClient.post(REFRESH_TOKENS) {
+            val response = authHttpClient.post(REFRESH_TOKENS) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateTokensRequest(

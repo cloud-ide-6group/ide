@@ -1,21 +1,20 @@
 package ru.vsu.front.network
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
- * Создает и настраивает экземпляр [HttpClient].
+ * Создает и настраивает экземпляр [HttpClient] для выполнения запросов, связанных с аутентификацией.
  * * Использует движок [CIO].
- * * Автоматически сериализует/десериализует JSON.
  * * @param baseUrl базовый url для запросов.
  *
  * @return Готовый HTTP-клиент.
  */
-fun httpClient(baseUrl: String): HttpClient {
+fun authHttpClient(baseUrl: String): HttpClient {
     return HttpClient {
         install(ContentNegotiation) {
             json(Json {

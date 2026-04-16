@@ -5,7 +5,7 @@ import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
 
 /**
- * UseCase для обновления токенов.
+ * UseCase для получения обновленных токенов.
  *
  * @property repository Интерфейс репозитория.
  */

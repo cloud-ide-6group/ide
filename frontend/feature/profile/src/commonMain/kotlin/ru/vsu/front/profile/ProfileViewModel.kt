@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.GetProfileUseCase
 import ru.vsu.front.model.entity.ProgramingLanguage
@@ -19,6 +18,7 @@ import ru.vsu.front.model.entity.User
  *
  * @param userId Айди пользователя.
  * @param getProfileUseCase UseCase для получения профиля.
+ * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class ProfileViewModel(
     private val userId: Int,
@@ -73,7 +73,9 @@ class ProfileViewModel(
 
     private fun handleAuthResult(result: Response<User>) {
         when (result) {
-            is Response.Error<*> -> TODO()
+            is Response.Error<*> -> {
+                println(result.requestError.message)
+            }
 
             is Response.Success<User> -> {
                 val user = result.data
@@ -82,7 +84,7 @@ class ProfileViewModel(
                         uiStateProfileLoaded = UiStateProfileLoaded(
                             name = user.name,
                             email = user.email,
-                            photoPath = user.photoPath,
+                            photo = user.photo,
                             projects = user.projects,
                         )
                     )
@@ -123,7 +125,7 @@ sealed interface ProfileCommand {
 data class UiStateProfileLoaded(
     val name: String = "",
     val email: String = "",
-    val photoPath: String = "",
+    val photo: String = "",
     val projects: List<Project> = emptyList(),
     val currentPassword: String = "",
     val newPassword: String = "",
