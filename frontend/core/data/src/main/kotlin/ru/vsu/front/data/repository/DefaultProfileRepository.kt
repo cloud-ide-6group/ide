@@ -17,17 +17,17 @@ import ru.vsu.front.network.HttpRoutes.PROFILE
 /**
  * Реализация интерфейса [ProfileRepository] для работы с сетевым API.
  *
- * @param httpClient Клиент Ktor для выполнения запросов.
+ * @param mainHttpClient Клиент Ktor для выполнения запросов.
  * @param tokenStorage Хранилище токенов.
  */
 class DefaultProfileRepository(
-    private val httpClient: HttpClient,
+    private val mainHttpClient: HttpClient,
     private val tokenStorage: TokenStorage
 ) : ProfileRepository {
 
     override suspend fun getProfile(userId: Int): Response<User> {
         return try {
-            val response = httpClient.get(PROFILE) {
+            val response = mainHttpClient.get(PROFILE) {
                 contentType(ContentType.Application.Json)
             }
 
