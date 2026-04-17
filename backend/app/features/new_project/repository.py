@@ -13,17 +13,15 @@ class ProjectRepository:
 
     def create_project(self, _name, _language_id, _owner_id):
         """
-        Получить пользователя по email.
+        Добавить проект в базу
 
         Args:
-            email (str): Email пользователя.
+            _name (str): Имя проекта
+            _language_id (int): Id языка
+            _owner_id (int): Id создающего пользователя
 
         Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_email("email@mail.ru")
+            Project: Проект
         """
         try:
             project = Project(name=_name, language_id=_language_id, owner_id=_owner_id)

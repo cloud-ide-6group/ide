@@ -18,8 +18,10 @@ def register_features(app):
 
 def register_shared_features(app):
     from .shared.features.jwt_token import jwt_token_bp
+    from .shared.features.languages import languages_bp
 
     app.register_blueprint(jwt_token_bp)
+    app.register_blueprint(languages_bp)
 
 
 def create_app(config_class=DebugConfig):
