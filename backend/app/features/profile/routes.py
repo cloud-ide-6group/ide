@@ -1,5 +1,4 @@
 from . import profile_bp
-import os
 from flask import request
 from dotenv import load_dotenv
 from .service import *

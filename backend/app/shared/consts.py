@@ -17,3 +17,5 @@ class ResultsCodes:
     INCORRECT_USER_NAME = "Неверное имя пользователя"
     ACCESS_TOKEN_EXPIRED = "Access токен истек"
     USER_ID_NULL = "User id равен null"
+    PROJECT_EXISTS_ALREADY = "Проект с таким именем уже существует"
+    PROJECT_CREATE_ERROR = "Ошибка создания проекта"
