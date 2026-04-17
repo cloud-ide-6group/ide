@@ -34,5 +34,17 @@ class ProjectRepository:
             db.session.rollback()
             raise e
 
+    def get_project(self, _name):
+        """
+        Получить проект из базы по имени
+
+        Args:
+            _name (str): Имя проекта
+
+        Returns:
+            Project: Проект
+        """
+        return db.session.query(Project).filter(_name == Project.name).first()
+
 
 project_repo = ProjectRepository()
