@@ -20,3 +20,5 @@ documentation for details.
    modules/dbmodels
    modules/jwt_token
    modules/consts
+   modules/new_project
+   modules/languages

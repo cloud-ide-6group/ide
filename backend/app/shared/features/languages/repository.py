@@ -24,5 +24,21 @@ class LanguageRepository:
         """
         return db.session.query(Language).all()
 
+    def get_lang(self, id):
+        """
+        Получить язык по id
+
+        Args:
+            id (int): Id языка
+
+        Returns:
+            Language: Языки
+
+        Example:
+            >>> repo = LanguageRepository()
+            >>> user = repo.get_lang(4)
+        """
+        return db.session.query(Language).filter(id == Language.id).first()
+
 
 language_repo = LanguageRepository()
