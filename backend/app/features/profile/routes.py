@@ -1,5 +1,5 @@
 from . import profile_bp
-from flask import request
+from flask import request, make_response
 from dotenv import load_dotenv
 from .service import *
 from ...shared.features.jwt_token.service import get_id
@@ -70,13 +70,17 @@ def profile():
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
-        return {"message": "Токен не предоставлен"}, 403
+        response = make_response({"message": "Токен не предоставлен"}, 401)
+        response.headers["WWW-Authenticate"] = "Bearer"
+        return response
 
     token = auth_header.split(" ")[1]
 
     id, result = get_id(token)
     if result != ResultsCodes.OK:
-        return {"message": result}, 401
+        response = make_response({"message": result}, 401)
+        response.headers["WWW-Authenticate"] = "Bearer"
+        return response
 
     user, result = get_user_data(id)
     if user == None:
