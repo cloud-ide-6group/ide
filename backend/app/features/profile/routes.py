@@ -37,6 +37,20 @@ def profile():
             email:
               type: string
               example: "user@mail.ru"
+            projects:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: "ID проекта"
+                    example: 1
+                  name:
+                    type: string
+                    description: "Название проекта"
+                    example: "Project34"
+              example: [{"id": 1, "name": "Project1"}, {"id": 15, "name": "Project2"}]
       401:
         description: Неверный access токен, доступ запрещен
         schema:
@@ -72,4 +86,13 @@ def profile():
 
     photo = get_photo_base_64(user.photo_path)
 
-    return {"name": user.name, "photo": photo, "email": user.email}, 200
+    projects, result = get_user_projects(id)
+    if result != ResultsCodes.OK:
+        return {"message": result}, 404
+
+    return {
+        "projects": projects,
+        "name": user.name,
+        "photo": photo,
+        "email": user.email,
+    }, 200

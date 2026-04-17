@@ -6,7 +6,11 @@ def get_all_langs():
     Получает массив языков только с нужными полями.
 
     Returns:
-        list: Массив словарей
+        list[dict]: Массив словарей языков
+        Каждый словарь содержит:
+            - id (int): Id языка
+            - name (str): Название языка
+            - description (str): Описание языка
     """
     langs = language_repo.get_all_langs()
 

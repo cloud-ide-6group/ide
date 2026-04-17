@@ -1,5 +1,5 @@
 import base64
-from .repository import user_repo
+from .repository import user_repo, project_repo
 from ...shared.consts import ResultsCodes
 import os
 from dotenv import load_dotenv
@@ -29,6 +29,32 @@ def get_user_data(id):
         return user, ResultsCodes.USER_NOT_FOUND
 
     return user, ResultsCodes.OK
+
+
+def get_user_projects(user_id):
+    """
+    Возвращает все проекты, которые создал этот пользователь
+
+    Args:
+        user_id (int): Id пользователя
+
+    Returns:
+        list[dict]: Массив словарей с полями проектов
+        Каждый словарь содержит:
+            - id (int): Id проекта
+            - name (str): Название проекта
+        ResultCodes: Результат операции
+    """
+    if user_id == None:
+        return [], ResultsCodes.USER_ID_NULL
+
+    projects = []
+
+    projects_raw_data = project_repo.get_by_owner_id(user_id)
+    for p in projects_raw_data:
+        projects.append({"id": p.id, "name": p.name})
+
+    return projects, ResultsCodes.OK
 
 
 def get_photo_base_64(image_path):
