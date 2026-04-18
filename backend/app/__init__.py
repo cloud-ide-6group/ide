@@ -8,17 +8,20 @@ def register_features(app):
     from .features.test_feature.routes import test_bp
     from .features.authorization.routes import auth_bp
     from .features.profile.routes import profile_bp
-    from .shared.features.jwt_token import jwt_token_bp
+    from .features.new_project.routes import new_project_bp
 
     app.register_blueprint(test_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(new_project_bp)
 
 
 def register_shared_features(app):
     from .shared.features.jwt_token import jwt_token_bp
+    from .shared.features.languages import languages_bp
 
     app.register_blueprint(jwt_token_bp)
+    app.register_blueprint(languages_bp)
 
 
 def create_app(config_class=DebugConfig):

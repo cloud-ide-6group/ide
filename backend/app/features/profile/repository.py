@@ -1,5 +1,5 @@
 from app.shared.extensions import db
-from app.shared.dbmodels import User
+from app.shared.dbmodels import User, Project
 
 
 class UserRepository:
@@ -51,4 +51,31 @@ class UserRepository:
             db.session.commit()
 
 
+class ProjectRepository:
+    """
+    Репозиторий для работы с проектами.
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель Project
+    """
+
+    def get_by_owner_id(self, owner_id):
+        """
+        Получить все проекты пользователя по его id.
+
+        Args:
+            owner_id (int): Id пользователя.
+
+        Returns:
+            Project: Проект
+
+        Example:
+            >>> repo = ProjectRepository()
+            >>> list_of_projects = repo.get_by_owner_id(123)
+        """
+        return db.session.query(Project).filter(Project.owner_id == owner_id).all()
+
+
 user_repo = UserRepository()
+project_repo = ProjectRepository()
