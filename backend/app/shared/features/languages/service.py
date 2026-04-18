@@ -21,9 +21,9 @@ def get_all_langs():
     return result
 
 
-def lang_extsts(id):
+def lang_exists(id):
     """
-    Проверяет наличие языкав базе данных
+    Проверяет наличие языка в базе данных
 
     Returns:
         bool: True, если язык есть, иначе False

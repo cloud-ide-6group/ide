@@ -42,6 +42,6 @@ def test_get_all_langs(app_context):
     [(4, True), (677, False)],
 )
 def test_get_lang(id, result, app_context):
-    is_exists = lang_extsts(id)
+    is_exists = lang_exists(id)
 
     assert is_exists == result

@@ -1,6 +1,6 @@
 from . import new_project_bp
 from ...shared.features.jwt_token.routes import get_id
-from app.shared.features.languages.service import lang_extsts
+from app.shared.features.languages.service import lang_exists
 from flask import request
 from .service import *
 
@@ -57,7 +57,7 @@ def create_new_project():
     project_name = data["project_name"]
     language_id = data["language_id"]
 
-    is_lang_exists = lang_extsts(language_id)
+    is_lang_exists = lang_exists(language_id)
     if not is_lang_exists:
         return {"message": ResultsCodes.INCORRECT_LANG}, 500
 
