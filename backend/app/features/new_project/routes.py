@@ -39,7 +39,7 @@ def create_new_project():
               message:
                 type: string
                 example: "Неверные учетные данные"
-      500:
+      409:
         description: Ошибка создания проекта
         schema:
           type: object
@@ -59,15 +59,15 @@ def create_new_project():
 
     is_lang_exists = lang_exists(language_id)
     if not is_lang_exists:
-        return {"message": ResultsCodes.INCORRECT_LANG}, 500
+        return {"message": ResultsCodes.INCORRECT_LANG}, 409
 
     result = create_project_dir(project_name)
     if result != ResultsCodes.OK:
-        return {"message": result}, 500
+        return {"message": result}, 409
 
     result = create_project(id, project_name, language_id)
 
     if result != ResultsCodes.OK:
-        return {"message": result}, 500
+        return {"message": result}, 409
 
     return {}, 201
