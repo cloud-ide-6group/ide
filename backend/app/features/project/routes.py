@@ -1,17 +1,17 @@
-from . import new_project_bp
+from . import project_bp
 from ...shared.features.jwt_token.routes import get_id
 from app.shared.features.languages.service import lang_exists
 from flask import request, make_response
 from .service import *
 
 
-@new_project_bp.route("/cteate/project", methods=["POST"])
+@project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
     Создание нового проекта
     ---
     tags:
-      - features/new_project
+      - features/project
     parameters:
       - name: Authorization
         in: header

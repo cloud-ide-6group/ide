@@ -8,12 +8,12 @@ def register_features(app):
     from .features.test_feature.routes import test_bp
     from .features.authorization.routes import auth_bp
     from .features.profile.routes import profile_bp
-    from .features.new_project.routes import new_project_bp
+    from .features.project.routes import project_bp
 
     app.register_blueprint(test_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
-    app.register_blueprint(new_project_bp)
+    app.register_blueprint(project_bp)
 
 
 def register_shared_features(app):

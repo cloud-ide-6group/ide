@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import pytest
 from app import create_app, db
-from app.features.new_project.service import create_project
+from app.features.project.service import create_project
 from app.shared.dbmodels import *
 from config import DBTestConfig
 
