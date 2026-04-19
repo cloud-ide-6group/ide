@@ -42,19 +42,20 @@ def create_project(user_id, project_name, language_id):
         language_id (int): Id языка
 
     Returns:
+        Project: Созданный проект
         ResultCodes: Код результата операции
     """
     if user_id == None:
-        return ResultsCodes.USER_NOT_FOUND
+        return None, ResultsCodes.USER_NOT_FOUND
     if language_id == None:
-        return ResultsCodes.INCORRECT_LANG
+        return None, ResultsCodes.INCORRECT_LANG
     if project_name == "" or project_name == None:
-        return ResultsCodes.INCORRECT_PROJECT_NAME
+        return None, ResultsCodes.INCORRECT_PROJECT_NAME
 
     if project_repo.get_project(project_name) != None:
-        return ResultsCodes.PROJECT_EXISTS_ALREADY
+        return None, ResultsCodes.PROJECT_EXISTS_ALREADY
 
     project = project_repo.create_project(project_name, language_id, user_id)
     if project == None:
-        return ResultsCodes.PROJECT_CREATE_ERROR
-    return ResultsCodes.OK
+        return None, ResultsCodes.PROJECT_CREATE_ERROR
+    return project, ResultsCodes.OK
