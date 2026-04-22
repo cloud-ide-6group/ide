@@ -33,7 +33,7 @@ class UserRepository:
         """
         return db.session.get(User, user_id)
 
-    def update_user(self, id, email, name, password_hash):
+    def update_user(self, id, email, name, password_hash, photo_path):
         old_user = db.session.get(User, id)
 
         if old_user == None:
@@ -46,6 +46,9 @@ class UserRepository:
 
         if password_hash != "" and password_hash != None:
             old_user.password_hash = password_hash
+
+        if photo_path != "" and photo_path != None:
+            old_user.photo_path = photo_path
 
         db.session.commit()
         return old_user

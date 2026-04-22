@@ -172,7 +172,7 @@ def update_profile():
 
     data = request.json
 
-    user = user_repo.update_user(id, data["email"], data["name"], None)
+    user = user_repo.update_user(id, data["email"], data["name"], None, None)
 
     if user != None:
         return {"message": ResultsCodes.DATA_UPDATED}, 200
@@ -251,8 +251,82 @@ def update_password():
             return {"message": ResultsCodes.INCORRECT_OLD_PASSWORD}, 401
 
         password_hash = get_password_hash(data["new_password"])
-        user = user_repo.update_user(id, None, None, password_hash)
+        user = user_repo.update_user(id, None, None, password_hash, None)
         if user != None:
             return {"message": ResultsCodes.DATA_UPDATED}, 200
 
-    return {"message": ResultsCodes.USER_NOT_FOUND}
+    return {"message": ResultsCodes.USER_NOT_FOUND}, 200
+
+
+@profile_bp.route("/profile/update/photo", methods=["PUT"])
+def update_photo():
+    """
+    Обновить фото профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
+    ---
+    tags:
+      - features/profile
+    description: |
+      Обновить фото профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            photo:
+              type: string
+              format: byte
+              description: "Фото в формате base64"
+              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    responses:
+      200:
+        description: Данные обновлены
+      401:
+        description: Неверный access токен, доступ запрещен
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Неверный access токен, доступ запрещен"
+      404:
+        description: Пользователь не найден, доступ запрещен
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Пользователь не найден, доступ запрещен"
+    """
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
+        response.headers["WWW-Authenticate"] = "Bearer"
+        return response
+
+    token = auth_header.split(" ")[1]
+
+    id, result = get_id(token)
+    if result != ResultsCodes.OK:
+        response = make_response({"message": result}, 401)
+        response.headers["WWW-Authenticate"] = "Bearer"
+        return response
+
+    data = request.json
+    photo = data["photo"]
+
+    filename, result = save_photo(photo, id)
+    if result != ResultsCodes.OK or filename == None:
+        return {"message": result}, 409
+    else:
+        user = user_repo.update_user(id, None, None, None, filename)
+        if user == None:
+            return {"message": ResultsCodes.INVALID_BASE64}, 409
+
+    return {}, 200

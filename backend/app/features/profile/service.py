@@ -79,3 +79,57 @@ def get_photo_base_64(image_path):
         photo_base64 = base64.b64encode(img_file.read()).decode("utf-8")
 
     return photo_base64
+
+
+BASE_IMAGES_DIR = "users_imgs"
+
+
+def save_photo(base64_string, user_id):
+    """
+    Сохраняет фото из base64 в файл
+
+    Args:
+        base64_string: Строка base64 (может быть с префиксом data:image/png;base64, или без)
+        user_id: Id пользователя
+
+    Returns:
+        string: Имя файла
+        ResultCodes: Результат выполнения операции
+    """
+    if "base64," in base64_string:
+        base64_string = base64_string.split("base64,")[1]
+
+    try:
+        image_data = base64.b64decode(base64_string)
+    except Exception as e:
+        return None, ResultsCodes.INVALID_BASE64
+
+    extension = get_image_extension(image_data)
+
+    filename = f"{BASE_IMAGES_DIR}/img_user{user_id}{extension}"
+
+    upload_folder = os.getenv("IMAGES_PATH")
+    os.makedirs(upload_folder, exist_ok=True)
+
+    filepath = os.path.join(upload_folder, filename)
+
+    with open(filepath, "wb") as f:
+        f.write(image_data)
+
+    return filename, ResultsCodes.OK
+
+
+def get_image_extension(image_data):
+    if image_data[:4] == b"\x89PNG":
+        return ".png"
+
+    if image_data[:2] == b"\xff\xd8":
+        return ".jpg"
+
+    if image_data[:3] == b"GIF":
+        return ".gif"
+
+    if image_data[:4] == b"RIFF" and image_data[8:12] == b"WEBP":
+        return ".webp"
+
+    return ".jpg"
