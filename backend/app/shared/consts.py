@@ -21,3 +21,7 @@ class ResultsCodes:
     PROJECT_CREATE_ERROR = "Ошибка создания проекта"
     INCORRECT_LANG = "Некорректный язык"
     INCORRECT_PROJECT_NAME = "Некорректное имя проекта"
+    DATA_UPDATED = "Данные обновлены"
+    INCORRECT_OLD_PASSWORD = (
+        "Вы не можете установить новый пароль, так как ввели неверный старый пароль"
+    )

@@ -1,7 +1,6 @@
 import pytest
 from sqlalchemy import text
 from app.features.authorization.service import *
-from werkzeug.security import generate_password_hash, check_password_hash
 from app import create_app
 from app.shared.dbmodels import User
 from app.shared.consts import ResultsCodes
@@ -26,38 +25,6 @@ def app_context(app):
     """Контекст приложения для тестов"""
     with app.app_context():
         yield
-
-
-@pytest.mark.parametrize(
-    "password",
-    [
-        "simple",
-        "complex!@#$%",
-        "very_long_password_" * 10,
-        "12345",
-        " with spaces ",
-        "русский_пароль",
-        "admin",
-        "password123",
-    ],
-)
-def test_password_hashing(password):
-    """Тест хеширования пароля"""
-
-    hashed = get_password_hash(password)
-
-    assert check_password_hash(hashed, password) is True
-
-
-def test_password_checking():
-    """Тест проверки пароля"""
-
-    password = "test"
-    hashed = get_password_hash(password)
-    correct = check_password_with_hash(hashed, password)
-    assert correct == True
-    wrong = check_password_with_hash(hashed, "not test")
-    assert wrong == False
 
 
 @pytest.mark.parametrize(

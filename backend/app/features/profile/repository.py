@@ -33,6 +33,26 @@ class UserRepository:
         """
         return db.session.get(User, user_id)
 
+    def update_user(self, id, email, name, password_hash):
+        old_user = db.session.get(User, id)
+
+        if old_user == None:
+            return None
+
+        if email != "" and email != None:
+            old_user.email = email
+        if name != "" and name != None:
+            old_user.name = name
+
+        if password_hash != "" and password_hash != None:
+            old_user.password_hash = password_hash
+
+        db.session.commit()
+        return old_user
+
+    def get_password_hash(self, id):
+        return db.session.query(User).filter(User.id == id).first().password_hash
+
     def delete_user_by_id(self, id):
         """
         Удалить пользователя.
