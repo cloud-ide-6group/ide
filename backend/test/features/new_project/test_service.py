@@ -31,8 +31,8 @@ def app_context(app):
     [
         (1, 2, "TestProj", ResultsCodes.OK),
         (1, 2, "TestProj", ResultsCodes.PROJECT_EXISTS_ALREADY),
-        (1, 2, "", ResultsCodes.INCORRECT_PROJECT_NAME),
-        (1, 2, None, ResultsCodes.INCORRECT_PROJECT_NAME),
+        (1, 2, "", ResultsCodes.INCORRECT_NAME),
+        (1, 2, None, ResultsCodes.INCORRECT_NAME),
         (1, None, "JProject", ResultsCodes.INCORRECT_LANG),
         (None, 4, "JProject", ResultsCodes.USER_NOT_FOUND),
     ],

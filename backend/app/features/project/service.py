@@ -20,7 +20,7 @@ def create_project_dir(project_name):
         Переменная окружения PROJECTS_PATH должна указывать на корневую папку со всеми проектами.
     """
     if project_name == "" or project_name == None:
-        return ResultsCodes.INCORRECT_PROJECT_NAME
+        return ResultsCodes.INCORRECT_NAME
 
     projects_dir = os.getenv("PROJECTS_PATH")
     new_project_dir = os.path.join(projects_dir, project_name)
@@ -50,7 +50,7 @@ def create_project(user_id, project_name, language_id):
     if language_id == None:
         return None, ResultsCodes.INCORRECT_LANG
     if project_name == "" or project_name == None:
-        return None, ResultsCodes.INCORRECT_PROJECT_NAME
+        return None, ResultsCodes.INCORRECT_NAME
 
     if project_repo.get_project(project_name) != None:
         return None, ResultsCodes.PROJECT_EXISTS_ALREADY
