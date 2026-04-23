@@ -5,12 +5,10 @@ from .shared.extensions import db, migrate
 
 
 def register_features(app):
-    from .features.test_feature.routes import test_bp
     from .features.authorization.routes import auth_bp
     from .features.profile.routes import profile_bp
     from .features.project.routes import project_bp
 
-    app.register_blueprint(test_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
