@@ -34,6 +34,15 @@ class UserRepository:
         return db.session.get(User, user_id)
 
     def update_user(self, new_user):
+        """
+        Обновить значения полей пользователя
+
+        Args:
+            new_user (User): Обновленный пользователь
+
+        Returns:
+            User: Пользователь
+        """
         old_user = db.session.get(User, new_user.id)
 
         if old_user == None or new_user == None:
@@ -48,6 +57,15 @@ class UserRepository:
         return old_user
 
     def get_password_hash(self, id):
+        """
+        Получает хэш пароля из таблицы
+
+        Args:
+            id (int): Id пользователя
+
+        Returns:
+            str: Хэш пароля
+        """
         return db.session.query(User).filter(User.id == id).first().password_hash
 
     def delete_user_by_id(self, id):

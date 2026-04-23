@@ -36,6 +36,19 @@ def get_user_data(id):
 
 
 def update_user_data(id, email, name, password_hash, photo_path):
+    """
+    Создает обновленный объект user и отправляет его в репозиторий, чтобы сохранить новые данные
+
+    Args:
+        id (int): Id пользователя
+        email (str): Почта пользователя
+        name (str): Имя пользователя
+        password_hash (str): Хэш пароля
+        photo_path (str): Путь к фото профиля на сервере
+
+    Returns:
+        User: Обновленный пользователь
+    """
     old_user = user_repo.get_by_id(id)
 
     if old_user == None:
@@ -52,9 +65,19 @@ def update_user_data(id, email, name, password_hash, photo_path):
     return user_repo.update_user(new_user)
 
 
-def check_old_password(id, old_password):
+def check_old_password(id, password):
+    """
+    Сверяет пароль с тем, что есть в БД
+
+    Args:
+        id (int): Id пользователя
+        password (str): Пароль, который необходимо сверить
+
+    Returns:
+        ResultCodes: Результат
+    """
     old_password_hash = user_repo.get_password_hash(id)
-    result = check_password_with_hash(old_password_hash, old_password)
+    result = check_password_with_hash(old_password_hash, password)
 
     if result == False:
         return ResultsCodes.INCORRECT_OLD_PASSWORD
@@ -117,11 +140,11 @@ def save_photo(base64_string, user_id):
     Сохраняет фото из base64 в файл
 
     Args:
-        base64_string: Строка base64 (может быть с префиксом data:image/png;base64, или без)
-        user_id: Id пользователя
+        base64_string (str): Строка base64 (может быть с префиксом data:image/png;base64, или без)
+        user_id (int): Id пользователя
 
     Returns:
-        string: Имя файла
+        str: Имя файла
         ResultCodes: Результат выполнения операции
     """
     if "base64," in base64_string:
@@ -148,6 +171,15 @@ def save_photo(base64_string, user_id):
 
 
 def get_image_extension(image_data):
+    """
+    Получает расширение фото из base64 строки
+
+    Args:
+        image_data (str): Строка фото
+
+    Returns:
+        str: Расширение
+    """
     if image_data[:4] == b"\x89PNG":
         return ".png"
 

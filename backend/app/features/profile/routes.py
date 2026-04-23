@@ -182,7 +182,7 @@ def update_profile():
     if user != None:
         return {"message": ResultsCodes.DATA_UPDATED}, 200
     else:
-        return {"message": ResultsCodes.USER_NOT_FOUND}, 409
+        return {"message": ResultsCodes.USER_NOT_FOUND}, 404
 
 
 @profile_bp.route("/profile/update/password", methods=["PUT"])
@@ -223,14 +223,14 @@ def update_password():
               message:
                 type: string
                 example: "Неверный access токен, доступ запрещен"
-      404:
+      409:
         description: Пользователь не найден, доступ запрещен
         schema:
           type: object
           properties:
               message:
                 type: string
-                example: "Пользователь не найден, доступ запрещен"
+                example: "Новый пароль не введен"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -299,7 +299,7 @@ def update_photo():
               message:
                 type: string
                 example: "Неверный access токен, доступ запрещен"
-      404:
+      409:
         description: Пользователь не найден, доступ запрещен
         schema:
           type: object
