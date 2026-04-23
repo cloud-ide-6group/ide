@@ -1,10 +1,14 @@
 import base64
 from .repository import user_repo, project_repo
 from ...shared.consts import ResultsCodes
+from app.shared.dbmodels import User
 import os
 from dotenv import load_dotenv
+from app.shared.features.password_hash.service import check_password_with_hash
 
 load_dotenv()
+
+BASE_IMAGES_DIR = "users_imgs"
 
 
 def get_user_data(id):
@@ -29,6 +33,33 @@ def get_user_data(id):
         return user, ResultsCodes.USER_NOT_FOUND
 
     return user, ResultsCodes.OK
+
+
+def update_user_data(id, email, name, password_hash, photo_path):
+    old_user = user_repo.get_by_id(id)
+
+    if old_user == None:
+        return None
+
+    new_user = User()
+    new_user.id = id
+
+    new_user.email = email or old_user.email
+    new_user.name = name or old_user.name
+    new_user.password_hash = password_hash or old_user.password_hash
+    new_user.photo_path = photo_path or old_user.photo_path
+
+    return user_repo.update_user(new_user)
+
+
+def check_old_password(id, old_password):
+    old_password_hash = user_repo.get_password_hash(id)
+    result = check_password_with_hash(old_password_hash, old_password)
+
+    if result == False:
+        return ResultsCodes.INCORRECT_OLD_PASSWORD
+
+    return ResultsCodes.OK
 
 
 def get_user_projects(user_id):
@@ -79,9 +110,6 @@ def get_photo_base_64(image_path):
         photo_base64 = base64.b64encode(img_file.read()).decode("utf-8")
 
     return photo_base64
-
-
-BASE_IMAGES_DIR = "users_imgs"
 
 
 def save_photo(base64_string, user_id):

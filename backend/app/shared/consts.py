@@ -25,4 +25,5 @@ class ResultsCodes:
     INCORRECT_OLD_PASSWORD = (
         "Вы не можете установить новый пароль, так как ввели неверный старый пароль"
     )
-    INVALID_BASE64="Неверна строка изображения"
+    INVALID_BASE64 = "Неверна строка изображения"
+    NEW_PASSWORD_NULL = "Новый пароль не может быть null"

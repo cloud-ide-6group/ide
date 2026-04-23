@@ -1,13 +1,18 @@
 from . import profile_bp
 from flask import request, make_response
 from dotenv import load_dotenv
-from .service import *
-from ...shared.features.jwt_token.service import get_id
-from app.shared.dbmodels import User
-from app.shared.features.password_hash.service import (
-    get_password_hash,
-    check_password_with_hash,
+from .service import (
+    check_old_password,
+    get_user_data,
+    get_user_projects,
+    get_photo_base_64,
+    update_user_data,
+    save_photo,
 )
+from ...shared.features.jwt_token.service import get_id
+from app.shared.features.password_hash.service import get_password_hash
+from app.shared.consts import ResultsCodes
+
 
 load_dotenv()
 
@@ -172,7 +177,7 @@ def update_profile():
 
     data = request.json
 
-    user = user_repo.update_user(id, data["email"], data["name"], None, None)
+    user = update_user_data(id, data["email"], data["name"], None, None)
 
     if user != None:
         return {"message": ResultsCodes.DATA_UPDATED}, 200
@@ -245,17 +250,16 @@ def update_password():
 
     if data["new_password"] != "" and data["new_password"] != None:
         old_password = data["old_password"]
-        old_password_hash = user_repo.get_password_hash(id)
-        result = check_password_with_hash(old_password_hash, old_password)
-        if result == False:
-            return {"message": ResultsCodes.INCORRECT_OLD_PASSWORD}, 401
+        result = check_old_password(id, old_password)
+        if result != ResultsCodes.OK:
+            return {"message": result}, 401
 
         password_hash = get_password_hash(data["new_password"])
-        user = user_repo.update_user(id, None, None, password_hash, None)
+        user = update_user_data(id, None, None, password_hash, None)
         if user != None:
             return {"message": ResultsCodes.DATA_UPDATED}, 200
 
-    return {"message": ResultsCodes.USER_NOT_FOUND}, 200
+    return {"message": ResultsCodes.NEW_PASSWORD_NULL}, 409
 
 
 @profile_bp.route("/profile/update/photo", methods=["PUT"])
@@ -325,7 +329,7 @@ def update_photo():
     if result != ResultsCodes.OK or filename == None:
         return {"message": result}, 409
     else:
-        user = user_repo.update_user(id, None, None, None, filename)
+        user = update_user_data(id, None, None, None, filename)
         if user == None:
             return {"message": ResultsCodes.INVALID_BASE64}, 409
 
