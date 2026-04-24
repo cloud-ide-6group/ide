@@ -21,6 +21,10 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import front.feature.profile.generated.resources.Res
 import front.feature.profile.generated.resources.edit_24dp
+import io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
+import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
+import io.github.ismoy.imagepickerkmp.features.imagepicker.state.ImagePickerKMPState
+import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import kotlin.io.encoding.Base64
@@ -47,6 +51,10 @@ internal fun UserAvatar(
     val interactionSource = remember { MutableInteractionSource() }
     val isHovered by interactionSource.collectIsHoveredAsState()
 
+    val decodedImage = remember(photoBase64) {
+        Base64.decode(photoBase64)
+    }
+
     Box(
         modifier = modifier
             .clip(shape)
@@ -59,7 +67,7 @@ internal fun UserAvatar(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(Base64.decode(photoBase64))
+                .data(decodedImage)
                 .build(),
             contentDescription = "User Avatar",
             modifier = Modifier.fillMaxSize(),
