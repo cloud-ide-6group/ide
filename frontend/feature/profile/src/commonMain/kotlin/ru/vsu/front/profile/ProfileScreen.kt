@@ -3,30 +3,31 @@ package ru.vsu.front.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBase64
+import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
+import io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
+import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
 import ru.vsu.front.designsystem.component.CodeTogetherScaffold
-import ru.vsu.front.designsystem.component.Section
-import ru.vsu.front.designsystem.component.VisibilityButton
+import ru.vsu.front.designsystem.component.CodeTogetherText
+import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.profile.component.CreatingProject
 import ru.vsu.front.profile.component.CustomDialog
@@ -45,11 +46,47 @@ fun ProfileScreen(
     viewModel: ProfileViewModel,
     modifier: Modifier = Modifier,
 ) {
-    var createProjectDialogIsShown by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val picker = rememberImagePickerKMP(
+        config = ImagePickerKMPConfig(
+            galleryConfig = GalleryConfig(
+                allowMultiple = false,
+                selectionLimit = 1
+            )
+        )
+    )
+
+    LaunchedEffect(viewModel) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is ProfileEffect.ShowMessage -> snackbarHostState.showSnackbar(message = event.message)
+            }
+        }
+    }
+
+    when(val result = picker.result) {
+        is ImagePickerResult.Error -> {
+            // TODO Show error
+        }
+
+        is ImagePickerResult.Success -> {
+            val photo = result.first
+            photo?.let {
+                viewModel.processCommand(ProfileCommand.UpdatePhoto(photo.loadBase64()))
+            }
+        }
+
+        else -> {
+            // Nothing
+        }
+    }
 
     CodeTogetherScaffold(
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
         backgroundColor = CodeTogetherTheme.colors.primaryBackground
     ) {
         when (val currentState = uiState) {
@@ -58,7 +95,7 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 32.dp),
+                        .padding(start = 32.dp, bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(
@@ -70,7 +107,7 @@ fun ProfileScreen(
                             modifier = Modifier.size(348.dp),
                             photoBase64 = loadedState.photo,
                             onClick = {
-
+                                picker.launchGallery()
                             }
                         )
                         ProfileSections(
@@ -81,6 +118,9 @@ fun ProfileScreen(
                             email = loadedState.email,
                             currentPassword = loadedState.currentPassword,
                             newPassword = loadedState.newPassword,
+                            hasChangesName = loadedState.hasChangesName,
+                            hasChangesEmail = loadedState.emailIsReadyForChange,
+                            hasChangesPassword = loadedState.hasChangesNewPassword,
                             isCurrentPasswordVisible = loadedState.isCurrentPasswordVisible,
                             isNewPasswordVisible = loadedState.isNewPasswordVisible,
                             onNameChange = {
@@ -101,6 +141,12 @@ fun ProfileScreen(
                             onChangeNewPasswordVisibility = {
                                 viewModel.processCommand(ProfileCommand.ChangeNewPasswordVisibility)
                             },
+                            onUpdateDataClick = {
+                                viewModel.processCommand(ProfileCommand.UpdateData)
+                            },
+                            onUpdatePasswordClick = {
+                                viewModel.processCommand(ProfileCommand.UpdatePassword)
+                            },
                         )
                     }
 
@@ -112,7 +158,7 @@ fun ProfileScreen(
                             viewModel.processCommand(ProfileCommand.ChangeProjectsVisibility)
                         },
                         onCreateProjectClick = {
-                            createProjectDialogIsShown = true
+                            viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
                         },
                         onProjectClick = {
                             // TODO NAVIGATE
@@ -120,31 +166,32 @@ fun ProfileScreen(
                     )
                 }
 
-                var programingLanguagesListExpanded by remember { mutableStateOf(false) }
                 CustomDialog(
-                    show = createProjectDialogIsShown,
-                    onDismissRequest = { createProjectDialogIsShown = false }
+                    show = loadedState.isCreateProjectDialogShown,
+                    onDismissRequest = {
+                        viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
+                    }
                 ) {
                     CreatingProject(
                         projectName = loadedState.projectName,
-                        selectedProgramingLanguage = loadedState.projectProgramingLanguage,
-                        programingLanguagesListExpanded = programingLanguagesListExpanded,
-                        programingLanguages = loadedState.projectLanguages,
+                        selectedProgramingLanguage = loadedState.selectedProgramingLanguageForProject,
+                        programingLanguagesListExpanded = loadedState.isProgramingLanguagesExpanded,
+                        programingLanguages = loadedState.programingLanguages,
                         onProjectNameChange = {
                             viewModel.processCommand(ProfileCommand.ChangeProjectName(it))
                         },
                         onProgramingLanguageClick = {
                             viewModel.processCommand(ProfileCommand.ChangeProgramingLanguage(it))
-                            programingLanguagesListExpanded = false
+                            viewModel.processCommand(ProfileCommand.ChangeProgramingLanguagesVisibility)
                         },
                         onSelectedProgramingLanguageClick = {
-                            programingLanguagesListExpanded = true
+                            viewModel.processCommand(ProfileCommand.ChangeProgramingLanguagesVisibility)
                         },
                         onCreateProjectClick = {
-                            createProjectDialogIsShown = false
+                            viewModel.processCommand(ProfileCommand.CreateProject)
                         },
                         onDismissRequest = {
-                            programingLanguagesListExpanded = false
+                            viewModel.processCommand(ProfileCommand.ChangeProgramingLanguagesVisibility)
                         }
                     )
                 }
@@ -153,6 +200,16 @@ fun ProfileScreen(
             UiStatusProfile.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = CodeTogetherTheme.colors.primary)
+                }
+            }
+
+            UiStatusProfile.Error -> {
+                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    CodeTogetherText(text = "Произошла ошибка во время загрузки! :(")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    CodeTogetherTextButton(text = "Повторить") {
+                        viewModel.processCommand(ProfileCommand.RepeatLoadingInfo)
+                    }
                 }
             }
         }
