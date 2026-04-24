@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
@@ -11,7 +12,6 @@ import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
-import kotlin.io.encoding.Base64
 
 /**
  * Вьюмодель экрана авторизации и регистрации.
@@ -25,7 +25,8 @@ class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val signUseCase: SignUseCase,
     private val tokenStorage: TokenStorage,
-    private val dispatcherProvider: DispatcherProvider
+    private val dispatcherProvider: DispatcherProvider,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateAuth())
@@ -36,6 +37,9 @@ class AuthViewModel(
     val events: SharedFlow<AuthEffect>
         get() = _events.asSharedFlow()
 
+    /**
+     * Выполняет определенные действия в зависимости от переданной команды.
+     */
     fun processCommand(command: AuthCommand) {
         when (command) {
             is AuthCommand.ChangeName -> {
@@ -116,6 +120,7 @@ class AuthViewModel(
         when (result) {
             is Response.Error<*> -> {
                 _events.emit(AuthEffect.ShowError(result.requestError.message))
+                _uiState.update { it.copy(buttonEnabled = true) }
             }
 
             is Response.Success<AuthTokens> -> {
@@ -127,12 +132,10 @@ class AuthViewModel(
                 val userId = tokenStorage.getUserIdFromToken()
 
                 userId?.let {
-                    _events.emit(AuthEffect.SuccessAuth(userId))
+                    authManager.onLoginSuccess(it)
                 }
             }
         }
-
-        _uiState.update { it.copy(buttonEnabled = true) }
     }
 }
 
@@ -168,5 +171,4 @@ data class UiStateAuth(
  */
 sealed interface AuthEffect {
     data class ShowError(val message: String) : AuthEffect
-    data class SuccessAuth(val userId: Int) : AuthEffect
 }

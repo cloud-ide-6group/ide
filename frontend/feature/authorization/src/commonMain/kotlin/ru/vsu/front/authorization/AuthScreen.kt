@@ -22,13 +22,11 @@ import ru.vsu.front.authorization.component.LeftSide
 /**
  * Экран авторизации и регистрации.
  *
- * @param onSuccessAuth Коллбек, срабатывающий при успешной аутентификации.
  * @param authViewModel Вьюмодель для входа и регистрации.
  * @param modifier Модификатор для настройки.
  */
 @Composable
 fun AuthScreen(
-    onSuccessAuth: (Int) -> Unit,
     authViewModel: AuthViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -38,7 +36,6 @@ fun AuthScreen(
         authViewModel.events.collect { event ->
             when (event) {
                 is AuthEffect.ShowError -> snackbarHostState.showSnackbar(event.message)
-                is AuthEffect.SuccessAuth -> onSuccessAuth(event.userId)
             }
         }
     }
