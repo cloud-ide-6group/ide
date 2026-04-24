@@ -19,6 +19,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+            implementation(libs.imagepicker)
             implementation(projects.core.designsystem)
             implementation(projects.core.common)
             implementation(projects.core.data)

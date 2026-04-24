@@ -15,6 +15,7 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation(projects.core.datastore)
             implementation(projects.core.domain)
+            implementation(projects.core.auth)
         }
 
         val jvmMain by getting {
