@@ -40,7 +40,7 @@ import ru.vsu.front.model.entity.ProgramingLanguage
 @Composable
 internal fun CreatingProject(
     projectName: String,
-    selectedProgramingLanguage: ProgramingLanguage,
+    selectedProgramingLanguage: ProgramingLanguage?,
     programingLanguagesListExpanded: Boolean,
     programingLanguages: List<ProgramingLanguage>,
     modifier: Modifier = Modifier,
@@ -50,6 +50,7 @@ internal fun CreatingProject(
     onCreateProjectClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    if (selectedProgramingLanguage == null) return
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = CodeTogetherTheme.colors.secondaryBackground,
@@ -94,6 +95,7 @@ internal fun CreatingProject(
             Section(
                 sectionName = "Project Name",
                 value = projectName,
+                isError = projectName.trim().isEmpty(),
                 hint = "Enter Project Name",
                 onValueChange = onProjectNameChange
             )
