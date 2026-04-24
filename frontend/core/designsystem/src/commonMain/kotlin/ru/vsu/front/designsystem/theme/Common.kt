@@ -25,6 +25,7 @@ data class CodeTogetherColors(
     val secondaryText: Color,
     val secondaryBackground: Color,
     val error: Color,
+    val confirm: Color,
     val black: Color
 )
 

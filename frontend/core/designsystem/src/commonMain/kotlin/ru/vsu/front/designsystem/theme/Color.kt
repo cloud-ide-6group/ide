@@ -12,5 +12,6 @@ val omniPalette = CodeTogetherColors(
     secondaryText = Color(0x80888888),
     secondaryBackground = Color(0xFF191622),
     error = Color(0xFFFF5555),
+    confirm = Color(0xFF22FF0B),
     black = Color(0xFF000000)
 )
