@@ -2,13 +2,17 @@ package ru.vsu.front.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.component.VisibilityButton
+import ru.vsu.front.domain.validation.EmailMatcher
 
 @Composable
 fun ProfileSections(
@@ -16,6 +20,9 @@ fun ProfileSections(
     email: String,
     currentPassword: String,
     newPassword: String,
+    hasChangesName: Boolean,
+    hasChangesEmail: Boolean,
+    hasChangesPassword: Boolean,
     isCurrentPasswordVisible: Boolean,
     isNewPasswordVisible: Boolean,
     modifier: Modifier = Modifier,
@@ -25,6 +32,8 @@ fun ProfileSections(
     onNewPasswordChange: (String) -> Unit,
     onChangeCurrentPasswordVisibility: () -> Unit,
     onChangeNewPasswordVisibility: () -> Unit,
+    onUpdateDataClick: () -> Unit,
+    onUpdatePasswordClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -34,14 +43,29 @@ fun ProfileSections(
             sectionName = "Name",
             value = name,
             hint = "Name",
-            onValueChange = onNameChange
+            onValueChange = onNameChange,
+            trailingIcon = {
+                if (hasChangesName) {
+                    ConfirmIcon(
+                        onClick = onUpdateDataClick,
+                    )
+                }
+            }
         )
 
         Section(
             sectionName = "Email",
             value = email,
             hint = "Email",
-            onValueChange = onEmailChange
+            onValueChange = onEmailChange,
+            isError = !EmailMatcher.isValid(email),
+            trailingIcon = {
+                if (hasChangesEmail) {
+                    ConfirmIcon(
+                        onClick = onUpdateDataClick,
+                    )
+                }
+            }
         )
 
         Section(
@@ -55,6 +79,7 @@ fun ProfileSections(
                     isVisible = isCurrentPasswordVisible,
                     onClick = onChangeCurrentPasswordVisibility
                 )
+
             }
         )
 
@@ -65,10 +90,19 @@ fun ProfileSections(
             onValueChange = onNewPasswordChange,
             visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                VisibilityButton(
-                    isVisible = isNewPasswordVisible,
-                    onClick = onChangeNewPasswordVisibility
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (hasChangesPassword) {
+                        ConfirmIcon(
+                            onClick = onUpdatePasswordClick,
+                        )
+                    }
+                    VisibilityButton(
+                        isVisible = isNewPasswordVisible,
+                        onClick = onChangeNewPasswordVisibility
+                    )
+                }
             }
         )
     }
