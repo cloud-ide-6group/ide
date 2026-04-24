@@ -9,7 +9,7 @@ package ru.vsu.front.model.entity
  * @property photo Фото пользователя в формате Base64.
  * @property projects Проекты, в которых состоит пользователь.
  */
-data class User(
+data class UserProfile(
     val id: Int,
     val name: String,
     val email: String,

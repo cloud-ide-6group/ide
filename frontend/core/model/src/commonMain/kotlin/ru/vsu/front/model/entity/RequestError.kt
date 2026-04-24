@@ -27,6 +27,11 @@ sealed class RequestError(open val message: String) {
     data class NotFound(override val message: String) : RequestError(message)
 
     /**
+     * 409: Конфликт.
+     * */
+    data class Conflict(override val message: String) : RequestError(message)
+
+    /**
      * Ошибка сети (отсутствует интернет или сервер недоступен).
      * */
     data class NetworkException(override val message: String = "Ошибка сети") : RequestError(message)
