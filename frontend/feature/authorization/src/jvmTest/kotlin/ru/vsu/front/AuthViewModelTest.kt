@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
+import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.authorization.AuthCommand
 import ru.vsu.front.authorization.AuthEffect
 import ru.vsu.front.authorization.AuthViewModel
@@ -32,6 +33,7 @@ class AuthViewModelTest {
     private val loginUseCase = mockk<LoginUseCase>()
     private val signUseCase = mockk<SignUseCase>()
     private val tokenStorage = mockk<TokenStorage>()
+    private val authManager = mockk<AuthManager>()
 
     private lateinit var viewModel: AuthViewModel
 
@@ -41,6 +43,7 @@ class AuthViewModelTest {
             loginUseCase = loginUseCase,
             signUseCase = signUseCase,
             tokenStorage = tokenStorage,
+            authManager = authManager,
             dispatcherProvider = object : DispatcherProvider {
                 override val main: CoroutineDispatcher = Dispatchers.Main
                 override val io: CoroutineDispatcher = Dispatchers.IO
@@ -127,6 +130,9 @@ class AuthViewModelTest {
         }
     }
 
+    /**
+     * TODO
+     */
     @Test
     fun `when login success, tokens should be saved`() = runTest {
         val emailTest = "email@email.com"
@@ -139,7 +145,7 @@ class AuthViewModelTest {
             every { refreshToken } returns refreshTokenTest
         }
 
-        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
+        coEvery { tokenStorage.getUserIdFromToken() } returns 1
         coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockTokens)
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
@@ -170,12 +176,15 @@ class AuthViewModelTest {
         }
     }
 
+    /**
+     * TODO
+     */
     @Test
     fun `when login clicks, button is disabled and then enabled`() = runTest {
         val emailTest = "email@email.com"
         val passwordTest = "password@password"
 
-        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
+        coEvery { tokenStorage.getUserIdFromToken() } returns 1
         coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockk(relaxed = true))
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
@@ -193,6 +202,9 @@ class AuthViewModelTest {
         }
     }
 
+    /**
+     * TODO
+     */
     @Test
     fun `when sign up success, tokens should be saved`() = runTest {
         val nameTest = "name_Test"
@@ -207,7 +219,7 @@ class AuthViewModelTest {
             every { refreshToken } returns refreshTokenTest
         }
 
-        coEvery { tokenStorage.getUserIdFromToken(any()) } returns 1
+        coEvery { tokenStorage.getUserIdFromToken() } returns 1
         coEvery { signUseCase(nameTest, emailTest, passwordTest) } returns Response.Success(mockTokens)
         coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
 
