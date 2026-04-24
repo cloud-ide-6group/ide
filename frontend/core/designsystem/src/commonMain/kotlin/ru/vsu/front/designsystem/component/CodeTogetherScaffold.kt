@@ -49,7 +49,7 @@ fun CodeTogetherScaffold(
                         text = it.visuals.message,
                         style = CodeTogetherTheme.typography.style.copy(fontSize = 18.sp),
                         textAlign = TextAlign.Center,
-                        color = CodeTogetherTheme.colors.error
+                        color = CodeTogetherTheme.colors.primary
                     )
                 }
             }
