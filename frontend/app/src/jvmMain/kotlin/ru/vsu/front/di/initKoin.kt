@@ -2,6 +2,7 @@ package ru.vsu.front.di
 
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.KoinAppDeclaration
+import ru.vsu.front.auth.di.authModule
 import ru.vsu.front.authorization.di.authorizationModule
 import ru.vsu.front.common.di.commonModule
 import ru.vsu.front.data.di.dataModule
@@ -19,6 +20,16 @@ import ru.vsu.front.profile.di.profileModule
 fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
-        modules(dataModule, domainModule, authorizationModule, profileModule, datastoreModule, commonModule, networkModule, appModule)
+        modules(
+            dataModule,
+            domainModule,
+            authorizationModule,
+            profileModule,
+            datastoreModule,
+            commonModule,
+            networkModule,
+            appModule,
+            authModule
+        )
     }
 }
