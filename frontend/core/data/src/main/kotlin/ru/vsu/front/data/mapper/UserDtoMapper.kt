@@ -1,20 +1,20 @@
 package ru.vsu.front.data.mapper
 
-import ru.vsu.front.data.dto.UserDto
-import ru.vsu.front.model.entity.User
+import ru.vsu.front.data.dto.UserProfileDto
+import ru.vsu.front.model.entity.UserProfile
 
 /**
- * Преобразует DTO-модель ([UserDto])
- * в доменную сущность пользователя ([User]).
+ * Преобразует DTO-модель ([UserProfileDto])
+ * в доменную сущность пользователя ([UserProfile]).
  * * * Изолирует модели бизнес-логики от аннотаций `@Serializable` и `@SerialName`.
- * * @return Модель [User], содержащая данные пользователя.
+ * * @return Модель [UserProfile], содержащая данные пользователя.
  */
-fun UserDto.toEntity(userId: Int): User {
-    return User(
+fun UserProfileDto.toEntity(userId: Int): UserProfile {
+    return UserProfile(
         id = userId,
         name = name,
         email = email,
         photo = photo,
-        projects = emptyList()
+        projects = projects.toEntities()
     )
 }
