@@ -30,12 +30,22 @@ object HttpRoutes {
     const val CREATE_PROJECT = "/project/create"
 
     /**
-     * Эндпоинт удаления проекта.
+     * Эндпоинт получения доступных языков программирования.
      */
-    const val DELETE_PROJECT = "/project/delete"
+    const val PROGRAMING_LANGUAGES = "/languages"
 
     /**
-     * Эндпоинт обновления профиля.
+     * Эндпоинт обновления почты и логина пользователя.
      */
-    const val UPDATE_PROFILE = "/profile/update"
+    const val UPDATE_PROFILE_DATA = "/profile/update/data"
+
+    /**
+     * Эндпоинт обновления пароля.
+     */
+    const val UPDATE_PROFILE_PASSWORD = "/profile/update/password"
+
+    /**
+     * Эндпоинт обновления аватара.
+     */
+    const val UPDATE_PROFILE_PHOTO = "/profile/update/photo"
 }

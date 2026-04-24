@@ -23,7 +23,7 @@ import ru.vsu.front.model.entity.Response
  *
  * @return Готовый HTTP-клиент.
  */
-fun mainHttpClient(
+fun withJWTTokensHttpClient(
     baseUrl: String,
     tokenStorage: TokenStorage,
     refreshUseCase: RefreshUseCase,
@@ -32,7 +32,6 @@ fun mainHttpClient(
     return HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {
-                prettyPrint = true
                 ignoreUnknownKeys = true
             })
         }
@@ -44,14 +43,10 @@ fun mainHttpClient(
         install(Auth) {
             bearer {
                 loadTokens {
-                    if (authManager.isAuthorized.value is AuthState.NotAuthorized) return@loadTokens null
-
                     val tokens = tokenStorage.getTokens()
 
-                    if (tokens != null) {
-                        BearerTokens(tokens.accessToken, tokens.refreshToken)
-                    } else {
-                        null
+                    return@loadTokens tokens?.let {
+                        BearerTokens(it.accessToken, it.refreshToken)
                     }
                 }
 
@@ -61,6 +56,7 @@ fun mainHttpClient(
                     when(val response = refreshUseCase(oldTokens.accessToken, oldTokens.refreshToken)) {
                         is Response.Error<*> -> {
                             tokenStorage.clearTokens()
+                            authManager.logout()
                             null
                         }
 

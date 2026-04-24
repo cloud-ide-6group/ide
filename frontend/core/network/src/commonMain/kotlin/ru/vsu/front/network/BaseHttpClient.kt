@@ -8,17 +8,16 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 /**
- * Создает и настраивает экземпляр [HttpClient] для выполнения запросов, связанных с аутентификацией.
+ * Создает и настраивает экземпляр [HttpClient] для выполнения запросов, в заголовке которых не передаётся токен.
  * * Использует движок [CIO].
  * * @param baseUrl базовый url для запросов.
  *
  * @return Готовый HTTP-клиент.
  */
-fun authHttpClient(baseUrl: String): HttpClient {
-    return HttpClient {
+fun baseHttpClient(baseUrl: String): HttpClient {
+    return HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {
-                prettyPrint = true
                 ignoreUnknownKeys = true
             })
         }
