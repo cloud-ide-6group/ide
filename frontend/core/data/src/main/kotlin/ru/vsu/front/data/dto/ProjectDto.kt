@@ -1,5 +1,6 @@
 package ru.vsu.front.data.dto
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -7,13 +8,9 @@ import kotlinx.serialization.Serializable
  *
  * @property id Идентификатор проекта.
  * @property name Название проекта.
- * @property ownerId Идентификатор владельца проекта.
- * @property programmingLanguageId Используемый язык программирование в проекте.
  */
 @Serializable
 data class ProjectDto(
-    val id: Int,
-    val name: String,
-    val ownerId: Int,
-    val programmingLanguageId: Int
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String
 )
