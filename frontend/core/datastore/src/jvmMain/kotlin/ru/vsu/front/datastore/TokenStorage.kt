@@ -30,7 +30,7 @@ class TokenStorage(
      * * Возвращает пару [AuthTokens] в расшифрованном виде.
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
-    private fun getTokensSync(): AuthTokens? {
+    fun getTokensSync(): AuthTokens? {
         val encryptedAccessToken = prefs.get(JWT_ACCESS_TOKEN_KEY, null)
         val encryptedRefreshToken = prefs.get(JWT_REFRESH_TOKEN_KEY, null)
 
@@ -75,7 +75,7 @@ class TokenStorage(
     /**
      * Удаляет Access и Refresh токены из хранилища.
      */
-    suspend fun clearTokens() {
+    fun clearTokens() {
         prefs.remove(JWT_ACCESS_TOKEN_KEY)
         prefs.remove(JWT_REFRESH_TOKEN_KEY)
     }
