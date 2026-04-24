@@ -42,25 +42,18 @@ fun WindowScope.WindowTopBar(
         Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
-                    .align(Alignment.CenterStart),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                content()
-            }
-
-            Row(
-                modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                val appIconRes = Res.drawable.app_icon_without_background
                 Icon(
                     modifier = Modifier
                         .size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
-                    painter = painterResource(appIconRes),
+                    painter = painterResource(Res.drawable.app_icon_without_background),
                     contentDescription = "Code Together",
                     tint = Color.Unspecified
                 )
+
+                content()
 
                 Spacer(Modifier.weight(1f))
 
