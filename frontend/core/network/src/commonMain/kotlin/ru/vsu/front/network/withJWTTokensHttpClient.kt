@@ -7,11 +7,13 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import ru.vsu.front.auth.AuthManager
+import ru.vsu.front.auth.AuthState
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.RefreshUseCase
+import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
 
 /**
@@ -24,7 +26,8 @@ import ru.vsu.front.model.entity.Response
 fun mainHttpClient(
     baseUrl: String,
     tokenStorage: TokenStorage,
-    refreshUseCase: RefreshUseCase
+    refreshUseCase: RefreshUseCase,
+    authManager: AuthManager
 ): HttpClient {
     return HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -41,7 +44,10 @@ fun mainHttpClient(
         install(Auth) {
             bearer {
                 loadTokens {
+                    if (authManager.isAuthorized.value is AuthState.NotAuthorized) return@loadTokens null
+
                     val tokens = tokenStorage.getTokens()
+
                     if (tokens != null) {
                         BearerTokens(tokens.accessToken, tokens.refreshToken)
                     } else {
@@ -52,18 +58,21 @@ fun mainHttpClient(
                 refreshTokens {
                     val oldTokens = tokenStorage.getTokens() ?: return@refreshTokens null
 
-                    val response = refreshUseCase(oldTokens.accessToken, oldTokens.refreshToken)
+                    when(val response = refreshUseCase(oldTokens.accessToken, oldTokens.refreshToken)) {
+                        is Response.Error<*> -> {
+                            tokenStorage.clearTokens()
+                            null
+                        }
 
-                    if (response is Response.Success) {
-                        val newAccess = response.data.accessToken
-                        val newRefresh = response.data.refreshToken
+                        is Response.Success<AuthTokens> -> {
+                            val newAccess = response.data.accessToken
+                            val newRefresh = response.data.refreshToken
 
-                        tokenStorage.saveToken(newAccess, isAccess = true)
-                        tokenStorage.saveToken(newRefresh, isAccess = false)
+                            tokenStorage.saveToken(newAccess, isAccess = true)
+                            tokenStorage.saveToken(newRefresh, isAccess = false)
 
-                        BearerTokens(newAccess, newRefresh)
-                    } else {
-                        null
+                            BearerTokens(newAccess, newRefresh)
+                        }
                     }
                 }
             }

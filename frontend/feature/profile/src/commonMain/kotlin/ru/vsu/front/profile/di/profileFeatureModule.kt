@@ -11,7 +11,7 @@ import ru.vsu.front.profile.ProfileViewModel
  * - [ProfileViewModel] - вьюмодель экрана профиля.
  */
 val profileModule = module {
-    viewModel { (userId: Int) ->
-        ProfileViewModel(userId = userId, get(), get())
+    viewModel {
+        ProfileViewModel(get(), get(), get(), get())
     }
 }

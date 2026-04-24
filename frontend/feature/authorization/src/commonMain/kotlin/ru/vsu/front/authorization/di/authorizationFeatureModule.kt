@@ -11,5 +11,5 @@ import ru.vsu.front.authorization.AuthViewModel
  * - [AuthViewModel] - вьюмодель экрана логина и регистрации.
  */
 val authorizationModule = module {
-    viewModel { AuthViewModel(get(), get(), get(), get()) }
+    viewModel { AuthViewModel(get(), get(), get(), get(), get()) }
 }

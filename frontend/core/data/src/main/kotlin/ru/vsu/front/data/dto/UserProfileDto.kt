@@ -15,5 +15,5 @@ data class UserDto(
     @SerialName("name") val name: String,
     @SerialName("email") val email: String,
     @SerialName("photo") val photo: String,
-//    @SerialName("projects") val projects: List<ProjectDto>
+    @SerialName("projects") val projects: List<ProjectDto>
 )
