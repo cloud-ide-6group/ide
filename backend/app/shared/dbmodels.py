@@ -30,7 +30,7 @@ class Project(db.Model):
     language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
 
     @validates("name")
-    def validate_name(self, name):
+    def validate_name(self, key, name):
         if name == None or name == "":
             raise ValueError(ResultsCodes.INCORRECT_NAME)
 
@@ -67,7 +67,7 @@ class File(db.Model):
     is_folder = db.Column(db.Boolean, nullable=False)
 
     @validates("name")
-    def validate_name(self, name):
+    def validate_name(self, key, name):
         if name == None or name == "":
             raise ValueError(ResultsCodes.INCORRECT_NAME)
 
