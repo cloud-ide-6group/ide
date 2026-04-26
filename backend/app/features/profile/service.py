@@ -53,7 +53,7 @@ def update_user_data(id, email, name, password_hash, photo_path):
     old_user = user_repo.get_by_id(id)
 
     if old_user == None:
-        return None
+        return None, ResultsCodes.USER_NOT_FOUND
 
     new_user = User()
     new_user.id = id

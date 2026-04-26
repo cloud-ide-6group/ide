@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import pytest
 from app import create_app, db
-from app.features.profile.service import get_user_data
+from app.features.profile.service import get_user_data, update_user_data
 from app.shared.dbmodels import *
 from config import DBTestConfig
 from werkzeug.security import generate_password_hash
@@ -46,3 +46,43 @@ def test_get_user_data(id, result, email, name, photo_path, app_context):
         assert user.name == name
     else:
         assert user == None
+
+
+@pytest.mark.parametrize(
+    "old_name, old_email, email, name, expected_code",
+    [
+        ("upd3", "upd3@mail.ru", "userupd3@mail.ru", "test_user3", ResultsCodes.OK),
+        (
+            "upd2",
+            "upd2@mail.ru",
+            "invalid-email",
+            "test_user2",
+            ResultsCodes.INVALID_EMAIL,
+        ),
+    ],
+)
+def test_update_user_data(old_name, old_email, email, name, expected_code, app_context):
+    user = User(
+        name=old_name,
+        email=old_email,
+        password_hash="old_hash",
+        photo_path="old_path",
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    id = db.session.query(User).filter(User.email == old_email).first().id
+
+    result, code = update_user_data(id, email, name, "new_hash", "new_path")
+
+    assert code == expected_code
+
+    if expected_code == ResultsCodes.OK:
+        assert result is not None
+        assert result.email == email
+    else:
+        assert result is None
+
+    deleted_user = db.session.get(User, id)
+    db.session.delete(deleted_user)
+    db.session.commit()
