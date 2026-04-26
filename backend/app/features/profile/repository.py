@@ -43,18 +43,22 @@ class UserRepository:
         Returns:
             User: Пользователь
         """
-        old_user = db.session.get(User, new_user.id)
+        try:
+            old_user = db.session.get(User, new_user.id)
 
-        if old_user == None or new_user == None:
-            return None
+            if old_user == None or new_user == None:
+                return None
 
-        old_user.email = new_user.email
-        old_user.name = new_user.name
-        old_user.password_hash = new_user.password_hash
-        old_user.photo_path = new_user.photo_path
+            old_user.email = new_user.email
+            old_user.name = new_user.name
+            old_user.password_hash = new_user.password_hash
+            old_user.photo_path = new_user.photo_path
 
-        db.session.commit()
-        return old_user
+            db.session.commit()
+            return old_user
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
     def get_password_hash(self, id):
         """

@@ -193,6 +193,8 @@ class User(db.Model):
         if not email:
             raise ValueError(ResultsCodes.INVALID_EMAIL)
 
+        email = email.replace(" ", "")
+
         try:
             valid = validate_email(email)
             return valid.normalized

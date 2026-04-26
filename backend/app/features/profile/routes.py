@@ -177,12 +177,12 @@ def update_profile():
 
     data = request.json
 
-    user = update_user_data(id, data["email"], data["name"], None, None)
+    user, result = update_user_data(id, data["email"], data["name"], None, None)
 
-    if user != None:
+    if result == ResultsCodes.OK:
         return {"message": ResultsCodes.DATA_UPDATED}, 200
     else:
-        return {"message": ResultsCodes.USER_NOT_FOUND}, 404
+        return {"message": result}, 404
 
 
 @profile_bp.route("/profile/update/password", methods=["PUT"])
@@ -255,8 +255,8 @@ def update_password():
             return {"message": result}, 401
 
         password_hash = get_password_hash(data["new_password"])
-        user = update_user_data(id, None, None, password_hash, None)
-        if user != None:
+        user, result = update_user_data(id, None, None, password_hash, None)
+        if result == ResultsCodes.OK:
             return {"message": ResultsCodes.DATA_UPDATED}, 200
 
     return {"message": ResultsCodes.NEW_PASSWORD_NULL}, 409
@@ -329,7 +329,7 @@ def update_photo():
     if result != ResultsCodes.OK or filename == None:
         return {"message": result}, 409
     else:
-        user = update_user_data(id, None, None, None, filename)
+        user, result = update_user_data(id, None, None, None, filename)
         if user == None:
             return {"message": ResultsCodes.INVALID_BASE64}, 409
 

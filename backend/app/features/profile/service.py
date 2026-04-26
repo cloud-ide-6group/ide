@@ -48,6 +48,7 @@ def update_user_data(id, email, name, password_hash, photo_path):
 
     Returns:
         User: Обновленный пользователь
+        ResultCodes: Результат выполнения
     """
     old_user = user_repo.get_by_id(id)
 
@@ -57,12 +58,19 @@ def update_user_data(id, email, name, password_hash, photo_path):
     new_user = User()
     new_user.id = id
 
-    new_user.email = email or old_user.email
+    try:
+        new_user.email = email or old_user.email
+    except:
+        return None, ResultsCodes.INVALID_EMAIL
+
     new_user.name = name or old_user.name
     new_user.password_hash = password_hash or old_user.password_hash
     new_user.photo_path = photo_path or old_user.photo_path
 
-    return user_repo.update_user(new_user)
+    try:
+        return user_repo.update_user(new_user), ResultsCodes.OK
+    except:
+        return None, ResultsCodes.UPDATED_DATA_INCORRECT
 
 
 def check_old_password(id, password):

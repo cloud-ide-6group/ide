@@ -27,3 +27,4 @@ class ResultsCodes:
     )
     INVALID_BASE64 = "Неверна строка изображения"
     NEW_PASSWORD_NULL = "Новый пароль не может быть null"
+    UPDATED_DATA_INCORRECT = "Данные для обновления неверны"
