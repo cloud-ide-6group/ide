@@ -10,6 +10,9 @@ import ru.vsu.front.datastore.TokenStorage
  * @property tokenStorage хранилище токенов.
  */
 class AuthManager(private val tokenStorage: TokenStorage) {
+    /**
+     * Текущее состояние авторизации.
+     */
     private val _isAuthorized = MutableStateFlow<AuthState>(checkAuthorized())
     val isAuthorized = _isAuthorized.asStateFlow()
 
