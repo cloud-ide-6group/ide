@@ -1,7 +1,6 @@
 package ru.vsu.front.datastore
 
 import kotlinx.serialization.json.Json
-import ru.vsu.front.datastore.entity.ExpireTimeFromPayload
 import ru.vsu.front.datastore.entity.IdFromPayload
 import ru.vsu.front.model.entity.AuthTokens
 import java.util.Base64
@@ -11,7 +10,7 @@ import java.util.prefs.Preferences
  * Хранилище JWT-токенов.
  * Обеспечивает безопасное чтение, запись и удаление токенов с использованием локального шифрования.
  *
- * @param cryptoManager Утилита для шифрования и дешифрования строковых данных.
+ * @param cryptoManager Утилита для шифрования и дешифрования.
  * @param prefs Хранилище.
  * @param json Json.
  */
@@ -43,7 +42,6 @@ class TokenStorage(
                 return AuthTokens(decodedAccessToken, decodedRefreshToken)
             }
         }
-
         return null
     }
 
@@ -82,6 +80,8 @@ class TokenStorage(
 
     /**
      * Извлекает идентификатор пользователя из токена.
+     *
+     * @return Идентификатор пользователя или null.
      */
     fun getUserIdFromToken(): Int? {
         return try {
@@ -89,24 +89,8 @@ class TokenStorage(
             val payloadBase64 = accessToken.split(".")[1]
             val decodedBytes = Base64.getUrlDecoder().decode(payloadBase64)
             val decodedString = String(decodedBytes, Charsets.UTF_8)
-
+            println(accessToken)
             json.decodeFromString<IdFromPayload>(decodedString).id
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    /**
-     * Извлекает время прихода access токена в негодность.
-     */
-    fun getExpireTimeFromToken(): Long? {
-        return try {
-            val accessToken = getTokensSync()?.accessToken ?: return null
-            val payloadBase64 = accessToken.split(".")[1]
-            val decodedBytes = Base64.getUrlDecoder().decode(payloadBase64)
-            val decodedString = String(decodedBytes, Charsets.UTF_8)
-
-            json.decodeFromString<ExpireTimeFromPayload>(decodedString).exp
         } catch (_: Exception) {
             null
         }

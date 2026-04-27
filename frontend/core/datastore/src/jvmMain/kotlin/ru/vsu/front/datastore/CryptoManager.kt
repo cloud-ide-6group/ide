@@ -11,7 +11,10 @@ import javax.crypto.spec.SecretKeySpec
  * Класс для шифрования и дешифрования локальных данных.
  * * Использует алгоритм AES (256 бит). Мастер-ключ генерируется автоматически при первом запуске
  * и сохраняется в хранилище через [Preferences].
- * * @param prefs Хранилище.
+ *
+ * * @property prefs Хранилище.
+ * * @property keyName Названия ключа.
+ * * @property secretKey Секретный ключ.
  */
 class CryptoManager(
     private val prefs: Preferences
@@ -36,7 +39,8 @@ class CryptoManager(
     /**
      * Зашифровывает переданную строку.
      *
-     * @param plainText Исходная незашифрованная строка.
+     * @param plainText Исходная не зашифрованная строка.
+     *
      * @return Зашифрованная строка, закодированная в формате Base64.
      */
     fun encrypt(plainText: String): String {
@@ -50,6 +54,7 @@ class CryptoManager(
      * Расшифровывает зашифрованную строку.
      *
      * @param encryptedText Зашифрованная строка в формате Base64, полученная из метода [encrypt].
+     *
      * @return Расшифрованная исходная строка или `null`, если произошла ошибка.
      */
     fun decrypt(encryptedText: String): String? {
