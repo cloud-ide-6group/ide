@@ -116,7 +116,6 @@ class DefaultProfileRepository(
                 }
 
                 else -> {
-                    println(response.bodyAsText())
                     Response.Error(RequestError.UnknownError())
                 }
             }

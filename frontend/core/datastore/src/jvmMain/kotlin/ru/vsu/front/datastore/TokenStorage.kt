@@ -89,7 +89,6 @@ class TokenStorage(
             val payloadBase64 = accessToken.split(".")[1]
             val decodedBytes = Base64.getUrlDecoder().decode(payloadBase64)
             val decodedString = String(decodedBytes, Charsets.UTF_8)
-            println(accessToken)
             json.decodeFromString<IdFromPayload>(decodedString).id
         } catch (_: Exception) {
             null
