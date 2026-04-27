@@ -1,5 +1,6 @@
 package ru.vsu.front.profile.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
@@ -73,7 +75,6 @@ internal fun UserAvatar(
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-
         if (isHovered) {
             Icon(
                 modifier = Modifier.matchParentSize().scale(0.5f),

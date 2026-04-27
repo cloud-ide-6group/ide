@@ -68,10 +68,6 @@ fun ProfileScreen(
     }
 
     when(val result = picker.result) {
-        is ImagePickerResult.Error -> {
-            // TODO Show error
-        }
-
         is ImagePickerResult.Success -> {
             val photo = result.first
             photo?.let {
@@ -80,7 +76,6 @@ fun ProfileScreen(
         }
 
         else -> {
-            // Nothing
         }
     }
 
@@ -135,10 +130,10 @@ fun ProfileScreen(
                             onNewPasswordChange = {
                                 viewModel.processCommand(ProfileCommand.ChangeNewPassword(it))
                             },
-                            onChangeCurrentPasswordVisibility = {
+                            onCurrentPasswordVisibilityChange = {
                                 viewModel.processCommand(ProfileCommand.ChangeCurrentPasswordVisibility)
                             },
-                            onChangeNewPasswordVisibility = {
+                            onNewPasswordVisibilityChange = {
                                 viewModel.processCommand(ProfileCommand.ChangeNewPasswordVisibility)
                             },
                             onUpdateDataClick = {
@@ -208,7 +203,7 @@ fun ProfileScreen(
                     CodeTogetherText(text = "Произошла ошибка во время загрузки! :(")
                     Spacer(modifier = Modifier.height(16.dp))
                     CodeTogetherTextButton(text = "Повторить") {
-                        viewModel.processCommand(ProfileCommand.RepeatLoadingInfo)
+                        viewModel.processCommand(ProfileCommand.RepeatLoadingProfile)
                     }
                 }
             }
