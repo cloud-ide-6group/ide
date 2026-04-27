@@ -8,11 +8,7 @@ import kotlinx.coroutines.launch
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
 import ru.vsu.front.domain.validation.EmailMatcher
-import ru.vsu.front.model.entity.ProgramingLanguage
-import ru.vsu.front.model.entity.Project
-import ru.vsu.front.model.entity.RequestError
-import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserProfile
+import ru.vsu.front.model.entity.*
 
 /**
  * Вьюмодель экрана профиля.
@@ -280,7 +276,7 @@ class ProfileViewModel(
                         photoBase64 = command.photoBase64
                     )) {
                         is Response.Error<*> -> {
-                            when(result.requestError) {
+                            when (result.requestError) {
                                 is RequestError.Unauthorized -> {
                                     _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
                                 }
@@ -436,10 +432,12 @@ sealed interface UiStatusProfile {
      * Данные загружаются.
      */
     data object Loading : UiStatusProfile
+
     /**
      * Данные загружены.
      */
     data class Loaded(val uiStateProfileLoaded: UiStateProfileLoaded) : UiStatusProfile
+
     /**
      * Ошибка при загрузке профиля.
      */

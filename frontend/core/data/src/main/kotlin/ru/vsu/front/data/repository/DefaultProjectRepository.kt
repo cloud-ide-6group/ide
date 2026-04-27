@@ -1,17 +1,15 @@
 package ru.vsu.front.data.repository
 
-import io.ktor.client.call.body
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
-import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.domain.repository.ProjectRepository
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.network.HttpRoutes
 import ru.vsu.front.network.HttpRoutes.CREATE_PROJECT
-import ru.vsu.front.network.HttpRoutes.PROGRAMING_LANGUAGES
 import ru.vsu.front.network.MainHttpClientManager
 
 /**
@@ -39,13 +37,15 @@ class DefaultProjectRepository(
         return try {
             val response = mainHttpClientManager.getClient().post(CREATE_PROJECT) {
                 contentType(ContentType.Application.Json)
-                setBody(CreateProjectRequest(
-                    programingLanguageId = programingLanguageId,
-                    projectName = projectName
-                ))
+                setBody(
+                    CreateProjectRequest(
+                        programingLanguageId = programingLanguageId,
+                        projectName = projectName
+                    )
+                )
             }
 
-            when(response.status) {
+            when (response.status) {
                 HttpStatusCode.Created -> {
                     val createdProjectId = response.body<CreateProjectResponse>().projectId
                     Response.Success(createdProjectId)

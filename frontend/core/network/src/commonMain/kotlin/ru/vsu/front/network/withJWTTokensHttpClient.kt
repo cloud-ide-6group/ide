@@ -3,9 +3,8 @@ package ru.vsu.front.network
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
@@ -68,7 +67,7 @@ fun withJWTTokensHttpClient(
                 refreshTokens {
                     val oldTokens = tokenStorage.getTokens() ?: return@refreshTokens null
 
-                    when(val response = refreshUseCase(oldTokens.refreshToken)) {
+                    when (val response = refreshUseCase(oldTokens.refreshToken)) {
                         is Response.Error<*> -> {
                             tokenStorage.clearTokens()
                             authManager.logout()

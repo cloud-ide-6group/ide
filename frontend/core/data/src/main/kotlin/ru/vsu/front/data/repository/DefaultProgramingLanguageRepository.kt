@@ -5,12 +5,10 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import ru.vsu.front.data.entity.dto.ProgramingLanguageDto
 import ru.vsu.front.data.mapper.toEntities
-import ru.vsu.front.domain.repository.AuthRepository
 import ru.vsu.front.domain.repository.ProgramingLanguageRepository
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.network.HttpRoutes.PROFILE
 import ru.vsu.front.network.HttpRoutes.PROGRAMING_LANGUAGES
 import ru.vsu.front.network.MainHttpClientManager
 

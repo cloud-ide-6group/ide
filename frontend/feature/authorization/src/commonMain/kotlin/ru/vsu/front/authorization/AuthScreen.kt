@@ -1,7 +1,6 @@
 package ru.vsu.front.authorization
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,8 +15,8 @@ import front.feature.authorization.generated.resources.Res
 import front.feature.authorization.generated.resources.app_icon_without_background
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.authorization.component.AuthForm
-import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 import ru.vsu.front.authorization.component.LeftSide
+import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 
 /**
  * Экран авторизации и регистрации.

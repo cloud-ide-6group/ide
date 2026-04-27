@@ -1,12 +1,7 @@
 package ru.vsu.front.profile
 
 import app.cash.turbine.test
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkAll
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -14,15 +9,9 @@ import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.ProgramingLanguage
-import ru.vsu.front.model.entity.Project
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserProfile
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTest {
@@ -161,7 +150,9 @@ class ProfileViewModelTest {
         viewModel.processCommand(ProfileCommand.ChangeProgramingLanguage(dummyLanguages[1]))
         viewModel.processCommand(ProfileCommand.ChangeProjectName("My Project"))
 
-        coEvery { createProjectUseCase(programingLanguageId = 2, projectName = "My Project") } returns Response.Success(99)
+        coEvery { createProjectUseCase(programingLanguageId = 2, projectName = "My Project") } returns Response.Success(
+            99
+        )
 
         viewModel.events.test {
             viewModel.processCommand(ProfileCommand.CreateProject)

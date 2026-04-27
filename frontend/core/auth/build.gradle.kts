@@ -11,5 +11,12 @@ kotlin {
             implementation(libs.coroutines)
             implementation(projects.core.datastore)
         }
+
+        jvmMain.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.mockk)
+            implementation(libs.cash.turbine.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
     }
 }

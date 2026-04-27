@@ -3,7 +3,7 @@ package ru.vsu.front.datastore
 import kotlinx.serialization.json.Json
 import ru.vsu.front.datastore.entity.IdFromPayload
 import ru.vsu.front.model.entity.AuthTokens
-import java.util.Base64
+import java.util.*
 import java.util.prefs.Preferences
 
 /**

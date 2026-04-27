@@ -2,7 +2,6 @@ package ru.vsu.front.domain.usecase
 
 import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserProfile
 
 /**
  * UseCase для обновления почты и логина пользователя.

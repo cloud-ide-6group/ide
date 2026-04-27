@@ -23,7 +23,7 @@ import ru.vsu.front.domain.repository.ProjectRepository
  */
 val dataModule = module {
     single {
-        DefaultAuthRepository(get(named("authHttpClient")))
+        DefaultAuthRepository(get(named("withoutJWTTokensHttpClient")))
     }.bind<AuthRepository>()
 
     single {

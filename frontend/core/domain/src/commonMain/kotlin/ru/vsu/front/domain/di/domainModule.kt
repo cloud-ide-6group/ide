@@ -1,15 +1,7 @@
 package ru.vsu.front.domain.di
 
 import org.koin.dsl.module
-import ru.vsu.front.domain.usecase.GetProfileUseCase
-import ru.vsu.front.domain.usecase.GetProgramingLanguagesUseCase
-import ru.vsu.front.domain.usecase.LoginUseCase
-import ru.vsu.front.domain.usecase.CreateProjectUseCase
-import ru.vsu.front.domain.usecase.RefreshUseCase
-import ru.vsu.front.domain.usecase.SignUseCase
-import ru.vsu.front.domain.usecase.UpdateProfileDataUseCase
-import ru.vsu.front.domain.usecase.UpdateProfilePasswordUseCase
-import ru.vsu.front.domain.usecase.UpdateProfilePhotoUseCase
+import ru.vsu.front.domain.usecase.*
 
 /**
  * Модуль слоя domain.

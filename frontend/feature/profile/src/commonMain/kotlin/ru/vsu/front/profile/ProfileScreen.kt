@@ -1,15 +1,6 @@
 package ru.vsu.front.profile
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -29,11 +20,7 @@ import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import ru.vsu.front.profile.component.CreatingProject
-import ru.vsu.front.profile.component.CustomDialog
-import ru.vsu.front.profile.component.ProfileSections
-import ru.vsu.front.profile.component.ProjectsSection
-import ru.vsu.front.profile.component.UserAvatar
+import ru.vsu.front.profile.component.*
 
 /**
  * Экран профиля.
@@ -67,7 +54,7 @@ fun ProfileScreen(
         }
     }
 
-    when(val result = picker.result) {
+    when (val result = picker.result) {
         is ImagePickerResult.Success -> {
             val photo = result.first
             photo?.let {
@@ -199,7 +186,11 @@ fun ProfileScreen(
             }
 
             UiStatusProfile.Error -> {
-                Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     CodeTogetherText(text = "Произошла ошибка во время загрузки! :(")
                     Spacer(modifier = Modifier.height(16.dp))
                     CodeTogetherTextButton(text = "Повторить") {

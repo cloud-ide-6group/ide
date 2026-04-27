@@ -8,7 +8,6 @@ import front.core.designsystem.generated.resources.visibility_off_24dp
 import front.core.designsystem.generated.resources.visibility_on_24dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import java.beans.Visibility
 
 /**
  * Кнопка с поддержкой переключения видимости.

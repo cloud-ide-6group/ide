@@ -1,7 +1,7 @@
 package ru.vsu.front.network
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.RefreshUseCase

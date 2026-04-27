@@ -23,7 +23,7 @@ class AuthManager(private val tokenStorage: TokenStorage) {
      */
     private fun checkAuthorized(): AuthState {
         val userId = tokenStorage.getUserIdFromToken()
-        return if(userId != null) AuthState.Authorized(userId) else AuthState.NotAuthorized
+        return if (userId != null) AuthState.Authorized(userId) else AuthState.NotAuthorized
     }
 
     /**

@@ -17,7 +17,6 @@ import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.Const
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
-import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.di.initKoin
 import ru.vsu.front.navigation.Navigation

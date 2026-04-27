@@ -1,8 +1,6 @@
 package ru.vsu.front.data.mapper
 
-import ru.vsu.front.data.entity.dto.ProgramingLanguageDto
 import ru.vsu.front.data.entity.dto.ProjectDto
-import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Project
 
 

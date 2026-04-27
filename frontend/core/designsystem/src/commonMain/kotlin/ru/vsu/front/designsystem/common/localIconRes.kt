@@ -1,10 +1,6 @@
 package ru.vsu.front.designsystem.common
 
-import front.core.designsystem.generated.resources.Res
-import front.core.designsystem.generated.resources.java
-import front.core.designsystem.generated.resources.javascript
-import front.core.designsystem.generated.resources.lua
-import front.core.designsystem.generated.resources.python
+import front.core.designsystem.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import ru.vsu.front.model.entity.ProgramingLanguage
 

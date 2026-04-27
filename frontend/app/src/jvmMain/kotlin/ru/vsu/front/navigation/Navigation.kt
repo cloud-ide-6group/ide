@@ -32,7 +32,7 @@ fun Navigation(
 
     NavHost(
         navController = navController,
-        startDestination = if(session is AuthState.Authorized) {
+        startDestination = if (session is AuthState.Authorized) {
             Route.Profile((session as AuthState.Authorized).userId)
         } else Route.Auth,
         enterTransition = { EnterTransition.None },

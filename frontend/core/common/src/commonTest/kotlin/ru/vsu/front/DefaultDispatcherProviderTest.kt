@@ -2,7 +2,6 @@ package ru.vsu.front
 
 import kotlinx.coroutines.Dispatchers
 import ru.vsu.front.common.dispatcher_provider.DefaultDispatcherProvider
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
