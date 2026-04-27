@@ -71,10 +71,16 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Вход в аккаунт.
+     */
     private fun login() {
         viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
-            if (!EmailMatcher.isValid(state.email)) {
+            val trimmedEmail = state.email.trim()
+            val trimmedPassword = state.password.trim()
+
+            if (!EmailMatcher.isValid(trimmedEmail)) {
                 _events.emit(AuthEffect.ShowError("Недопустимая почта"))
                 return@launch
             }
@@ -82,19 +88,22 @@ class AuthViewModel(
             _uiState.update { it.copy(buttonEnabled = false) }
 
             val result = loginUseCase(
-                email = state.email,
-                password = state.password
+                email = trimmedEmail,
+                password = trimmedPassword
             )
 
             handleAuthResult(result)
         }
     }
 
+    /**
+     * Регистрация.
+     */
     private fun signUp() {
         viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
-
-            if (!EmailMatcher.isValid(state.email)) {
+            val trimmedEmail = state.email.trim()
+            if (!EmailMatcher.isValid(trimmedEmail)) {
                 _events.emit(AuthEffect.ShowError("Недопустимая почта"))
                 return@launch
             }
@@ -108,7 +117,7 @@ class AuthViewModel(
 
             val result = signUseCase(
                 name = state.name,
-                email = state.email,
+                email = trimmedEmail,
                 password = state.password
             )
 
@@ -116,6 +125,10 @@ class AuthViewModel(
         }
     }
 
+
+    /**
+     * Обработка результата запроса.
+     */
     private suspend fun handleAuthResult(result: Response<AuthTokens>) {
         when (result) {
             is Response.Error<*> -> {

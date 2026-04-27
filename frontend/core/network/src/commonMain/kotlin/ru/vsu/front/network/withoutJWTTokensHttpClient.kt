@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
  *
  * @return Готовый HTTP-клиент.
  */
-fun baseHttpClient(baseUrl: String): HttpClient {
+fun withoutJWTTokensHttpClient(baseUrl: String): HttpClient {
     return HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {

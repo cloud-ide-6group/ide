@@ -20,6 +20,10 @@ import ru.vsu.front.model.entity.UserProfile
  * @param getProfileUseCase UseCase для получения профиля.
  * @param getProgramingLanguagesUseCase UseCase получения доступных языков программирования.
  * @param createProjectUseCase UseCase для создания проекта.
+ * @param updateProfileDataUseCase UseCase для обновления почты и имени пользователя.
+ * @param updateProfilePasswordUseCase UseCase для обновления пароля.
+ * @param createProjectUseCase UseCase для создания проекта.
+ * @param updateProfilePhotoUseCase UseCase для обновления аватара пользователя.
  * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class ProfileViewModel(
@@ -43,9 +47,12 @@ class ProfileViewModel(
         loadProfile()
     }
 
+    /**
+     * Выполняет определенные действия в зависимости от переданной команды.
+     */
     fun processCommand(command: ProfileCommand) {
         when (command) {
-            is ProfileCommand.ChangeName ->
+            is ProfileCommand.ChangeName -> {
                 updateLoadedState {
                     val hasChangesName = it.initialName.trim() != command.name.trim()
                     it.copy(
@@ -53,8 +60,9 @@ class ProfileViewModel(
                         hasChangesName = hasChangesName,
                     )
                 }
+            }
 
-            is ProfileCommand.ChangeEmail ->
+            is ProfileCommand.ChangeEmail -> {
                 updateLoadedState {
                     val trimmedEmail = command.email.trim()
                     it.copy(
@@ -64,32 +72,40 @@ class ProfileViewModel(
                         ),
                     )
                 }
+            }
 
-            is ProfileCommand.ChangeCurrentPassword ->
+            is ProfileCommand.ChangeCurrentPassword -> {
                 updateLoadedState { it.copy(currentPassword = command.currentPassword) }
+            }
 
-            is ProfileCommand.ChangeNewPassword ->
+            is ProfileCommand.ChangeNewPassword -> {
                 updateLoadedState {
                     it.copy(
                         newPassword = command.newPassword,
                         hasChangesNewPassword = command.newPassword.trim() != ""
                     )
                 }
+            }
 
-            ProfileCommand.ChangeCurrentPasswordVisibility ->
+            ProfileCommand.ChangeCurrentPasswordVisibility -> {
                 updateLoadedState { it.copy(isCurrentPasswordVisible = !it.isCurrentPasswordVisible) }
+            }
 
-            ProfileCommand.ChangeNewPasswordVisibility ->
+            ProfileCommand.ChangeNewPasswordVisibility -> {
                 updateLoadedState { it.copy(isNewPasswordVisible = !it.isNewPasswordVisible) }
+            }
 
-            ProfileCommand.ChangeProjectsVisibility ->
+            ProfileCommand.ChangeProjectsVisibility -> {
                 updateLoadedState { it.copy(areProjectsVisible = !it.areProjectsVisible) }
+            }
 
-            is ProfileCommand.ChangeProgramingLanguage ->
+            is ProfileCommand.ChangeProgramingLanguage -> {
                 updateLoadedState { it.copy(selectedProgramingLanguageForProject = command.programingLanguage) }
+            }
 
-            is ProfileCommand.ChangeProjectName ->
+            is ProfileCommand.ChangeProjectName -> {
                 updateLoadedState { it.copy(projectName = command.projectName) }
+            }
 
             ProfileCommand.CreateProject -> {
                 viewModelScope.launch(dispatcherProvider.io) {
@@ -97,14 +113,11 @@ class ProfileViewModel(
                         (_uiState.value as? UiStatusProfile.Loaded)?.uiStateProfileLoaded ?: return@launch
 
                     val languageId = currentState.selectedProgramingLanguageForProject?.id ?: return@launch
-                    val projectName = currentState.projectName.trim()
+                    val trimmedProjectName = currentState.projectName.trim()
 
-                    if (projectName.isEmpty()) return@launch
+                    if (trimmedProjectName.isEmpty()) return@launch
 
-                    updateLoadedState {
-                        it.copy(isCreateProjectDialogShown = false)
-                    }
-                    val result = createProjectUseCase(languageId, projectName)
+                    val result = createProjectUseCase(languageId, trimmedProjectName)
 
                     updateLoadedState { latestState ->
                         when (result) {
@@ -113,10 +126,11 @@ class ProfileViewModel(
                                 latestState.copy(
                                     projects = latestState.projects + Project(
                                         id = result.data,
-                                        name = projectName
+                                        name = trimmedProjectName
                                     ),
                                     projectName = "",
-                                    selectedProgramingLanguageForProject = latestState.programingLanguages.first()
+                                    selectedProgramingLanguageForProject = latestState.programingLanguages.first(),
+                                    isCreateProjectDialogShown = false
                                 )
                             }
 
@@ -139,28 +153,28 @@ class ProfileViewModel(
                                     }
 
                                     else -> {
-                                        // Nothing
                                     }
                                 }
-                                latestState.copy(
-                                    projectName = "",
-                                    selectedProgramingLanguageForProject = latestState.programingLanguages.first()
-                                )
+                                latestState
                             }
                         }
                     }
                 }
             }
 
-            ProfileCommand.ChangeCreateProjectDialogVisibility -> updateLoadedState {
-                it.copy(isCreateProjectDialogShown = !it.isCreateProjectDialogShown)
+            ProfileCommand.ChangeCreateProjectDialogVisibility -> {
+                updateLoadedState {
+                    it.copy(isCreateProjectDialogShown = !it.isCreateProjectDialogShown)
+                }
             }
 
-            ProfileCommand.ChangeProgramingLanguagesVisibility -> updateLoadedState {
-                it.copy(isProgramingLanguagesExpanded = !it.isProgramingLanguagesExpanded)
+            ProfileCommand.ChangeProgramingLanguagesVisibility -> {
+                updateLoadedState {
+                    it.copy(isProgramingLanguagesExpanded = !it.isProgramingLanguagesExpanded)
+                }
             }
 
-            ProfileCommand.RepeatLoadingInfo -> {
+            ProfileCommand.RepeatLoadingProfile -> {
                 loadProfile()
             }
 
@@ -175,11 +189,11 @@ class ProfileViewModel(
                     when (val result = updateProfileDataUseCase(email = email, name = name)) {
                         is Response.Error<*> -> {
                             when (val requestError = result.requestError) {
-                                is RequestError.NotFound -> {
+                                is RequestError.Unauthorized -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
 
-                                is RequestError.UnknownError -> {
+                                is RequestError.NotFound -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
 
@@ -187,8 +201,11 @@ class ProfileViewModel(
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
 
+                                is RequestError.UnknownError -> {
+                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                }
+
                                 else -> {
-                                    // Nothing
                                 }
                             }
                         }
@@ -222,11 +239,11 @@ class ProfileViewModel(
                     )) {
                         is Response.Error<*> -> {
                             when (val requestError = result.requestError) {
-                                is RequestError.NotFound -> {
+                                is RequestError.Conflict -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
 
-                                is RequestError.Conflict -> {
+                                is RequestError.Unauthorized -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
 
@@ -239,7 +256,6 @@ class ProfileViewModel(
                                 }
 
                                 else -> {
-                                    // Nothing
                                 }
                             }
                         }
@@ -264,13 +280,33 @@ class ProfileViewModel(
                         photoBase64 = command.photoBase64
                     )) {
                         is Response.Error<*> -> {
-                            println(result.requestError.message)
+                            when(result.requestError) {
+                                is RequestError.Unauthorized -> {
+                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                }
+
+                                is RequestError.Conflict -> {
+                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                }
+
+                                is RequestError.UnknownError -> {
+                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                }
+
+                                is RequestError.NetworkException -> {
+                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                }
+
+                                else -> {
+                                }
+                            }
                         }
 
                         is Response.Success<*> -> {
                             updateLoadedState {
                                 it.copy(photo = command.photoBase64)
                             }
+                            _events.emit(ProfileEffect.ShowMessage("Аватар изменён"))
                         }
                     }
                 }
@@ -278,6 +314,9 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Загрузка профиля.
+     */
     private fun loadProfile() {
         viewModelScope.launch(dispatcherProvider.io) {
             _uiState.update {
@@ -295,7 +334,6 @@ class ProfileViewModel(
                 is Response.Success<UserProfile> -> {
                     when (val programingLanguages = programingLanguagesResponse.await()) {
                         is Response.Error<*> -> {
-                            println(programingLanguages.requestError.message)
                             _uiState.update {
                                 UiStatusProfile.Error
                             }
@@ -329,6 +367,9 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Обновление состояния, если оно текущее состояние Loaded.
+     */
     private inline fun updateLoadedState(transform: (UiStateProfileLoaded) -> UiStateProfileLoaded) {
         _uiState.update { currentState ->
             if (currentState is UiStatusProfile.Loaded) {
@@ -359,7 +400,7 @@ sealed interface ProfileCommand {
     data object UpdateData : ProfileCommand
     data object UpdatePassword : ProfileCommand
     data class UpdatePhoto(val photoBase64: String) : ProfileCommand
-    data object RepeatLoadingInfo : ProfileCommand
+    data object RepeatLoadingProfile : ProfileCommand
 }
 
 /**
@@ -389,14 +430,19 @@ data class UiStateProfileLoaded(
 
 /**
  * Текущий статус экрана.
- *
- * [Loading] - Данные загружаются.
- * [Loaded] - Данные загружены.
- * [Error] - Ошибка при загрузке профиля.
  */
 sealed interface UiStatusProfile {
+    /**
+     * Данные загружаются.
+     */
     data object Loading : UiStatusProfile
+    /**
+     * Данные загружены.
+     */
     data class Loaded(val uiStateProfileLoaded: UiStateProfileLoaded) : UiStatusProfile
+    /**
+     * Ошибка при загрузке профиля.
+     */
     data object Error : UiStatusProfile
 }
 
@@ -404,5 +450,8 @@ sealed interface UiStatusProfile {
  * События экрана профиля.
  */
 sealed interface ProfileEffect {
+    /**
+     * Показывает сообщение на экране.
+     */
     data class ShowMessage(val message: String) : ProfileEffect
 }

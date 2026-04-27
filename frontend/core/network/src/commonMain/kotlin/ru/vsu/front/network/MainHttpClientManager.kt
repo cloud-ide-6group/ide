@@ -9,7 +9,11 @@ import ru.vsu.front.domain.usecase.RefreshUseCase
 /**
  * Создает и настраивает экземпляр [HttpClient] для выполнения запросов, в заголовке которых может быть токен.
  * * Использует движок [CIO].
- * * @param baseUrl базовый url для запросов.
+ *
+ * * @property baseUrl Базовый url для запросов.
+ * * @property tokenStorage Хранилище токенов.
+ * * @property refreshUseCase Юзкейс для обновления токенов.
+ * * @property authManager Менеджер аутентификации.
  *
  * @return Готовый HTTP-клиент.
  */
@@ -19,7 +23,7 @@ class MainHttpClientManager(
     private val refreshUseCase: RefreshUseCase,
     private val authManager: AuthManager
 ) {
-    private var _httpClient: HttpClient? = null
+    private var _withJWTTokensHttpClient: HttpClient? = null
 
     /**
      * Возвращает экземпляр [HttpClient].
@@ -27,7 +31,7 @@ class MainHttpClientManager(
      * Если не создан, создаёт и после возвращает.
      */
     fun getClient(): HttpClient {
-        return _httpClient ?: createClient().also { _httpClient = it }
+        return _withJWTTokensHttpClient ?: createClient().also { _withJWTTokensHttpClient = it }
     }
 
 
@@ -35,8 +39,8 @@ class MainHttpClientManager(
      * Очищает [HttpClient], необходимо для обновления токенов при выходе из аккаунта.
      */
     fun invalidateClient() {
-        _httpClient?.close()
-        _httpClient = null
+        _withJWTTokensHttpClient?.close()
+        _withJWTTokensHttpClient = null
     }
 
 
