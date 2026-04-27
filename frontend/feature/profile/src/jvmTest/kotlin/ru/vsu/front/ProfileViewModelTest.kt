@@ -1,38 +1,181 @@
-package ru.vsu.front
+package ru.vsu.front.profile
 
 import app.cash.turbine.test
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
-import ru.vsu.front.domain.usecase.GetProfileUseCase
+import ru.vsu.front.domain.usecase.*
+import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.ProgramingLanguage
+import ru.vsu.front.model.entity.Project
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserProfile
-import ru.vsu.front.profile.ProfileCommand
-import ru.vsu.front.profile.ProfileViewModel
-import ru.vsu.front.profile.UiStatusProfile
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
-/**
- * Тесты для [ProfileViewModelTest].
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProfileViewModelTest {
+    private lateinit var getProfileUseCase: GetProfileUseCase
+    private lateinit var getProgramingLanguagesUseCase: GetProgramingLanguagesUseCase
+    private lateinit var createProjectUseCase: CreateProjectUseCase
+    private lateinit var updateProfileDataUseCase: UpdateProfileDataUseCase
+    private lateinit var updateProfilePasswordUseCase: UpdateProfilePasswordUseCase
+    private lateinit var updateProfilePhotoUseCase: UpdateProfilePhotoUseCase
+    private lateinit var dispatcherProvider: DispatcherProvider
+    private val testDispatcher = UnconfinedTestDispatcher()
 
-    private lateinit var viewModel: ProfileViewModel
+    private val dummyProfile = UserProfile(
+        id = 1,
+        name = "Ivan",
+        email = "ivan@test.ru",
+        photo = "photo",
+        projects = emptyList()
+    )
+    private val dummyLanguages = listOf(
+        ProgramingLanguage(id = 1, name = "Kotlin", description = ""),
+        ProgramingLanguage(id = 2, name = "Java", description = "")
+    )
 
-    @Before
-    fun setup() {
+    @BeforeTest
+    fun setUp() {
+        getProfileUseCase = mockk()
+        getProgramingLanguagesUseCase = mockk()
+        createProjectUseCase = mockk()
+        updateProfileDataUseCase = mockk()
+        updateProfilePasswordUseCase = mockk()
+        updateProfilePhotoUseCase = mockk()
 
+        dispatcherProvider = mockk {
+            every { main } returns testDispatcher
+            every { io } returns testDispatcher
+            every { default } returns testDispatcher
+        }
+
+        mockkObject(EmailMatcher)
+        every { EmailMatcher.isValid(any()) } returns true
+    }
+
+    @AfterTest
+    fun tearDown() {
+        unmockkAll()
+    }
+
+    /**
+     * Фабричный метод для создания ViewModel.
+     * Позволяет настроить моки (coEvery) в самом тесте ДО вызова init {}.
+     */
+    private fun createViewModel(): ProfileViewModel {
+        return ProfileViewModel(
+            getProfileUseCase = getProfileUseCase,
+            getProgramingLanguagesUseCase = getProgramingLanguagesUseCase,
+            createProjectUseCase = createProjectUseCase,
+            updateProfileDataUseCase = updateProfileDataUseCase,
+            updateProfilePasswordUseCase = updateProfilePasswordUseCase,
+            updateProfilePhotoUseCase = updateProfilePhotoUseCase,
+            dispatcherProvider = dispatcherProvider
+        )
+    }
+
+    /**
+     * Настраивает успешный ответ для первичной загрузки данных.
+     */
+    private fun setupSuccessInitialization() {
+        coEvery { getProfileUseCase() } returns Response.Success(dummyProfile)
+        coEvery { getProgramingLanguagesUseCase() } returns Response.Success(dummyLanguages)
+    }
+
+    @Test
+    fun `init loads profile and languages successfully and sets Loaded state`() = runTest {
+        setupSuccessInitialization()
+
+        val viewModel = createViewModel()
+
+        val state = viewModel.uiState.value
+        assertIs<UiStatusProfile.Loaded>(state)
+
+        val loadedState = state.uiStateProfileLoaded
+        assertEquals("Ivan", loadedState.name)
+        assertEquals("Kotlin", loadedState.selectedProgramingLanguageForProject?.name)
+        assertEquals(2, loadedState.programingLanguages.size)
+    }
+
+    @Test
+    fun `init sets Error state when profile loading fails`() = runTest {
+        coEvery { getProfileUseCase() } returns Response.Error(mockk(relaxed = true))
+        coEvery { getProgramingLanguagesUseCase() } returns Response.Success(dummyLanguages)
+
+        val viewModel = createViewModel()
+
+        assertEquals(UiStatusProfile.Error, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `processCommand ChangeName updates state and sets hasChangesName to true`() = runTest {
+        setupSuccessInitialization()
+        val viewModel = createViewModel()
+
+        viewModel.processCommand(ProfileCommand.ChangeName("Alex"))
+
+        val state = viewModel.uiState.value as UiStatusProfile.Loaded
+        assertEquals("Alex", state.uiStateProfileLoaded.name)
+        assertTrue(state.uiStateProfileLoaded.hasChangesName)
+    }
+
+    @Test
+    fun `processCommand UpdateData calls useCase and emits success message`() = runTest {
+        setupSuccessInitialization()
+        val viewModel = createViewModel()
+
+        viewModel.processCommand(ProfileCommand.ChangeName("Alex"))
+
+        coEvery { updateProfileDataUseCase(email = "ivan@test.ru", name = "Alex") } returns Response.Success(Unit)
+
+        viewModel.events.test {
+            viewModel.processCommand(ProfileCommand.UpdateData)
+
+            assertEquals(ProfileEffect.ShowMessage("Данные обновлены"), awaitItem())
+
+            val state = viewModel.uiState.value as UiStatusProfile.Loaded
+            assertEquals("Alex", state.uiStateProfileLoaded.initialName)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `processCommand CreateProject creates project and updates list`() = runTest {
+        setupSuccessInitialization()
+        val viewModel = createViewModel()
+
+        viewModel.processCommand(ProfileCommand.ChangeProgramingLanguage(dummyLanguages[1]))
+        viewModel.processCommand(ProfileCommand.ChangeProjectName("My Project"))
+
+        coEvery { createProjectUseCase(programingLanguageId = 2, projectName = "My Project") } returns Response.Success(99)
+
+        viewModel.events.test {
+            viewModel.processCommand(ProfileCommand.CreateProject)
+
+            assertEquals(ProfileEffect.ShowMessage("Проект создан"), awaitItem())
+
+            val state = viewModel.uiState.value as UiStatusProfile.Loaded
+            val addedProject = state.uiStateProfileLoaded.projects.first()
+            assertEquals(99, addedProject.id)
+            assertEquals("My Project", addedProject.name)
+
+            assertEquals("", state.uiStateProfileLoaded.projectName)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

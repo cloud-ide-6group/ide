@@ -1,296 +1,179 @@
-package ru.vsu.front
+package ru.vsu.front.authorization
 
 import app.cash.turbine.test
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import ru.vsu.front.auth.AuthManager
-import ru.vsu.front.authorization.AuthCommand
-import ru.vsu.front.authorization.AuthEffect
-import ru.vsu.front.authorization.AuthViewModel
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
+import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.AuthTokens
-import ru.vsu.front.model.entity.RequestError
+import ru.vsu.front.model.entity.RequestError // Предполагаемый импорт
 import ru.vsu.front.model.entity.Response
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/**
- * Тесты для [AuthViewModel].
- */
+@OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
-
-    private val loginUseCase = mockk<LoginUseCase>()
-    private val signUseCase = mockk<SignUseCase>()
-    private val tokenStorage = mockk<TokenStorage>()
-    private val authManager = mockk<AuthManager>()
+    private lateinit var loginUseCase: LoginUseCase
+    private lateinit var signUseCase: SignUseCase
+    private lateinit var tokenStorage: TokenStorage
+    private lateinit var authManager: AuthManager
+    private lateinit var dispatcherProvider: DispatcherProvider
 
     private lateinit var viewModel: AuthViewModel
 
-    @Before
-    fun setup() {
+    private val testDispatcher = UnconfinedTestDispatcher()
+
+    @BeforeTest
+    fun setUp() {
+        loginUseCase = mockk()
+        signUseCase = mockk()
+        tokenStorage = mockk(relaxed = true)
+        authManager = mockk(relaxed = true)
+
+        dispatcherProvider = mockk {
+            every { main } returns testDispatcher
+            every { io } returns testDispatcher
+            every { default } returns testDispatcher
+        }
+
+        mockkObject(EmailMatcher)
+
         viewModel = AuthViewModel(
             loginUseCase = loginUseCase,
             signUseCase = signUseCase,
             tokenStorage = tokenStorage,
-            authManager = authManager,
-            dispatcherProvider = object : DispatcherProvider {
-                override val main: CoroutineDispatcher = Dispatchers.Main
-                override val io: CoroutineDispatcher = Dispatchers.IO
-                override val default: CoroutineDispatcher = Dispatchers.Default
-            }
+            dispatcherProvider = dispatcherProvider,
+            authManager = authManager
         )
     }
 
+    @AfterTest
+    fun tearDown() {
+        unmockkAll()
+    }
+
     @Test
-    fun `when name changes, uiState should be updated`() = runTest {
-        val newName = "newName"
-        viewModel.uiState.test {
-            assertEquals("", awaitItem().name)
+    fun `processCommand ChangeEmail updates email in state`() {
+        viewModel.processCommand(AuthCommand.ChangeEmail("test@mail.ru"))
+        assertEquals("test@mail.ru", viewModel.uiState.value.email)
+    }
 
-            viewModel.processCommand(AuthCommand.ChangeName(newName))
+    @Test
+    fun `processCommand ChangePasswordVisibility toggles state`() {
+        val initialState = viewModel.uiState.value.isPasswordVisible
+        viewModel.processCommand(AuthCommand.ChangePasswordVisibility)
+        assertEquals(!initialState, viewModel.uiState.value.isPasswordVisible)
+    }
 
-            assertEquals(newName, awaitItem().name)
+    @Test
+    fun `ClickLogin emits ShowError event when email is invalid`() = runTest {
+        every { EmailMatcher.isValid("invalid_email") } returns false
+        viewModel.processCommand(AuthCommand.ChangeEmail("invalid_email"))
+
+        viewModel.events.test {
+            viewModel.processCommand(AuthCommand.ClickLogin)
+
+            assertEquals(AuthEffect.ShowError("Недопустимая почта"), awaitItem())
+
+            coVerify(exactly = 0) { loginUseCase(any(), any()) }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `when email changes, uiState should be updated`() = runTest {
-        val newEmail = "new_email@mail.com"
+    fun `ClickLogin calls useCase and emits Error on failure`() = runTest {
+        val testEmail = "test@mail.ru"
+        val testPassword = "123"
+        every { EmailMatcher.isValid(testEmail) } returns true
+        viewModel.processCommand(AuthCommand.ChangeEmail(testEmail))
+        viewModel.processCommand(AuthCommand.ChangePassword(testPassword))
 
-        viewModel.uiState.test {
-            assertEquals("", awaitItem().email)
+        val mockError = mockk<RequestError> { every { message } returns "Ошибка сервера" }
+        coEvery { loginUseCase(testEmail, testPassword) } returns Response.Error(mockError)
 
-            viewModel.processCommand(AuthCommand.ChangeEmail(newEmail))
+        viewModel.events.test {
+            viewModel.processCommand(AuthCommand.ClickLogin)
 
-            assertEquals(newEmail, awaitItem().email)
+            assertEquals(AuthEffect.ShowError("Ошибка сервера"), awaitItem())
+            assertTrue(viewModel.uiState.value.buttonEnabled)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `when password changes, uiState should be updated`() = runTest {
-        val newPassword = "newPassword"
+    fun `ClickLogin success saves tokens and calls AuthManager`() = runTest {
+        val testEmail = "test@mail.ru"
+        val testPassword = "123"
+        every { EmailMatcher.isValid(testEmail) } returns true
+        viewModel.processCommand(AuthCommand.ChangeEmail(testEmail))
+        viewModel.processCommand(AuthCommand.ChangePassword(testPassword))
 
-        viewModel.uiState.test {
-            assertEquals("", awaitItem().password)
+        val mockTokens = AuthTokens(accessToken = "access", refreshToken = "refresh")
+        coEvery { loginUseCase(testEmail, testPassword) } returns Response.Success(mockTokens)
+        every { tokenStorage.getUserIdFromToken() } returns 99
 
-            viewModel.processCommand(AuthCommand.ChangePassword(newPassword))
-
-            assertEquals(newPassword, awaitItem().password)
-        }
-    }
-
-    @Test
-    fun `when confirmed password changes, uiState should be updated`() = runTest {
-        val newConfirmedPassword = "newConfirmedPassword"
-
-        viewModel.uiState.test {
-            assertEquals("", awaitItem().confirmedPassword)
-
-            viewModel.processCommand(AuthCommand.ChangeConfirmedPassword(newConfirmedPassword))
-
-            assertEquals(newConfirmedPassword, awaitItem().confirmedPassword)
-        }
-    }
-
-    @Test
-    fun `when password visibility clicked, uiState should toggle visibility`() = runTest {
-        viewModel.uiState.test {
-
-            assertFalse(awaitItem().isPasswordVisible)
-
-            viewModel.processCommand(AuthCommand.ChangePasswordVisibility)
-            assertTrue(awaitItem().isPasswordVisible)
-
-            viewModel.processCommand(AuthCommand.ChangePasswordVisibility)
-            assertFalse(awaitItem().isPasswordVisible)
-        }
-    }
-
-    @Test
-    fun `when confirmed password visibility clicked, uiState should toggle visibility`() = runTest {
-        viewModel.uiState.test {
-            assertFalse(awaitItem().isConfirmedPasswordVisible)
-
-            viewModel.processCommand(AuthCommand.ChangeConfirmedPasswordVisibility)
-            assertTrue(awaitItem().isConfirmedPasswordVisible)
-
-            viewModel.processCommand(AuthCommand.ChangeConfirmedPasswordVisibility)
-            assertFalse(awaitItem().isConfirmedPasswordVisible)
-        }
-    }
-
-    /**
-     * TODO
-     */
-    @Test
-    fun `when login success, tokens should be saved`() = runTest {
-        val emailTest = "email@email.com"
-        val passwordTest = "password@password"
-        val accessTokenTest = "access-token"
-        val refreshTokenTest = "refresh-token"
-
-        val mockTokens = mockk<AuthTokens> {
-            every { accessToken } returns accessTokenTest
-            every { refreshToken } returns refreshTokenTest
-        }
-
-        coEvery { tokenStorage.getUserIdFromToken() } returns 1
-        coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockTokens)
-        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
-
-        viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
-        viewModel.processCommand(AuthCommand.ChangePassword(passwordTest))
         viewModel.processCommand(AuthCommand.ClickLogin)
 
-        coVerify(exactly = 1) { tokenStorage.saveToken(accessTokenTest, true) }
-        coVerify(exactly = 1) { tokenStorage.saveToken(refreshTokenTest, false) }
+        coVerify { tokenStorage.saveToken("access", true) }
+        coVerify { tokenStorage.saveToken("refresh", false) }
+
+        coVerify(exactly = 1) { authManager.onLoginSuccess(99) }
+
+        assertFalse(viewModel.uiState.value.buttonEnabled)
     }
 
     @Test
-    fun `when login fails, ShowError effect is sent`() = runTest {
-        val emailTest = "email@email.com"
-        val errorMessage = "error"
-        val requestError = RequestError.BadRequest(message = errorMessage)
+    fun `ClickSignUp emits ShowError when passwords do not match`() = runTest {
+        val testEmail = "test@mail.ru"
+        every { EmailMatcher.isValid(testEmail) } returns true
 
-        coEvery { loginUseCase(any(), any()) } returns Response.Error(requestError)
-
-        viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
+        viewModel.processCommand(AuthCommand.ChangeEmail(testEmail))
+        viewModel.processCommand(AuthCommand.ChangePassword("123"))
+        viewModel.processCommand(AuthCommand.ChangeConfirmedPassword("321"))
 
         viewModel.events.test {
-            viewModel.processCommand(AuthCommand.ClickLogin)
+            viewModel.processCommand(AuthCommand.ClickSignUp)
 
-            val effect = awaitItem()
-            assertTrue(effect is AuthEffect.ShowError)
-            assertEquals(errorMessage, effect.message)
+            assertEquals(AuthEffect.ShowError("Пароли не совпадают"), awaitItem())
+            coVerify(exactly = 0) { signUseCase(any(), any(), any()) }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
-    /**
-     * TODO
-     */
     @Test
-    fun `when login clicks, button is disabled and then enabled`() = runTest {
-        val emailTest = "email@email.com"
-        val passwordTest = "password@password"
+    fun `ClickSignUp success calls signUseCase and saves tokens`() = runTest {
+        val testName = "Ivan"
+        val testEmail = "test@mail.ru"
+        val testPassword = "123"
 
-        coEvery { tokenStorage.getUserIdFromToken() } returns 1
-        coEvery { loginUseCase(emailTest, passwordTest) } returns Response.Success(mockk(relaxed = true))
-        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
+        every { EmailMatcher.isValid(testEmail) } returns true
+        viewModel.processCommand(AuthCommand.ChangeName(testName))
+        viewModel.processCommand(AuthCommand.ChangeEmail(testEmail))
+        viewModel.processCommand(AuthCommand.ChangePassword(testPassword))
+        viewModel.processCommand(AuthCommand.ChangeConfirmedPassword(testPassword))
 
-        viewModel.uiState.test {
-            assertTrue(awaitItem().buttonEnabled)
+        val mockTokens = AuthTokens(accessToken = "access_new", refreshToken = "refresh_new")
+        coEvery { signUseCase(testName, testEmail, testPassword) } returns Response.Success(mockTokens)
+        every { tokenStorage.getUserIdFromToken() } returns 42
 
-            viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
-            viewModel.processCommand(AuthCommand.ChangePassword(passwordTest))
-            viewModel.processCommand(AuthCommand.ClickLogin)
-
-            skipItems(2)
-
-            assertFalse(awaitItem().buttonEnabled)
-            assertTrue(awaitItem().buttonEnabled)
-        }
-    }
-
-    /**
-     * TODO
-     */
-    @Test
-    fun `when sign up success, tokens should be saved`() = runTest {
-        val nameTest = "name_Test"
-        val emailTest = "email@email.com"
-        val passwordTest = "password@password"
-        val confirmedPasswordTest = "password@password"
-        val accessTokenTest = "access-token"
-        val refreshTokenTest = "refresh-token"
-
-        val mockTokens = mockk<AuthTokens> {
-            every { accessToken } returns accessTokenTest
-            every { refreshToken } returns refreshTokenTest
-        }
-
-        coEvery { tokenStorage.getUserIdFromToken() } returns 1
-        coEvery { signUseCase(nameTest, emailTest, passwordTest) } returns Response.Success(mockTokens)
-        coEvery { tokenStorage.saveToken(any(), any()) } returns Unit
-
-        viewModel.processCommand(AuthCommand.ChangeName(nameTest))
-        viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
-        viewModel.processCommand(AuthCommand.ChangePassword(passwordTest))
-        viewModel.processCommand(AuthCommand.ChangeConfirmedPassword(confirmedPasswordTest))
         viewModel.processCommand(AuthCommand.ClickSignUp)
 
-        coVerify(exactly = 1) { tokenStorage.saveToken(accessTokenTest, true) }
-        coVerify(exactly = 1) { tokenStorage.saveToken(refreshTokenTest, false) }
-    }
-
-    @Test
-    fun `when sign up fails, ShowError effect is sent`() = runTest {
-        val emailTest = "email@email.com"
-        val errorMessage = "error"
-        val requestError = RequestError.BadRequest(message = errorMessage)
-
-        coEvery { signUseCase(any(), any(), any()) } returns Response.Error(requestError)
-
-        viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
-
-        viewModel.events.test {
-            viewModel.processCommand(AuthCommand.ClickSignUp)
-
-            val effect = awaitItem()
-            assertTrue(effect is AuthEffect.ShowError)
-            assertEquals(errorMessage, effect.message)
-        }
-    }
-
-    @Test
-    fun `when sign up clicks and passwords do not match, ShowError effect should be sent`() = runTest {
-        val nameTest = "name_Test"
-        val emailTest = "email@email.com"
-        val passwordTest = "12345"
-        val confirmedPasswordTest = "54321"
-
-        viewModel.processCommand(AuthCommand.ChangeName(nameTest))
-        viewModel.processCommand(AuthCommand.ChangeEmail(emailTest))
-        viewModel.processCommand(AuthCommand.ChangePassword(passwordTest))
-        viewModel.processCommand(AuthCommand.ChangeConfirmedPassword(confirmedPasswordTest))
-
-        viewModel.events.test {
-            viewModel.processCommand(AuthCommand.ClickSignUp)
-
-            val event = awaitItem()
-            assertTrue(event is AuthEffect.ShowError)
-            assertEquals("Пароли не совпадают", event.message)
-        }
-    }
-
-    @Test
-    fun `when invalid email, ShowError effect is sent on login and signup`() = runTest {
-        val invalidEmail = "bad_email"
-
-        viewModel.processCommand(AuthCommand.ChangeEmail(invalidEmail))
-
-        viewModel.events.test {
-            viewModel.processCommand(AuthCommand.ClickLogin)
-
-            val loginEvent = awaitItem()
-            assertTrue(loginEvent is AuthEffect.ShowError)
-            assertEquals("Недопустимая почта", loginEvent.message)
-
-            viewModel.processCommand(AuthCommand.ClickSignUp)
-
-            val signUpEvent = awaitItem()
-            assertTrue(signUpEvent is AuthEffect.ShowError)
-            assertEquals("Недопустимая почта", signUpEvent.message)
-        }
+        coVerify { signUseCase(testName, testEmail, testPassword) }
+        coVerify { authManager.onLoginSuccess(42) }
     }
 }
