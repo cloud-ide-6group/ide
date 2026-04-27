@@ -15,14 +15,12 @@ class RefreshUseCase(
     /**
      * Обновляет токены.
      *
-     * @param accessToken Токен доступа.
      * @param refreshToken Токен обновления.
      * @return [Response] с access и refresh токенами при успехе, либо с ошибкой.
      */
     suspend operator fun invoke(
-        accessToken: String,
         refreshToken: String
     ): Response<AuthTokens> {
-        return repository.refresh(accessToken = accessToken, refreshToken = refreshToken)
+        return repository.refresh(refreshToken = refreshToken)
     }
 }

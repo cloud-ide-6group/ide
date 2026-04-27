@@ -15,7 +15,7 @@ class CreateProjectUseCase(
     /**
      * Выполняет создания проекта.
      *
-     * @param programingLanguageId Айди языка программирования.
+     * @param programingLanguageId Идентификатор языка программирования.
      * @param projectName Название проекта.
      *
      * @return [Response] с ничем, либо с ошибкой.
