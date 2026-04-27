@@ -33,6 +33,45 @@ class UserRepository:
         """
         return db.session.get(User, user_id)
 
+    def update_user(self, new_user):
+        """
+        Обновить значения полей пользователя
+
+        Args:
+            new_user (User): Обновленный пользователь
+
+        Returns:
+            User: Пользователь
+        """
+        try:
+            old_user = db.session.get(User, new_user.id)
+
+            if old_user == None or new_user == None:
+                return None
+
+            old_user.email = new_user.email
+            old_user.name = new_user.name
+            old_user.password_hash = new_user.password_hash
+            old_user.photo_path = new_user.photo_path
+
+            db.session.commit()
+            return old_user
+        except Exception as e:
+            db.session.rollback()
+            raise e
+
+    def get_password_hash(self, id):
+        """
+        Получает хэш пароля из таблицы
+
+        Args:
+            id (int): Id пользователя
+
+        Returns:
+            str: Хэш пароля
+        """
+        return db.session.query(User).filter(User.id == id).first().password_hash
+
     def delete_user_by_id(self, id):
         """
         Удалить пользователя.

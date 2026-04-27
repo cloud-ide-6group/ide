@@ -22,3 +22,4 @@ documentation for details.
    modules/consts
    modules/new_project
    modules/languages
+   modules/password_hash

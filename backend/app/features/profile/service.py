@@ -1,10 +1,14 @@
 import base64
 from .repository import user_repo, project_repo
 from ...shared.consts import ResultsCodes
+from app.shared.dbmodels import User
 import os
 from dotenv import load_dotenv
+from app.shared.features.password_hash.service import check_password_with_hash
 
 load_dotenv()
+
+BASE_IMAGES_DIR = "users_imgs"
 
 
 def get_user_data(id):
@@ -29,6 +33,64 @@ def get_user_data(id):
         return user, ResultsCodes.USER_NOT_FOUND
 
     return user, ResultsCodes.OK
+
+
+def update_user_data(id, email, name, password_hash, photo_path):
+    """
+    Создает обновленный объект user и отправляет его в репозиторий, чтобы сохранить новые данные
+
+    Args:
+        id (int): Id пользователя
+        email (str): Почта пользователя
+        name (str): Имя пользователя
+        password_hash (str): Хэш пароля
+        photo_path (str): Путь к фото профиля на сервере
+
+    Returns:
+        User: Обновленный пользователь
+        ResultCodes: Результат выполнения
+    """
+    old_user = user_repo.get_by_id(id)
+
+    if old_user == None:
+        return None, ResultsCodes.USER_NOT_FOUND
+
+    new_user = User()
+    new_user.id = id
+
+    try:
+        new_user.email = email or old_user.email
+    except:
+        return None, ResultsCodes.INVALID_EMAIL
+
+    new_user.name = name or old_user.name
+    new_user.password_hash = password_hash or old_user.password_hash
+    new_user.photo_path = photo_path or old_user.photo_path
+
+    try:
+        return user_repo.update_user(new_user), ResultsCodes.OK
+    except:
+        return None, ResultsCodes.UPDATED_DATA_INCORRECT
+
+
+def check_old_password(id, password):
+    """
+    Сверяет пароль с тем, что есть в БД
+
+    Args:
+        id (int): Id пользователя
+        password (str): Пароль, который необходимо сверить
+
+    Returns:
+        ResultCodes: Результат
+    """
+    old_password_hash = user_repo.get_password_hash(id)
+    result = check_password_with_hash(old_password_hash, password)
+
+    if result == False:
+        return ResultsCodes.INCORRECT_OLD_PASSWORD
+
+    return ResultsCodes.OK
 
 
 def get_user_projects(user_id):
@@ -79,3 +141,63 @@ def get_photo_base_64(image_path):
         photo_base64 = base64.b64encode(img_file.read()).decode("utf-8")
 
     return photo_base64
+
+
+def save_photo(base64_string, user_id):
+    """
+    Сохраняет фото из base64 в файл
+
+    Args:
+        base64_string (str): Строка base64 (может быть с префиксом data:image/png;base64, или без)
+        user_id (int): Id пользователя
+
+    Returns:
+        str: Имя файла
+        ResultCodes: Результат выполнения операции
+    """
+    if "base64," in base64_string:
+        base64_string = base64_string.split("base64,")[1]
+
+    try:
+        image_data = base64.b64decode(base64_string)
+    except Exception as e:
+        return None, ResultsCodes.INVALID_BASE64
+
+    extension = get_image_extension(image_data)
+
+    filename = f"{BASE_IMAGES_DIR}/img_user{user_id}{extension}"
+
+    upload_folder = os.getenv("IMAGES_PATH")
+    os.makedirs(upload_folder, exist_ok=True)
+
+    filepath = os.path.join(upload_folder, filename)
+
+    with open(filepath, "wb") as f:
+        f.write(image_data)
+
+    return filename, ResultsCodes.OK
+
+
+def get_image_extension(image_data):
+    """
+    Получает расширение фото из base64 строки
+
+    Args:
+        image_data (str): Строка фото
+
+    Returns:
+        str: Расширение
+    """
+    if image_data[:4] == b"\x89PNG":
+        return ".png"
+
+    if image_data[:2] == b"\xff\xd8":
+        return ".jpg"
+
+    if image_data[:3] == b"GIF":
+        return ".gif"
+
+    if image_data[:4] == b"RIFF" and image_data[8:12] == b"WEBP":
+        return ".webp"
+
+    return ".jpg"

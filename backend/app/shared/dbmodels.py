@@ -1,7 +1,7 @@
 from .extensions import db
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
 from .consts import ResultsCodes
+import re
 from email_validator import validate_email, EmailNotValidError
 
 
@@ -28,6 +28,15 @@ class Project(db.Model):
     name = db.Column(db.Text, unique=True, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
+
+    @validates("name")
+    def validate_name(self, key, name):
+        if name == None or name == "":
+            raise ValueError(ResultsCodes.INCORRECT_NAME)
+
+        name = re.sub(r"\s+", " ", name)
+
+        return name
 
 
 class File(db.Model):
@@ -56,6 +65,15 @@ class File(db.Model):
     parent_id = db.Column(db.Integer, db.ForeignKey("file.id"), nullable=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     is_folder = db.Column(db.Boolean, nullable=False)
+
+    @validates("name")
+    def validate_name(self, key, name):
+        if name == None or name == "":
+            raise ValueError(ResultsCodes.INCORRECT_NAME)
+
+        name = re.sub(r"\s+", " ", name)
+
+        return name
 
 
 class Language(db.Model):
@@ -166,12 +184,16 @@ class User(db.Model):
         if not name or name == "":
             raise ValueError(ResultsCodes.INCORRECT_USER_NAME)
 
+        name = re.sub(r"\s+", " ", name)
+
         return name
 
     @validates("email")
     def validate_email(self, key, email):
         if not email:
             raise ValueError(ResultsCodes.INVALID_EMAIL)
+
+        email = email.replace(" ", "")
 
         try:
             valid = validate_email(email)
