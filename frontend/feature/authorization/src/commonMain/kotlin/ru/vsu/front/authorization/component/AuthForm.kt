@@ -36,7 +36,7 @@ internal fun AuthForm(
 ) {
     var isSignUpMode by remember { mutableStateOf(false) }
     val state by authViewModel.uiState.collectAsStateWithLifecycle()
-    val isNotValidEmail = state.email.isNotEmpty() && !EmailMatcher.isValid(state.email)
+    val isNotValidEmail = state.email.isNotEmpty() && !EmailMatcher.isValid(state.email.trim())
 
     SideColumn(modifier = modifier) {
         AuthCard {
