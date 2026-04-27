@@ -30,9 +30,8 @@ interface AuthRepository {
     /**
      * Выполняет обновление токенов.
      *
-     * @param accessToken Токен доступа.
      * @param refreshToken Токен обновления.
      * @return [Response] с новыми токенами при успехе, либо с ошибкой.
      */
-    suspend fun refresh(accessToken: String, refreshToken: String): Response<AuthTokens>
+    suspend fun refresh(refreshToken: String): Response<AuthTokens>
 }
