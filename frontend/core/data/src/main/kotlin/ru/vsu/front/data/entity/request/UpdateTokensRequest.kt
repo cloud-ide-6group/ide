@@ -1,4 +1,4 @@
-package ru.vsu.front.data.dto
+package ru.vsu.front.data.entity.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,11 +6,9 @@ import kotlinx.serialization.Serializable
 /**
  * Запрос на обновление токенов.
  *
- * @property accessToken Короткоживущий токен доступа.
- * @property refreshToken Долгоживущий токен для обновления [accessToken].
+ * @property refreshToken Долгоживущий токен для обновления токена доступа.
  */
 @Serializable
 data class UpdateTokensRequest(
-    @SerialName("access_token") val accessToken: String,
     @SerialName("refresh_token") val refreshToken: String
 )

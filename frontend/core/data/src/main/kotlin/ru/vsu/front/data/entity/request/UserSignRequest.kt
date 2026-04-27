@@ -1,4 +1,4 @@
-package ru.vsu.front.data.dto
+package ru.vsu.front.data.entity.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

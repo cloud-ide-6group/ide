@@ -1,10 +1,10 @@
-package ru.vsu.front.data.dto
+package ru.vsu.front.data.entity.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * DTO запроса на создание проекта.
+ * Запрос на создание проекта.
  *
  * @property programingLanguageId Идентификатор языка программирования.
  * @property projectName Название проекта.

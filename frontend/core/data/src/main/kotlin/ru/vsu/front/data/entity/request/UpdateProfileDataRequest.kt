@@ -1,13 +1,13 @@
-package ru.vsu.front.data.dto
+package ru.vsu.front.data.entity.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * DTO запроса на создание проекта.
+ * Запрос на обновление почты и имени пользователя.
  *
- * @property TODO Идентификатор языка программирования.
- * @property TODO Название проекта.
+ * @property email Почта.
+ * @property name Имя.
  */
 @Serializable
 data class UpdateProfileDataRequest(

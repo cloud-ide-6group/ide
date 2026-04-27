@@ -1,12 +1,13 @@
-package ru.vsu.front.data.dto
+package ru.vsu.front.data.entity.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * DTO запроса на создание проекта.
+ * Запрос на обновление пароля.
  *
- * @property TODO Идентификатор языка программирования.
+ * @property newPassword Новый пароль.
+ * @property oldPassword Старый пароль
  */
 @Serializable
 data class UpdateProfilePasswordRequest(
