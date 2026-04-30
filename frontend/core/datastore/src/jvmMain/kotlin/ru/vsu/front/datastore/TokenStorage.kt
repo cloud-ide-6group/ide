@@ -1,17 +1,23 @@
 package ru.vsu.front.datastore
 
+import kotlinx.serialization.json.Json
+import ru.vsu.front.datastore.entity.IdFromPayload
+import ru.vsu.front.model.entity.AuthTokens
+import java.util.*
 import java.util.prefs.Preferences
 
 /**
  * Хранилище JWT-токенов.
  * Обеспечивает безопасное чтение, запись и удаление токенов с использованием локального шифрования.
  *
- * @param cryptoManager Утилита для шифрования и дешифрования строковых данных.
+ * @param cryptoManager Утилита для шифрования и дешифрования.
  * @param prefs Хранилище.
+ * @param json Json.
  */
 class TokenStorage(
     private val cryptoManager: CryptoManager,
-    private val prefs: Preferences
+    private val prefs: Preferences,
+    private val json: Json
 ) {
     companion object {
         private const val JWT_ACCESS_TOKEN_KEY = "jwt_access_token"
@@ -20,28 +26,31 @@ class TokenStorage(
 
     /**
      * Возвращает текущие токены.
-     * * Возвращает пару `Pair(AccessToken, RefreshToken)` в расшифрованном виде.
+     * * Возвращает пару [AuthTokens] в расшифрованном виде.
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
-    private fun getTokensSync(): Pair<String?, String?>? {
+    fun getTokensSync(): AuthTokens? {
         val encryptedAccessToken = prefs.get(JWT_ACCESS_TOKEN_KEY, null)
         val encryptedRefreshToken = prefs.get(JWT_REFRESH_TOKEN_KEY, null)
 
-        return if (encryptedAccessToken != null && encryptedRefreshToken != null) {
-            with(cryptoManager) {
-                decrypt(encryptedAccessToken) to decrypt(encryptedRefreshToken)
+        if (encryptedAccessToken != null && encryptedRefreshToken != null) {
+
+            val decodedAccessToken = cryptoManager.decrypt(encryptedAccessToken)
+            val decodedRefreshToken = cryptoManager.decrypt(encryptedRefreshToken)
+
+            if (decodedAccessToken != null && decodedRefreshToken != null) {
+                return AuthTokens(decodedAccessToken, decodedRefreshToken)
             }
-        } else {
-            null
         }
+        return null
     }
 
     /**
      * Возвращает текущие токены.
-     * * Возвращает пару `Pair(AccessToken, RefreshToken)` в расшифрованном виде.
+     * * Асинхронно возвращает [AuthTokens] в расшифрованном виде.
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
-    suspend fun getTokens(): Pair<String?, String?>? {
+    suspend fun getTokens(): AuthTokens? {
         return getTokensSync()
     }
 
@@ -64,8 +73,25 @@ class TokenStorage(
     /**
      * Удаляет Access и Refresh токены из хранилища.
      */
-    suspend fun clearTokens() {
+    fun clearTokens() {
         prefs.remove(JWT_ACCESS_TOKEN_KEY)
         prefs.remove(JWT_REFRESH_TOKEN_KEY)
+    }
+
+    /**
+     * Извлекает идентификатор пользователя из токена.
+     *
+     * @return Идентификатор пользователя или null.
+     */
+    fun getUserIdFromToken(): Int? {
+        return try {
+            val accessToken = getTokensSync()?.accessToken ?: return null
+            val payloadBase64 = accessToken.split(".")[1]
+            val decodedBytes = Base64.getUrlDecoder().decode(payloadBase64)
+            val decodedString = String(decodedBytes, Charsets.UTF_8)
+            json.decodeFromString<IdFromPayload>(decodedString).id
+        } catch (_: Exception) {
+            null
+        }
     }
 }

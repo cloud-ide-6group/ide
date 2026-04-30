@@ -2,7 +2,6 @@ package ru.vsu.front.domain.repository
 
 import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserData
 
 /**
  * Интерфейс репозитория для аутентификации и регистрации.
@@ -16,7 +15,7 @@ interface AuthRepository {
      * @param password Введенный пароль пользователя.
      * @return [Response] с сессией пользователя при успехе, либо с ошибкой.
      */
-    suspend fun login(email: String, password: String): Response<UserData>
+    suspend fun login(email: String, password: String): Response<AuthTokens>
 
     /**
      * Выполняет регистрацию пользователя.
@@ -26,14 +25,13 @@ interface AuthRepository {
      * @param password Пароль пользователя.
      * @return [Response] с сессией пользователя при успехе, либо с ошибкой.
      */
-    suspend fun sign(name: String, email: String, password: String): Response<UserData>
+    suspend fun sign(name: String, email: String, password: String): Response<AuthTokens>
 
     /**
      * Выполняет обновление токенов.
      *
-     * @param accessToken Токен доступа.
      * @param refreshToken Токен обновления.
      * @return [Response] с новыми токенами при успехе, либо с ошибкой.
      */
-    suspend fun refresh(accessToken: String, refreshToken: String): Response<AuthTokens>
+    suspend fun refresh(refreshToken: String): Response<AuthTokens>
 }

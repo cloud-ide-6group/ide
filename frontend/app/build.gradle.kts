@@ -31,6 +31,7 @@ kotlin {
             implementation(libs.jetbrains.navigation.compose)
 
             implementation(projects.feature.authorization)
+            implementation(projects.feature.profile)
             implementation(projects.core.designsystem)
             implementation(projects.core.network)
             implementation(projects.core.data)
@@ -38,6 +39,7 @@ kotlin {
             implementation(projects.core.domain)
             implementation(projects.core.navigation)
             implementation(projects.core.datastore)
+            implementation(projects.core.auth)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

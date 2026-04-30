@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
+import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.UserData
 
 /**
  * Вьюмодель экрана авторизации и регистрации.
@@ -24,7 +25,8 @@ class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val signUseCase: SignUseCase,
     private val tokenStorage: TokenStorage,
-    private val dispatcherProvider: DispatcherProvider
+    private val dispatcherProvider: DispatcherProvider,
+    private val authManager: AuthManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UiStateAuth())
@@ -35,6 +37,9 @@ class AuthViewModel(
     val events: SharedFlow<AuthEffect>
         get() = _events.asSharedFlow()
 
+    /**
+     * Выполняет определенные действия в зависимости от переданной команды.
+     */
     fun processCommand(command: AuthCommand) {
         when (command) {
             is AuthCommand.ChangeName -> {
@@ -66,10 +71,16 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Вход в аккаунт.
+     */
     private fun login() {
-        viewModelScope.launch(dispatcherProvider.default) {
+        viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
-            if (!EmailMatcher.isValid(state.email)) {
+            val trimmedEmail = state.email.trim()
+            val trimmedPassword = state.password.trim()
+
+            if (!EmailMatcher.isValid(trimmedEmail)) {
                 _events.emit(AuthEffect.ShowError("Недопустимая почта"))
                 return@launch
             }
@@ -77,19 +88,22 @@ class AuthViewModel(
             _uiState.update { it.copy(buttonEnabled = false) }
 
             val result = loginUseCase(
-                email = state.email,
-                password = state.password
+                email = trimmedEmail,
+                password = trimmedPassword
             )
 
             handleAuthResult(result)
         }
     }
 
+    /**
+     * Регистрация.
+     */
     private fun signUp() {
-        viewModelScope.launch(dispatcherProvider.default) {
+        viewModelScope.launch(dispatcherProvider.io) {
             val state = _uiState.value
-
-            if (!EmailMatcher.isValid(state.email)) {
+            val trimmedEmail = state.email.trim()
+            if (!EmailMatcher.isValid(trimmedEmail)) {
                 _events.emit(AuthEffect.ShowError("Недопустимая почта"))
                 return@launch
             }
@@ -103,7 +117,7 @@ class AuthViewModel(
 
             val result = signUseCase(
                 name = state.name,
-                email = state.email,
+                email = trimmedEmail,
                 password = state.password
             )
 
@@ -111,20 +125,30 @@ class AuthViewModel(
         }
     }
 
-    private suspend fun handleAuthResult(result: Response<UserData>) {
+
+    /**
+     * Обработка результата запроса.
+     */
+    private suspend fun handleAuthResult(result: Response<AuthTokens>) {
         when (result) {
             is Response.Error<*> -> {
                 _events.emit(AuthEffect.ShowError(result.requestError.message))
+                _uiState.update { it.copy(buttonEnabled = true) }
             }
 
-            is Response.Success<UserData> -> {
-                val tokens = result.data.tokens
+            is Response.Success<AuthTokens> -> {
+                val tokens = result.data
+
                 tokenStorage.saveToken(token = tokens.accessToken, isAccess = true)
                 tokenStorage.saveToken(token = tokens.refreshToken, isAccess = false)
+
+                val userId = tokenStorage.getUserIdFromToken()
+
+                userId?.let {
+                    authManager.onLoginSuccess(it)
+                }
             }
         }
-
-        _uiState.update { it.copy(buttonEnabled = true) }
     }
 }
 
