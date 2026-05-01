@@ -28,4 +28,12 @@ sealed interface Route {
     data class Profile(val userId: Int) : Route {
         override val name: String = "ProfileScreen"
     }
+
+    /**
+     * Экран уведомлений.
+     */
+    @Serializable
+    data object Notifications : Route {
+        override val name: String = "NotificationsScreen"
+    }
 }

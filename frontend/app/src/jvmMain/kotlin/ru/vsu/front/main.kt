@@ -11,10 +11,12 @@ import androidx.navigation.compose.rememberNavController
 import front.app.generated.resources.Res
 import front.app.generated.resources.app_icon
 import front.app.generated.resources.logout_24dp
+import front.app.generated.resources.notifications_24dp
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.Const
+import ru.vsu.front.component.TopBarButtons
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -85,18 +87,19 @@ fun main() {
                     exitApplication()
                 },
                 topBarContent = {
-                    if (currentDestination?.hasRoute<Route.Profile>() == true) {
-                        CodeTogetherIconButton(onClick = {
+                    TopBarButtons(
+                        navDestination = currentDestination,
+                        onLogoutClick = {
                             authManager.logout()
                             mainHttpClientManager.invalidateClient()
-                        }) {
-                            Icon(
-                                painter = painterResource(Res.drawable.logout_24dp),
-                                contentDescription = "Logout",
-                                tint = CodeTogetherTheme.colors.primary,
-                            )
+                        },
+                        onNotificationsClick = {
+                            navController.navigate(Route.Notifications)
+                        },
+                        onBackClick = {
+                            navController.popBackStack()
                         }
-                    }
+                    )
                 }
             ) {
                 Navigation(

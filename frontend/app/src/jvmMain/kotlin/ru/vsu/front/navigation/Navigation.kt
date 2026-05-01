@@ -14,6 +14,8 @@ import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.auth.AuthState
 import ru.vsu.front.authorization.AuthScreen
 import ru.vsu.front.authorization.AuthViewModel
+import ru.vsu.front.notifications.NotificationsScreen
+import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen
 import ru.vsu.front.profile.ProfileViewModel
 
@@ -50,6 +52,13 @@ fun Navigation(
         composable<Route.Profile> {
             val viewModel = koinViewModel<ProfileViewModel>()
             ProfileScreen(
+                viewModel = viewModel
+            )
+        }
+
+        composable<Route.Notifications> {
+            val viewModel = koinViewModel<NotificationsViewModel>()
+            NotificationsScreen(
                 viewModel = viewModel
             )
         }
