@@ -8,10 +8,12 @@ def register_features(app):
     from .features.authorization.routes import auth_bp
     from .features.profile.routes import profile_bp
     from .features.project.routes import project_bp
+    from .features.invitation.routes import invitation_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
+    app.register_blueprint(invitation_bp)
 
 
 def register_shared_features(app):
