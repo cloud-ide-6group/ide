@@ -47,10 +47,10 @@ def connect_notifications():
 @notifications_bp.route("/delete/notification", methods=["DELETE"])
 def delete_notification():
     """
-    Создание нового проекта
+    Удаление уведомления после прочтения пользователем
     ---
     tags:
-      - features/project
+      - shared/features/notifications
     description: |
       Удаляет уведомление
     parameters:
