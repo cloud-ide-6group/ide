@@ -29,13 +29,13 @@ class NotificationRepository:
 
     def get_by_id(self, notification_id):
         """
-        Получить все уведомления пользователя по его id.
+        Получить уведомление по его id
 
         Args:
-            user_id (int): Id пользователя.
+            notification_id (int): Id уведомления.
 
         Returns:
-            list[Notification]: Список объектов Notification (может быть пустым).
+            Notification: Уведомление
         """
         return (
             db.session.query(Notification)
@@ -45,13 +45,10 @@ class NotificationRepository:
 
     def delete_by_id(self, notification_id):
         """
-        Получить все уведомления пользователя по его id.
+        Удаляет уведомление из БД
 
         Args:
-            user_id (int): Id пользователя.
-
-        Returns:
-            list[Notification]: Список объектов Notification (может быть пустым).
+            notification_id (int): Id уведомления
         """
         notification = db.session.query(Notification.id == notification_id)
         if notification:

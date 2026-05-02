@@ -49,6 +49,16 @@ def send_to_klient(invited_user_id):
 
 
 def delete_notification(user_id, notification_id):
+    """
+    Проверяет, может ли этот пользователь удалить уведомление, и удаляет.
+
+    Args:
+        user_id (int): Id пользователя
+        notification_id (int): Id уведомления
+
+    Returns:
+        ResultCodes: Результат выполнения операции
+    """
     notification = notification_repo.get_by_id(notification_id)
     if user_id == notification.receiver_id:
         notification_repo.delete_by_id(notification.id)
