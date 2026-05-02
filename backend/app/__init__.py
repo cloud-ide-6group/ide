@@ -32,8 +32,7 @@ def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}})
-    _socketio = SocketIO(app, cors_allowed_origins="*")
-    soketio = _socketio
+    socketio.init_app(app, cors_allowed_origins="*")
 
     db.init_app(app)
     if not app.config["DB_TEST"]:
