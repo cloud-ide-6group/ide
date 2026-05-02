@@ -2,6 +2,8 @@ from flask import Flask, request, Response
 from flasgger import Swagger
 from config import DebugConfig
 from .shared.extensions import db, migrate
+from flask_socketio import SocketIO
+from flask_cors import CORS
 
 
 def register_features(app):
@@ -27,6 +29,8 @@ def register_shared_features(app):
 def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    CORS(app, resources={r"/*": {"origins": "*"}})
+    socketio = SocketIO(app, cors_allowed_origins="*")
 
     db.init_app(app)
     if not app.config["DB_TEST"]:

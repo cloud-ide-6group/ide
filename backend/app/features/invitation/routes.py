@@ -1,6 +1,6 @@
 from . import invitation_bp
 from flask import request, make_response
-from app.shared.features.jwt_token import get_id
+from app.shared.features.jwt_token.service import get_id
 from app.shared.consts import ResultsCodes
 from .service import add_user_in_project, delete_user_from_project
 
@@ -86,7 +86,7 @@ def invite():
         return {"message": result}, 409
 
 
-@invitation_bp.route("/delete/invited", methods=["POST"])
+@invitation_bp.route("/delete/invited", methods=["DELETE"])
 def delete_invited():
     """
     Создание нового проекта
