@@ -1,5 +1,6 @@
 from .repository import notification_repo, user_repo
 from app.shared.consts import ResultsCodes
+from app.shared.extensions import socketio
 
 
 def get_notifications(user_id):
@@ -29,3 +30,11 @@ def get_notifications(user_id):
         )
 
     return notifications
+
+
+def send_to_klient(invited_user_id):
+    socketio.emit(
+        "notifications_list",
+        {"notifications": get_notifications(invited_user_id)},
+        room=str(invited_user_id),
+    )

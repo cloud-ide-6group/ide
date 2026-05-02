@@ -11,7 +11,7 @@ def register_features(app):
     from .features.profile.routes import profile_bp
     from .features.project.routes import project_bp
     from .features.invitation.routes import invitation_bp
-    from .features.notifications.routes import notifications_bp
+    from .shared.features.notifications.routes import notifications_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
