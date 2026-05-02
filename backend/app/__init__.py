@@ -1,7 +1,7 @@
 from flask import Flask, request, Response
 from flasgger import Swagger
 from config import DebugConfig
-from .shared.extensions import db, migrate
+from .shared.extensions import db, migrate, socketio
 from flask_socketio import SocketIO
 from flask_cors import CORS
 
@@ -11,11 +11,13 @@ def register_features(app):
     from .features.profile.routes import profile_bp
     from .features.project.routes import project_bp
     from .features.invitation.routes import invitation_bp
+    from .features.notifications.routes import notifications_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(invitation_bp)
+    app.register_blueprint(notifications_bp)
 
 
 def register_shared_features(app):
@@ -30,7 +32,8 @@ def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}})
-    socketio = SocketIO(app, cors_allowed_origins="*")
+    _socketio = SocketIO(app, cors_allowed_origins="*")
+    soketio = _socketio
 
     db.init_app(app)
     if not app.config["DB_TEST"]:

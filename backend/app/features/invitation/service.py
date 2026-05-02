@@ -1,4 +1,4 @@
-from .repository import user_repo, project_repo
+from .repository import user_repo, project_repo, notification_repo
 from app.shared.consts import ResultsCodes
 
 
@@ -23,11 +23,13 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
         added_user = user_repo.get_by_email(invited_user_email)
         if added_user and user_repo.user_exists(owner_id):
             project_repo.add_user_in_project(project.id, added_user.id)
+            notification_repo.add_notification(project.id, owner_id, added_user)
             return ResultsCodes.OK
         else:
             return ResultsCodes.USER_NOT_FOUND
     else:
         return ResultsCodes.PROJECT_NOT_FOUND
+
 
 def delete_user_from_project(project_name, invited_user_email, owner_id):
     """
