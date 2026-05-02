@@ -28,6 +28,7 @@ def connect_notifications():
                 ]
             }
     """
+    print("jjj")
     auth_header = request.args.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
         return False
@@ -40,7 +41,7 @@ def connect_notifications():
     join_room(str(user_id))
 
     notifications = get_notifications(user_id)
-    emit("notifications_list", {"notifications": notifications})
+    emit("notifications_list", {"notifications": notifications}, room=str(user_id))
     return True
 
 

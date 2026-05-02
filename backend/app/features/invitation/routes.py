@@ -63,7 +63,7 @@ def invite():
         return {"message": id_result}, 403
 
     project_name = data["project_name"]
-    invited_user_email = data["email"]
+    invited_user_email = data["invited_user_email"]
 
     result = add_user_in_project(project_name, invited_user_email, id)
     if result == ResultsCodes.OK:

@@ -80,7 +80,7 @@ class UserRepository:
             >>> repo = UserRepository()
             >>> user = repo.get_by_id(123)
         """
-        user = db.session.query(Project).filter(Project.id == id).first()
+        user = db.session.query(User).filter(User.id == id).first()
         if user == None:
             return False
         else:
