@@ -46,3 +46,11 @@ def send_to_klient(invited_user_id):
         {"notifications": get_notifications(invited_user_id)},
         room=str(invited_user_id),
     )
+
+
+def delete_notification(user_id, notification_id):
+    notification = notification_repo.get_by_id(notification_id)
+    if user_id == notification.receiver_id:
+        notification_repo.delete_by_id(notification.id)
+        return ResultsCodes.OK
+    return ResultsCodes.USER_NOT_FOUND

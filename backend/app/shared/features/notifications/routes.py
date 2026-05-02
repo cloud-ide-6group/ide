@@ -1,7 +1,7 @@
 from . import notifications_bp
 from flask import request, make_response
 from app.shared.consts import ResultsCodes
-from .service import get_notifications
+from .service import get_notifications, delete_notification
 from app.shared.features.jwt_token.service import get_id
 from app.shared.extensions import socketio
 from flask_socketio import emit, join_room
@@ -42,3 +42,26 @@ def connect_notifications():
     notifications = get_notifications(user_id)
     emit("notifications_list", {"notifications": notifications})
     return True
+
+
+@notifications_bp.route("/delete/notification", methods=["DELETE"])
+def delete_notification():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        response = make_response({"message": "Токен не предоставлен"}, 401)
+        response.headers["WWW-Authenticate"] = "Bearer"
+        return response
+
+    data = request.json
+    access_token = auth_header.split(" ")[1]
+    user_id, id_result = get_id(access_token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 403
+
+    notification_id = data["notification_id"]
+    result = delete_notification(user_id, notification_id)
+
+    if result == ResultsCodes.OK:
+        return {}, 200
+    else:
+        return {"message": result}, 409

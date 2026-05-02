@@ -27,6 +27,37 @@ class NotificationRepository:
             .all()
         )
 
+    def get_by_id(self, notification_id):
+        """
+        Получить все уведомления пользователя по его id.
+
+        Args:
+            user_id (int): Id пользователя.
+
+        Returns:
+            list[Notification]: Список объектов Notification (может быть пустым).
+        """
+        return (
+            db.session.query(Notification)
+            .filter(Notification.id == notification_id)
+            .first()
+        )
+
+    def delete_by_id(self, notification_id):
+        """
+        Получить все уведомления пользователя по его id.
+
+        Args:
+            user_id (int): Id пользователя.
+
+        Returns:
+            list[Notification]: Список объектов Notification (может быть пустым).
+        """
+        notification = db.session.query(Notification.id == notification_id)
+        if notification:
+            db.session.delete(notification)
+            db.session.commit()
+
 
 class UserRepository:
     """
