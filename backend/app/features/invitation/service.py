@@ -5,17 +5,14 @@ from app.shared.features.notifications.service import send_to_klient
 
 def add_user_in_project(project_name, invited_user_email, owner_id):
     """
-    Создает обновленный объект user и отправляет его в репозиторий, чтобы сохранить новые данные
+    Добавляет пользователя в проект.
 
     Args:
-        id (int): Id пользователя
-        email (str): Почта пользователя
-        name (str): Имя пользователя
-        password_hash (str): Хэш пароля
-        photo_path (str): Путь к фото профиля на сервере
+        project_name (str): Имя проекта
+        invited_user_email (str): Почта приглашаемого пользователя
+        owner_id (int): Id автора-владельца проекта
 
     Returns:
-        User: Обновленный пользователь
         ResultCodes: Результат выполнения
     """
     project = project_repo.get_by_name(project_name)
@@ -35,17 +32,14 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
 
 def delete_user_from_project(project_name, invited_user_email, owner_id):
     """
-    Создает обновленный объект user и отправляет его в репозиторий, чтобы сохранить новые данные
+    Удаляет пользователя из проекта
 
     Args:
-        id (int): Id пользователя
-        email (str): Почта пользователя
-        name (str): Имя пользователя
-        password_hash (str): Хэш пароля
-        photo_path (str): Путь к фото профиля на сервере
+        project_name (str): Имя проекта
+        invited_user_email (str): Почта приглашаемого пользователя
+        owner_id (int): Id автора-владельца проекта
 
     Returns:
-        User: Обновленный пользователь
         ResultCodes: Результат выполнения
     """
     project = project_repo.get_by_name(project_name)

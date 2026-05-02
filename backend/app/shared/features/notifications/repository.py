@@ -4,32 +4,22 @@ from app.shared.dbmodels import Notification, User
 
 class NotificationRepository:
     """
-    Репозиторий для работы с пользователями.
+    Репозиторий для работы с уведомлениями
 
     Attributes:
         session: Сессия SQLAlchemy для работы с БД
-        model: Модель User
-
-    Example:
-        >>> repo = UserRepository()
-        >>> user = repo.get_by_id(1)
-        >>> print(user.name)
-        'username1'
+        model: Модель Notifications
     """
 
     def get_all_by_user_id(self, user_id):
         """
-        Получить пользователя по id.
+        Получить все уведомления пользователя по его id.
 
         Args:
             user_id (int): Id пользователя.
 
         Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            list[Notification]: Список объектов Notification (может быть пустым).
         """
         return (
             db.session.query(Notification)
@@ -55,17 +45,13 @@ class UserRepository:
 
     def get_name(self, user_id):
         """
-        Получить пользователя по id.
+        Получить имя пользователя по id.
 
         Args:
             user_id (int): Id пользователя.
 
         Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            str: Имя. Может быть None
         """
         user = db.session.query(User).filter(User.id == user_id).first()
         if user:

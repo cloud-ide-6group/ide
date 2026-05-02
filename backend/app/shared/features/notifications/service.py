@@ -5,18 +5,20 @@ from app.shared.extensions import socketio
 
 def get_notifications(user_id):
     """
-    Создает обновленный объект user и отправляет его в репозиторий, чтобы сохранить новые данные
+    Получает уведомления из БД и преобразует их в json.
 
     Args:
-        id (int): Id пользователя
-        email (str): Почта пользователя
-        name (str): Имя пользователя
-        password_hash (str): Хэш пароля
-        photo_path (str): Путь к фото профиля на сервере
+        user_id (int): Id пользователя
 
     Returns:
-        User: Обновленный пользователь
-        ResultCodes: Результат выполнения
+        list[dict]: Список уведомлений, каждое в виде словаря:
+            [
+                {
+                    "sender_name": str,
+                    "send_time": datetime,
+                    "notification_id": int
+                }
+            ]
     """
     raw_notifications = notification_repo.get_all_by_user_id(user_id)
     notifications = []
@@ -33,6 +35,12 @@ def get_notifications(user_id):
 
 
 def send_to_klient(invited_user_id):
+    """
+    Посылает клиенту все уведомления по сокету.
+
+    Args:
+        invited_user_id (int): Id пользователя
+    """
     socketio.emit(
         "notifications_list",
         {"notifications": get_notifications(invited_user_id)},

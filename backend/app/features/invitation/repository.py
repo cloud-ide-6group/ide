@@ -5,48 +5,32 @@ import datetime
 
 class ProjectRepository:
     """
-    Репозиторий для работы с пользователями.
+    Репозиторий для работы с проектами
 
     Attributes:
         session: Сессия SQLAlchemy для работы с БД
-        model: Модель User
-
-    Example:
-        >>> repo = UserRepository()
-        >>> user = repo.get_by_id(1)
-        >>> print(user.name)
-        'username1'
+        model: Модель Project
     """
 
     def get_by_name(self, name):
         """
-        Получить пользователя по id.
+        Получить проект по имени.
 
         Args:
-            user_id (int): Id пользователя.
+            name (str): Название проекта.
 
         Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            Project: Проект.
         """
         return db.session.query(Project).filter(Project.name == name).first()
 
     def add_user_in_project(self, _project_id, _user_id):
         """
-        Получить пользователя по id.
+        Создает сущность UserInProject для связи проекта и пользователя
 
         Args:
-            user_id (int): Id пользователя.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            _project_id (int): Id проекта.
+            _user_id (int): Id пользователя.
         """
         userInProject = UserInProject(project_id=_project_id, user_id=_user_id)
         db.session.add(userInProject)
@@ -54,17 +38,11 @@ class ProjectRepository:
 
     def delete_user_from_project(self, _project_id, _user_id):
         """
-        Получить пользователя по id.
+        Удаляет связь UserInProject.
 
         Args:
-            user_id (int): Id пользователя.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            _project_id (int): Id проекта.
+            _user_id (int): Id пользователя.
         """
         user_in_project = (
             db.session.query(UserInProject)
@@ -86,20 +64,14 @@ class UserRepository:
     Attributes:
         session: Сессия SQLAlchemy для работы с БД
         model: Модель User
-
-    Example:
-        >>> repo = UserRepository()
-        >>> user = repo.get_by_id(1)
-        >>> print(user.name)
-        'username1'
     """
 
     def user_exists(self, id):
         """
-        Получить пользователя по id.
+        Проверяет, существует ли пользователь.
 
         Args:
-            user_id (int): Id пользователя.
+            id (int): Id пользователя.
 
         Returns:
             User: Пользователь
@@ -116,10 +88,10 @@ class UserRepository:
 
     def get_by_email(self, email):
         """
-        Получить пользователя по id.
+        Получить пользователя по email.
 
         Args:
-            user_id (int): Id пользователя.
+            email (str): Email пользователя.
 
         Returns:
             User: Пользователь
@@ -133,32 +105,21 @@ class UserRepository:
 
 class NotificationRepository:
     """
-    Репозиторий для работы с пользователями.
+    Репозиторий для работы с уведомлениями.
 
     Attributes:
         session: Сессия SQLAlchemy для работы с БД
         model: Модель User
-
-    Example:
-        >>> repo = UserRepository()
-        >>> user = repo.get_by_id(1)
-        >>> print(user.name)
-        'username1'
     """
 
     def add_notification(self, _project_id, _sender_id, _receiver_id):
         """
-        Получить пользователя по id.
+        Добавляет уведомление в БД.
 
         Args:
-            user_id (int): Id пользователя.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            _project_id (int): Id проекта.
+            _sender_id (int): Id отправителя.
+            _receiver_id (int): Id получаетеля.
         """
         notification = Notification(
             project_id=_project_id,

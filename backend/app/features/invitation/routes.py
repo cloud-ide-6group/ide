@@ -8,10 +8,12 @@ from .service import add_user_in_project, delete_user_from_project
 @invitation_bp.route("/invite", methods=["POST"])
 def invite():
     """
-    Создание нового проекта
+    Приглашение пользователя в проект
     ---
     tags:
-      - features/project
+      - features/invitation
+    description: |
+      Добавляет пользователя в проект
     parameters:
       - name: Authorization
         in: header
@@ -27,42 +29,26 @@ def invite():
             project_name:
               type: string
               example: "TestProject"
-            language_id:
-              type: int
-              example: 7
+            invited_user_email:
+              type: string
+              example: "test@mail.ru"
     responses:
-      201:
-        description: Успешное создание
+      200:
+        description: Успешное пришлашение
         schema:
           type: object
           properties:
               project_id:
                 type: int
                 example: 25
-      401:
-        description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
-      403:
-        description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
       409:
-        description: Ошибка создания проекта
+        description: Ошибка приглашения
         schema:
           type: object
           properties:
               message:
                 type: string
-                example: "Проект уже существует"
+                example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -89,10 +75,12 @@ def invite():
 @invitation_bp.route("/delete/invited", methods=["DELETE"])
 def delete_invited():
     """
-    Создание нового проекта
+    Удалить пользователя из проекта
     ---
     tags:
-      - features/project
+      - features/invitation
+    description: |
+      Удаляет ранее приглашенного пользователя из проекта
     parameters:
       - name: Authorization
         in: header
@@ -108,42 +96,26 @@ def delete_invited():
             project_name:
               type: string
               example: "TestProject"
-            language_id:
-              type: int
-              example: 7
+            invited_user_email:
+              type: string
+              example: "test@mail.ru"
     responses:
-      201:
-        description: Успешное создание
+      200:
+        description: Успешное удаление
         schema:
           type: object
           properties:
               project_id:
                 type: int
                 example: 25
-      401:
-        description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
-      403:
-        description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
       409:
-        description: Ошибка создания проекта
+        description: Ошибка удаления
         schema:
           type: object
           properties:
               message:
                 type: string
-                example: "Проект уже существует"
+                example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
