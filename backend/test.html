@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body>
+    <input id="tok" placeholder="Bearer Token" style="width: 400px;"><br /><br />
+    <button onclick="go()">CONNECT</button>
+    <pre id="out"></pre>
+    <script>
+        function go() {
+            let t = document.getElementById('tok').value;
+            let out = document.getElementById('out');
+            let socket = io('http://127.0.0.1:3000', {
+                extraHeaders: { 'Authorization': 'Bearer ' + t }
+            });
+            socket.on('connect', () => out.innerText += '✅ Подключено\n');
+            socket.on('notifications_list', (d) => out.innerText += '📩 JSON: ' + JSON.stringify(d, null, 2) + '\n');
+            socket.on('connect_error', (e) => out.innerText += '❌ ' + e.message + '\n');
+        }
+    </script>
+</body>
+
+</html>

@@ -26,7 +26,7 @@ def get_notifications(user_id):
         notifications.append(
             {
                 "sender_name": user_repo.get_name(n.sender_id) or "-",
-                "send_time": n.send_time,
+                "send_time": n.send_time.isoformat() if n.send_time else None,
                 "notification_id": n.id,
             }
         )
@@ -41,6 +41,7 @@ def send_to_klient(invited_user_id):
     Args:
         invited_user_id (int): Id пользователя
     """
+    print(get_notifications(invited_user_id))
     socketio.emit(
         "notifications_list",
         {"notifications": get_notifications(invited_user_id)},
