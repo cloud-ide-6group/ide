@@ -38,3 +38,4 @@ test.db-journal
 .pytest_cache
 test_feature/
 images/
+test.html

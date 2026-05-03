@@ -9,7 +9,7 @@ from flask import request
 
 
 @notifications_bp.route("/delete/notification", methods=["DELETE"])
-def delete_notification():
+def delete_notification_rout():
     """
     Удаление уведомления после прочтения пользователем
     ---

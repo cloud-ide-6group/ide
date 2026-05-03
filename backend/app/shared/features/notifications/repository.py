@@ -50,7 +50,7 @@ class NotificationRepository:
         Args:
             notification_id (int): Id уведомления
         """
-        notification = db.session.query(Notification.id == notification_id)
+        notification = db.session.query(Notification).filter(Notification.id == notification_id).first()
         if notification:
             db.session.delete(notification)
             db.session.commit()

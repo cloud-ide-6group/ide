@@ -13,8 +13,12 @@
         function go() {
             let t = document.getElementById('tok').value;
             let out = document.getElementById('out');
-            let socket = io('http://127.0.0.1:3000', {
-                extraHeaders: { 'Authorization': 'Bearer ' + t }
+            let socket = io('http://170.168.15.84:8000/', {
+                transportOptions: {
+                    polling: {
+                        extraHeaders: { 'Authorization': 'Bearer ' + t }
+                    }
+                }
             });
             socket.on('connect', () => out.innerText += '✅ Подключено\n');
             socket.on('notifications_list', (d) => out.innerText += '📩 JSON: ' + JSON.stringify(d, null, 2) + '\n');
