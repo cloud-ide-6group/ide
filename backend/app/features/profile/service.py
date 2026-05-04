@@ -119,6 +119,32 @@ def get_user_projects(user_id):
     return projects, ResultsCodes.OK
 
 
+def get_projects_includes(user_id):
+    """
+    Возвращает все проекты, в которые пользователь приглашен
+
+    Args:
+        user_id (int): Id пользователя
+
+    Returns:
+        list[dict]: Массив словарей с полями проектов
+        Каждый словарь содержит:
+            - id (int): Id проекта
+            - name (str): Название проекта
+        ResultCodes: Результат операции
+    """
+    if user_id == None:
+        return [], ResultsCodes.USER_ID_NULL
+
+    projects = []
+
+    projects_raw_data = project_repo.get_includes(user_id)
+    for p in projects_raw_data:
+        projects.append({"id": p.id, "name": p.name})
+
+    return projects, ResultsCodes.OK
+
+
 def get_photo_base_64(image_path):
     """
     Преобразует фото в base64 строку.
