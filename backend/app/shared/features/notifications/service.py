@@ -1,4 +1,4 @@
-from .repository import notification_repo, user_repo
+from .repository import notification_repo, user_repo, project_repo
 from app.shared.consts import ResultsCodes
 from app.shared.extensions import socketio
 
@@ -16,7 +16,9 @@ def get_notifications(user_id):
                 {
                     "sender_name": str,
                     "send_time": datetime,
-                    "notification_id": int
+                    "notification_id": int,
+                    "project_id": int,
+                    "project_name": str
                 }
             ]
     """
@@ -28,6 +30,8 @@ def get_notifications(user_id):
                 "sender_name": user_repo.get_name(n.sender_id) or "-",
                 "send_time": n.send_time.isoformat() if n.send_time else None,
                 "notification_id": n.id,
+                "project_id": n.project_id,
+                "project_name": project_repo.get_name(n.project_id) or "-",
             }
         )
 

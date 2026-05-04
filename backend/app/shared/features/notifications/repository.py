@@ -1,5 +1,5 @@
 from app.shared.extensions import db
-from app.shared.dbmodels import Notification, User
+from app.shared.dbmodels import Notification, User, Project
 
 
 class NotificationRepository:
@@ -50,7 +50,11 @@ class NotificationRepository:
         Args:
             notification_id (int): Id уведомления
         """
-        notification = db.session.query(Notification).filter(Notification.id == notification_id).first()
+        notification = (
+            db.session.query(Notification)
+            .filter(Notification.id == notification_id)
+            .first()
+        )
         if notification:
             db.session.delete(notification)
             db.session.commit()
@@ -88,5 +92,32 @@ class UserRepository:
             return None
 
 
+class ProjectRepository:
+    """
+    Репозиторий для работы с проектами.
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель Project
+    """
+
+    def get_name(self, project_id):
+        """
+        Получить имя проекта по id.
+
+        Args:
+            project_id (int): Id проекта.
+
+        Returns:
+            str: Имя. Может быть None
+        """
+        project = db.session.query(Project).filter(Project.id == project_id).first()
+        if project:
+            return project.name
+        else:
+            return None
+
+
 notification_repo = NotificationRepository()
 user_repo = UserRepository()
+project_repo = ProjectRepository()
