@@ -29,3 +29,4 @@ class ResultsCodes:
     NEW_PASSWORD_NULL = "Новый пароль не может быть null"
     UPDATED_DATA_INCORRECT = "Данные для обновления неверны"
     PROJECT_NOT_FOUND = "Проект не найден"
+    USER_IS_IN_ALREADY = "Пользователь уже в проекте"

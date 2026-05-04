@@ -20,6 +20,8 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
     if project and project.owner_id == owner_id:
         added_user = user_repo.get_by_email(invited_user_email)
         if added_user and user_repo.user_exists(owner_id):
+            if project_repo.is_user_in_project(project.id, added_user.id):
+                return ResultsCodes.USER_IS_IN_ALREADY
             project_repo.add_user_in_project(project.id, added_user.id)
             notification_repo.add_notification(project.id, owner_id, added_user.id)
             send_to_klient(added_user.id)

@@ -36,6 +36,30 @@ class ProjectRepository:
         db.session.add(userInProject)
         db.session.commit()
 
+    def is_user_in_project(self, _project_id, _user_id):
+        """
+        Проверяет, нет ли пользователя в проекте
+
+        Args:
+            _project_id (int): Id проекта.
+            _user_id (int): Id пользователя.
+
+        Returns:
+            bool: True, если в проекте. Иначе False
+        """
+        userInProject = (
+            db.session.query(UserInProject)
+            .filter(
+                (UserInProject.project_id == _project_id)
+                & (UserInProject.user_id == _user_id)
+            )
+            .first()
+        )
+        if userInProject:
+            return True
+        else:
+            return False
+
     def delete_user_from_project(self, _project_id, _user_id):
         """
         Удаляет связь UserInProject.
