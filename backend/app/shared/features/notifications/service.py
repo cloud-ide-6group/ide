@@ -65,7 +65,7 @@ def delete_notification(user_id, notification_id):
         ResultCodes: Результат выполнения операции
     """
     notification = notification_repo.get_by_id(notification_id)
-    if user_id == notification.receiver_id:
+    if notification and user_id == notification.receiver_id:
         notification_repo.delete_by_id(notification.id)
         return ResultsCodes.OK
     return ResultsCodes.USER_NOT_FOUND

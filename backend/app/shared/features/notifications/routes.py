@@ -70,7 +70,7 @@ def delete_notification_rout():
     access_token = auth_header.split(" ")[1]
     user_id, id_result = get_id(access_token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     notification_id = data["notification_id"]
     result = delete_notification(user_id, notification_id)
