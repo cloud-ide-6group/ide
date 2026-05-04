@@ -219,6 +219,10 @@ class UserInProject(db.Model):
 
     __tablename__ = "user_in_project"
 
+    __table_args__ = (
+        db.UniqueConstraint('project_id', 'user_id', name='uq_project_user'),
+    )
+
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -244,6 +248,10 @@ class Notification(db.Model):
     """
 
     __tablename__ = "notification"
+
+    __table_args__ = (
+        db.UniqueConstraint('project_id', 'receiver_id', name='uq_project_receiver'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
