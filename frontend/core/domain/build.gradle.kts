@@ -9,6 +9,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.koin.core)
             api(projects.core.model)
+            implementation(libs.coroutines)
         }
 
         jvmTest.dependencies {
