@@ -12,7 +12,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import front.feature.notifications.generated.resources.Res
-import front.feature.notifications.generated.resources.check_24dp
 import front.feature.notifications.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
@@ -26,7 +25,6 @@ import ru.vsu.front.model.entity.Notification
  * @param notification Сущность, содержащая основные сведения об уведомлении.
  * @param modifier Modifier для настроек.
  * @param background Цвет бекграунда.
- * @param onAcceptClick Коллбек, вызываемый при нажатии на кнопку "Принять".
  * @param onDeclineClick Коллбек, вызываемый при нажатии на кнопку "Отклонить".
  */
 @Composable
@@ -34,7 +32,6 @@ fun NotificationItem(
     notification: Notification,
     modifier: Modifier = Modifier,
     background: Color = CodeTogetherTheme.colors.primary.copy(alpha = 0.035f),
-    onAcceptClick: (Int) -> Unit,
     onDeclineClick: (Int) -> Unit,
 ) {
     Column(
@@ -42,42 +39,19 @@ fun NotificationItem(
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(background)
-            .padding(8.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserAvatar(
-                modifier = Modifier
-                    .size(48.dp)
-                    .align(Alignment.CenterVertically),
-                photoBase64 = notification.ownerPhoto
+            CodeTogetherText(
+                text = "${notification.senderName} пригласил Вас в проект ${notification.projectName}",
+                color = CodeTogetherTheme.colors.primaryText
             )
 
-            Column(
-
-            ) {
-                CodeTogetherText(
-                    text = notification.ownerName
-                )
-                CodeTogetherText(
-                    text = "Вы были приглашены в проект ${notification.projectName}",
-                    color = CodeTogetherTheme.colors.secondaryText
-                )
-            }
-
             Spacer(Modifier.weight(1f))
-            CodeTogetherIconButton(
-                onClick = {
-                    onAcceptClick(notification.projectId)
-                }
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.check_24dp),
-                    contentDescription = null,
-                    tint = Color.Green
-                )
-            }
+
             CodeTogetherIconButton(
                 onClick = {
                     onDeclineClick(notification.projectId)
