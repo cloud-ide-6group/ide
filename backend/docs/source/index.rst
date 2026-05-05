@@ -23,3 +23,5 @@ documentation for details.
    modules/new_project
    modules/languages
    modules/password_hash
+   modules/notifications
+   modules/invitation

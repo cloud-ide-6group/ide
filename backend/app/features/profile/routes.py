@@ -8,11 +8,11 @@ from .service import (
     get_photo_base_64,
     update_user_data,
     save_photo,
+    get_projects_includes,
 )
 from ...shared.features.jwt_token.service import get_id
 from app.shared.features.password_hash.service import get_password_hash
 from app.shared.consts import ResultsCodes
-
 
 load_dotenv()
 
@@ -102,9 +102,19 @@ def profile():
 
     photo = get_photo_base_64(user.photo_path)
 
-    projects, result = get_user_projects(id)
+    projects_owns, result = get_user_projects(id)
     if result != ResultsCodes.OK:
         return {"message": result}, 404
+
+    projects_includes, result = get_projects_includes(id)
+    if result != ResultsCodes.OK:
+        return {"message": result}, 404
+
+    projects = []
+    for p in projects_owns:
+        projects.append(p)
+    for p in projects_includes:
+        projects.append(p)
 
     return {
         "projects": projects,

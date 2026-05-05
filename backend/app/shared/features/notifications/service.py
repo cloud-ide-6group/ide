@@ -1,0 +1,71 @@
+from .repository import notification_repo, user_repo, project_repo
+from app.shared.consts import ResultsCodes
+from app.shared.extensions import socketio
+
+
+def get_notifications(user_id):
+    """
+    Получает уведомления из БД и преобразует их в json.
+
+    Args:
+        user_id (int): Id пользователя
+
+    Returns:
+        list[dict]: Список уведомлений, каждое в виде словаря:
+            [
+                {
+                    "sender_name": str,
+                    "send_time": datetime,
+                    "notification_id": int,
+                    "project_id": int,
+                    "project_name": str
+                }
+            ]
+    """
+    raw_notifications = notification_repo.get_all_by_user_id(user_id)
+    notifications = []
+    for n in raw_notifications:
+        notifications.append(
+            {
+                "sender_name": user_repo.get_name(n.sender_id) or "-",
+                "send_time": n.send_time.isoformat() if n.send_time else None,
+                "notification_id": n.id,
+                "project_id": n.project_id,
+                "project_name": project_repo.get_name(n.project_id) or "-",
+            }
+        )
+
+    return notifications
+
+
+def send_to_klient(invited_user_id):
+    """
+    Посылает клиенту все уведомления по сокету.
+
+    Args:
+        invited_user_id (int): Id пользователя
+    """
+    print(get_notifications(invited_user_id))
+    socketio.emit(
+        "notifications_list",
+        {"notifications": get_notifications(invited_user_id)},
+        room=str(invited_user_id),
+    )
+
+
+def delete_notification(user_id, notification_id):
+    """
+    Проверяет, может ли этот пользователь удалить уведомление, и удаляет.
+
+    Args:
+        user_id (int): Id пользователя
+        notification_id (int): Id уведомления
+
+    Returns:
+        ResultCodes: Результат выполнения операции
+    """
+    notification = notification_repo.get_by_id(notification_id)
+    if notification and user_id == notification.receiver_id:
+        notification_repo.delete_by_id(notification.id)
+        return ResultsCodes.OK
+    return ResultsCodes.USER_NOT_FOUND

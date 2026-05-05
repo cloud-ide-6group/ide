@@ -28,3 +28,6 @@ class ResultsCodes:
     INVALID_BASE64 = "Неверна строка изображения"
     NEW_PASSWORD_NULL = "Новый пароль не может быть null"
     UPDATED_DATA_INCORRECT = "Данные для обновления неверны"
+    PROJECT_NOT_FOUND = "Проект не найден"
+    USER_IS_IN_ALREADY = "Пользователь уже в проекте"
+    CANT_INVITE="Вы не можете пригласить сами себя"

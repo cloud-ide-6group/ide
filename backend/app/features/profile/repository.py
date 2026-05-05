@@ -1,5 +1,5 @@
 from app.shared.extensions import db
-from app.shared.dbmodels import User, Project
+from app.shared.dbmodels import User, Project, UserInProject
 
 
 class UserRepository:
@@ -107,13 +107,41 @@ class ProjectRepository:
             owner_id (int): Id пользователя.
 
         Returns:
-            Project: Проект
+            list[Project]: Массив проектов
 
         Example:
             >>> repo = ProjectRepository()
             >>> list_of_projects = repo.get_by_owner_id(123)
         """
         return db.session.query(Project).filter(Project.owner_id == owner_id).all()
+
+    def get_includes(self, user_id):
+        """
+        Получить все проекты, в которые пользователь приглашен
+
+        Args:
+            user_id (int): Id пользователя.
+
+        Returns:
+            list[Project]: Массив проектов
+
+        Example:
+            >>> repo = ProjectRepository()
+            >>> list_of_projects = repo.get_by_owner_id(123)
+        """
+        user_in_projects = (
+            db.session.query(UserInProject)
+            .filter(UserInProject.user_id == user_id)
+            .all()
+        )
+
+        projects = []
+        for u in user_in_projects:
+            projects.append(
+                db.session.query(Project).filter(Project.id == u.project_id).first()
+            )
+
+        return projects
 
 
 user_repo = UserRepository()
