@@ -18,6 +18,7 @@ coroutines = "1.10.2"
 kotlinx-serialization = "1.10.0"
 coil = "3.4.0"
 imagepicker = "1.0.39"
+socketio = "2.1.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -57,6 +58,8 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 cash-turbine-test = { module = "app.cash.turbine:turbine", version.ref = "turbine-test" }
 
 imagepicker = { module = "io.github.ismoy:imagepickerkmp", version.ref = "imagepicker" }
+
+socketio = { module = "io.socket:socket.io-client", version.ref = "socketio" }
 
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
