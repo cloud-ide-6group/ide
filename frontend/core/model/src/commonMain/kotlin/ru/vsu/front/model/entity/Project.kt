@@ -1,7 +1,7 @@
 package ru.vsu.front.model.entity
 
 /**
- * Проекта.
+ * Проект.
  *
  * @property id Идентификатор проекта.
  * @property name Название проекта.
