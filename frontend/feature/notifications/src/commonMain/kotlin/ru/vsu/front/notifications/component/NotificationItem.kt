@@ -54,7 +54,7 @@ fun NotificationItem(
 
             CodeTogetherIconButton(
                 onClick = {
-                    onDeclineClick(notification.projectId)
+                    onDeclineClick(notification.notificationId)
                 }
             ) {
                 Icon(
