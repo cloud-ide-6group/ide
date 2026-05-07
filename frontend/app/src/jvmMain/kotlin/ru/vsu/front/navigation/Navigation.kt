@@ -2,18 +2,25 @@ package ru.vsu.front.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.auth.AuthState
 import ru.vsu.front.authorization.AuthScreen
 import ru.vsu.front.authorization.AuthViewModel
+import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen
@@ -52,7 +59,10 @@ fun Navigation(
         composable<Route.Profile> {
             val viewModel = koinViewModel<ProfileViewModel>()
             ProfileScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onProjectInfoClick = { projectId ->
+                    navController.navigate(Route.ProjectInfo(projectId))
+                }
             )
         }
 
@@ -61,6 +71,12 @@ fun Navigation(
             NotificationsScreen(
                 viewModel = viewModel
             )
+        }
+
+        composable<Route.ProjectInfo> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CodeTogetherText(text = "Project Info Screen")
+            }
         }
     }
 }
