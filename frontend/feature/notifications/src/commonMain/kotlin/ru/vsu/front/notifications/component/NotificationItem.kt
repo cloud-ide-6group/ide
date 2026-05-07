@@ -13,8 +13,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -29,7 +31,7 @@ import ru.vsu.front.model.entity.Notification
  * @param onDeclineClick Коллбек, вызываемый при нажатии на кнопку "Отклонить".
  */
 @Composable
-fun NotificationItem(
+internal fun NotificationItem(
     notification: Notification,
     modifier: Modifier = Modifier,
     background: Color = CodeTogetherTheme.colors.primary.copy(alpha = 0.035f),
@@ -40,12 +42,12 @@ fun NotificationItem(
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(background)
-            .padding(12.dp)
-            .padding(bottom = 4.dp),
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(bottom = 4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             CodeTogetherText(
                 text = notification.senderName.replaceFirstChar {
@@ -83,5 +85,24 @@ fun NotificationItem(
         ) {
             onDeclineClick(notification.notificationId)
         }
+    }
+}
+
+@Composable
+@Preview
+private fun NotificationItemPreview() {
+    BackgroundPreview {
+        NotificationItem(
+            notification = Notification(
+                notificationId = 1,
+                senderName = "Dmitry",
+                sendTime = "...",
+                projectId = 1,
+                projectName = "Project Name"
+            ),
+            onDeclineClick = {
+
+            }
+        )
     }
 }

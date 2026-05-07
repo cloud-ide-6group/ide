@@ -21,6 +21,7 @@ kotlin {
             implementation(libs.coil.network.ktor)
             implementation(libs.koin.core)
             implementation(libs.socketio)
+            implementation(libs.compose.uiToolingPreview)
             implementation(projects.core.designsystem)
             implementation(projects.core.common)
             implementation(projects.core.data)
