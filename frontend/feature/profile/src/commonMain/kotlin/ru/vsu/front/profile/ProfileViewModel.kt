@@ -2,7 +2,9 @@ package ru.vsu.front.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
@@ -29,6 +31,7 @@ class ProfileViewModel(
     private val updateProfileDataUseCase: UpdateProfileDataUseCase,
     private val updateProfilePasswordUseCase: UpdateProfilePasswordUseCase,
     private val updateProfilePhotoUseCase: UpdateProfilePhotoUseCase,
+    private val observeNotificationsUseCase: ObserveNotificationsUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -41,6 +44,7 @@ class ProfileViewModel(
 
     init {
         loadProfile()
+        observeNotifications()
     }
 
     /**
@@ -132,23 +136,17 @@ class ProfileViewModel(
 
                             is Response.Error<*> -> {
                                 when (val requestError = result.requestError) {
-                                    is RequestError.Conflict -> {
-                                        _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    }
-
-                                    is RequestError.Forbidden -> {
-                                        _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    }
-
-                                    is RequestError.UnknownError -> {
-                                        _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    }
-
-                                    is RequestError.NetworkException -> {
-                                        _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    }
+                                    is RequestError.Conflict -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    is RequestError.Forbidden -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    is RequestError.UnknownError -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    is RequestError.NetworkException -> _events.emit(
+                                        ProfileEffect.ShowMessage(
+                                            requestError.message
+                                        )
+                                    )
 
                                     else -> {
+                                        // Nothing
                                     }
                                 }
                                 latestState
@@ -277,23 +275,11 @@ class ProfileViewModel(
                     )) {
                         is Response.Error<*> -> {
                             when (result.requestError) {
-                                is RequestError.Unauthorized -> {
-                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                }
-
-                                is RequestError.Conflict -> {
-                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                }
-
-                                is RequestError.UnknownError -> {
-                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                }
-
-                                is RequestError.NetworkException -> {
-                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                }
-
+                                is RequestError.Conflict -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                is RequestError.UnknownError -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                is RequestError.NetworkException -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
                                 else -> {
+                                    // Nothing
                                 }
                             }
                         }
@@ -318,6 +304,7 @@ class ProfileViewModel(
             _uiState.update {
                 UiStatusProfile.Loading
             }
+
             val profileResponse = async {
                 getProfileUseCase()
             }
@@ -361,6 +348,30 @@ class ProfileViewModel(
                 }
             }
         }
+    }
+
+    private fun observeNotifications() {
+        observeNotificationsUseCase()
+            .flowOn(dispatcherProvider.io)
+            .retryWhen { _, _ ->
+                delay(5000)
+                true
+            }
+            .onEach { notifications ->
+                val projectsFromNotifications = notifications.map {
+                    Project(id = it.projectId, name = it.projectName)
+                }
+
+                updateLoadedState { state ->
+                    if (!projectsFromNotifications.all { it in state.projects }) {
+                        val allProjects = (projectsFromNotifications union state.projects).toList()
+                        state.copy(projects = allProjects)
+                    } else {
+                        state.copy()
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     /**

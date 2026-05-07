@@ -1,7 +1,6 @@
 package ru.vsu.front.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,9 +15,7 @@ import io.github.ismoy.imagepickerkmp.domain.extensions.loadBase64
 import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
 import io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
 import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
-import ru.vsu.front.designsystem.component.CodeTogetherScaffold
-import ru.vsu.front.designsystem.component.CodeTogetherText
-import ru.vsu.front.designsystem.component.CodeTogetherTextButton
+import ru.vsu.front.designsystem.component.*
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.profile.component.*
 
@@ -27,11 +24,13 @@ import ru.vsu.front.profile.component.*
  *
  * @param viewModel Вьюмодель для экрана профиля.
  * @param modifier Модификатор для настройки.
+ * @param onProjectInfoClick Коллбек, вызываемый при клике на проект.
  */
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
     modifier: Modifier = Modifier,
+    onProjectInfoClick: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -77,13 +76,14 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 32.dp, bottom = 8.dp),
+                        .padding(32.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(32.dp)
                     ) {
                         UserAvatar(
                             modifier = Modifier.size(348.dp),
@@ -94,8 +94,7 @@ fun ProfileScreen(
                         )
                         ProfileSections(
                             modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 32.dp),
+                                .weight(1f),
                             name = loadedState.name,
                             email = loadedState.email,
                             currentPassword = loadedState.currentPassword,
@@ -142,8 +141,8 @@ fun ProfileScreen(
                         onCreateProjectClick = {
                             viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
                         },
-                        onProjectClick = {
-                            // TODO NAVIGATE
+                        onProjectClick = { projectId ->
+                            onProjectInfoClick(projectId)
                         }
                     )
                 }
@@ -180,23 +179,15 @@ fun ProfileScreen(
             }
 
             UiStatusProfile.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = CodeTogetherTheme.colors.primary)
-                }
+                LoadingScreen()
             }
 
             UiStatusProfile.Error -> {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CodeTogetherText(text = "Произошла ошибка во время загрузки! :(")
-                    Spacer(modifier = Modifier.height(16.dp))
-                    CodeTogetherTextButton(text = "Повторить") {
+                ErrorScreen(
+                    onClick = {
                         viewModel.processCommand(ProfileCommand.RepeatLoadingProfile)
                     }
-                }
+                )
             }
         }
     }
