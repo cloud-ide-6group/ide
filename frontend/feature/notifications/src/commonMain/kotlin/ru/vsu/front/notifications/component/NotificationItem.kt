@@ -4,18 +4,19 @@ package ru.vsu.front.notifications.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import front.feature.notifications.generated.resources.Res
-import front.feature.notifications.generated.resources.close_24dp
-import org.jetbrains.compose.resources.painterResource
-import ru.vsu.front.designsystem.component.CodeTogetherIconButton
+import androidx.compose.ui.unit.sp
 import ru.vsu.front.designsystem.component.CodeTogetherText
+import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.model.entity.Notification
 
@@ -34,35 +35,53 @@ fun NotificationItem(
     background: Color = CodeTogetherTheme.colors.primary.copy(alpha = 0.035f),
     onDeclineClick: (Int) -> Unit,
 ) {
-    Column(
+    Row(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .background(background)
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+            .padding(12.dp)
+            .padding(bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             CodeTogetherText(
-                text = "${notification.senderName} пригласил Вас в проект ${notification.projectName}",
-                color = CodeTogetherTheme.colors.primaryText
+                text = notification.senderName.replaceFirstChar {
+                    it.uppercaseChar()
+                },
+                style = CodeTogetherTheme.typography.style.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                ),
+                color = CodeTogetherTheme.colors.primary
             )
-
-            Spacer(Modifier.weight(1f))
-
-            CodeTogetherIconButton(
-                onClick = {
-                    onDeclineClick(notification.notificationId)
+            CodeTogetherText(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(color = CodeTogetherTheme.colors.primaryText)
+                    ) {
+                        append("Invited you to the project ")
+                    }
+                    withStyle(
+                        style = SpanStyle(
+                            color = CodeTogetherTheme.colors.primary,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    ) {
+                        append(notification.projectName)
+                    }
                 }
-            ) {
-                Icon(
-                    painter = painterResource(Res.drawable.close_24dp),
-                    contentDescription = null,
-                    tint = Color.Red
-                )
-            }
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        CodeTogetherTextButton(
+            text = "Read",
+            textColor = CodeTogetherTheme.colors.primary,
+            unHoverColor = CodeTogetherTheme.colors.primary.copy(0.01f)
+        ) {
+            onDeclineClick(notification.notificationId)
         }
     }
 }
