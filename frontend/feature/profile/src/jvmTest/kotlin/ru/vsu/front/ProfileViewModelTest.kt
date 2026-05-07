@@ -1,4 +1,4 @@
-package ru.vsu.front.profile
+package ru.vsu.front
 
 import app.cash.turbine.test
 import io.mockk.*
@@ -12,6 +12,10 @@ import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserProfile
+import ru.vsu.front.profile.ProfileCommand
+import ru.vsu.front.profile.ProfileEffect
+import ru.vsu.front.profile.ProfileViewModel
+import ru.vsu.front.profile.UiStatusProfile
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
