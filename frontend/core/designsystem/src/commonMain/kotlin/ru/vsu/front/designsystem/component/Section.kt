@@ -22,7 +22,8 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param visualTransformation Визуальная трансформация текста.
  * @param onValueChange Коллбек, вызываемый при вводе текста.
  * @param modifier Модификатор, применяемый ко всей секции.
- * @param textColor Единый цвет текста.
+ * @param textColor Цвет текста в поле ввода.
+ * @param sectionNameTextColor Цвет текста названия секции.
  * @param textFieldColors Цветовая схема введенного текста.
  * @param style Единый стиль текста.
  * @param isError Ошибка ли. Если `true`, поле ввода переходит в состояние ошибки.
@@ -37,6 +38,7 @@ fun Section(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = CodeTogetherTheme.colors.primaryText,
+    sectionNameTextColor: Color = CodeTogetherTheme.colors.primary,
     textFieldColors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
     style: TextStyle = CodeTogetherTheme.typography.style,
     isError: Boolean = false,
@@ -49,7 +51,7 @@ fun Section(
             modifier = Modifier
                 .padding(bottom = 8.dp),
             text = sectionName,
-            color = textColor,
+            color = sectionNameTextColor,
             style = style
         )
         CodeTogetherTextField(
