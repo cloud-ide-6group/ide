@@ -3,6 +3,7 @@ package ru.vsu.front.profile
 import app.cash.turbine.test
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
@@ -21,6 +22,7 @@ class ProfileViewModelTest {
     private lateinit var updateProfileDataUseCase: UpdateProfileDataUseCase
     private lateinit var updateProfilePasswordUseCase: UpdateProfilePasswordUseCase
     private lateinit var updateProfilePhotoUseCase: UpdateProfilePhotoUseCase
+    private lateinit var observeNotificationsUseCase: ObserveNotificationsUseCase
     private lateinit var dispatcherProvider: DispatcherProvider
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -44,12 +46,15 @@ class ProfileViewModelTest {
         updateProfileDataUseCase = mockk()
         updateProfilePasswordUseCase = mockk()
         updateProfilePhotoUseCase = mockk()
+        observeNotificationsUseCase = mockk()
 
         dispatcherProvider = mockk {
             every { main } returns testDispatcher
             every { io } returns testDispatcher
             every { default } returns testDispatcher
         }
+
+        every { observeNotificationsUseCase() } returns emptyFlow()
 
         mockkObject(EmailMatcher)
         every { EmailMatcher.isValid(any()) } returns true
@@ -72,6 +77,7 @@ class ProfileViewModelTest {
             updateProfileDataUseCase = updateProfileDataUseCase,
             updateProfilePasswordUseCase = updateProfilePasswordUseCase,
             updateProfilePhotoUseCase = updateProfilePhotoUseCase,
+            observeNotificationsUseCase = observeNotificationsUseCase,
             dispatcherProvider = dispatcherProvider
         )
     }
