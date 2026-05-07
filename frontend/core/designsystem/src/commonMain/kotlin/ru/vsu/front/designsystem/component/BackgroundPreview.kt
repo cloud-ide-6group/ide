@@ -19,14 +19,15 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  */
 @Composable
 fun BackgroundPreview(
-    content: @Composable () -> Unit
+    withPadding: Boolean = true,
+    content: @Composable () -> Unit,
 ) {
     CodeTogetherTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(CodeTogetherTheme.colors.primaryBackground)
-                .padding(16.dp),
+                .padding(if(withPadding) 16.dp else 0.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
