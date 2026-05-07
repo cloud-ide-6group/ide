@@ -11,3 +11,5 @@
 
 -keep class coil3.** { *; }
 -dontwarn coil3.**
+
+-ignorewarnings
