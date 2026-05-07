@@ -12,6 +12,6 @@ import ru.vsu.front.notifications.NotificationsViewModel
  */
 val notificationsModule = module {
     viewModel {
-        NotificationsViewModel()
+        NotificationsViewModel(get(), get(), get())
     }
 }
