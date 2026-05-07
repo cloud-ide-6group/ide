@@ -42,6 +42,6 @@ val dataModule = module {
     }.bind<ProjectRepository>()
 
     single {
-        DefaultNotificationsRepository(get(), get(named("baseUrl")))
+        DefaultNotificationsRepository(get(), get(), get(named("baseUrl")))
     }.bind<NotificationsRepository>()
 }
