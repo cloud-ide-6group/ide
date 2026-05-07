@@ -1,11 +1,14 @@
 package ru.vsu.front.designsystem.theme
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import ru.vsu.front.designsystem.theme.CodeTogetherTheme.selectionColors
 
 /**
  * Корневой Composable-компонент темы приложения.
@@ -32,9 +35,17 @@ fun CodeTogetherTheme(
         )
     )
 
+    val selectionColors = remember(colors.primary) {
+        TextSelectionColors(
+            handleColor = colors.primary,
+            backgroundColor = colors.primary.copy(alpha = 0.3f)
+        )
+    }
+
     CompositionLocalProvider(
         LocalCodeTogetherColors provides colors,
         LocalCodeTogetherTypography provides typography,
+        LocalCodeTogetherSelectionColors provides selectionColors,
         content = content
     )
 }
