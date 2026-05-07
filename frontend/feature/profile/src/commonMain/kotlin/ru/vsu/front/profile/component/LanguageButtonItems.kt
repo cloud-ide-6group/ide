@@ -7,8 +7,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.common.localIconRes
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.model.entity.ProgramingLanguage
 
 /**
@@ -37,5 +39,27 @@ internal fun LanguageButtonItems(
                 onClick = onLanguageClick
             )
         }
+    }
+}
+
+@Composable
+@Preview
+private fun LanguageButtonItemsPreview() {
+    BackgroundPreview {
+        LanguageButtonItems(
+            languages = buildList {
+                repeat(10) {
+                    val programingLanguage = ProgramingLanguage(
+                        id = it,
+                        name = listOf("Java", "Lua", "Python").random(),
+                        description = "description"
+                    )
+                    add(programingLanguage)
+                }
+            },
+            onLanguageClick = {
+
+            }
+        )
     }
 }

@@ -9,7 +9,9 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVerticalScrollBar
 import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
@@ -72,6 +74,33 @@ internal fun ProjectsSection(
                 .fillMaxHeight(),
             state = projectsState,
             visible = projectsAreVisible && projectsState.canScrollForward
+        )
+    }
+}
+
+
+
+@Composable
+@Preview
+internal fun ProjectsSectionPreview() {
+    BackgroundPreview {
+        ProjectsSection(
+            projects = buildList {
+                repeat(10) {
+                    val project = Project(id = it, name = "Project $it")
+                    add(project)
+                }
+            },
+            projectsAreVisible = true,
+            onChangeVisibleClick = {
+
+            },
+            onCreateProjectClick = {
+
+            },
+            onProjectClick = {
+
+            }
         )
     }
 }

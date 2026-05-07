@@ -8,7 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.Section
 import ru.vsu.front.designsystem.component.VisibilityButton
 import ru.vsu.front.domain.validation.EmailMatcher
@@ -36,7 +38,7 @@ import ru.vsu.front.domain.validation.EmailMatcher
  * @param onUpdatePasswordClick Коллбек, вызывающийся при клике на обновление пароля.
  */
 @Composable
-fun ProfileSections(
+internal fun ProfileSections(
     name: String,
     email: String,
     currentPassword: String,
@@ -127,4 +129,39 @@ fun ProfileSections(
             }
         )
     }
+}
+
+@Composable
+@Preview
+private fun ProfileSectionsPreview() {
+    BackgroundPreview {
+        ProfileSections(
+            name =  "name",
+            email =  "email",
+            currentPassword =  "currentPassword",
+            newPassword =  "newPassword",
+            hasChangesName =  false,
+            hasChangesEmail =  false,
+            hasChangesPassword =  false,
+            isCurrentPasswordVisible =  false,
+            isNewPasswordVisible =  true,
+            onNameChange =  {
+            },
+            onEmailChange =  {
+            },
+            onCurrentPasswordChange =  {
+            },
+            onNewPasswordChange =  {
+            },
+            onCurrentPasswordVisibilityChange =  {
+            },
+            onNewPasswordVisibilityChange =  {
+            },
+            onUpdateDataClick =  {
+            },
+            onUpdatePasswordClick =  {
+            }
+        )
+    }
+
 }
