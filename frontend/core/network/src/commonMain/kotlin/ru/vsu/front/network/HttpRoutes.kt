@@ -48,4 +48,9 @@ object HttpRoutes {
      * Эндпоинт обновления аватара.
      */
     const val UPDATE_PROFILE_PHOTO = "/profile/update/photo"
+
+    /**
+     * Эндпоинт удаления уведомления.
+     */
+    const val DELETE_NOTIFICATION = "/delete/notification"
 }
