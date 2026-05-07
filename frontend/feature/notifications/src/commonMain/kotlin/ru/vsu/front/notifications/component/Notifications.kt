@@ -1,20 +1,13 @@
 package ru.vsu.front.notifications.component
 
-import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVerticalScrollBar
 import ru.vsu.front.model.entity.Notification
 
 /**
@@ -54,13 +47,12 @@ fun Notifications(
                 )
             }
         }
-        VerticalScrollbar(
-            modifier = Modifier.padding(horizontal = 8.dp).fillMaxHeight(),
-            adapter = rememberScrollbarAdapter(state),
-            style = LocalScrollbarStyle.current.copy(
-                unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
-                hoverColor = CodeTogetherTheme.colors.primary
-            )
+        CodeTogetherAnimatedVerticalScrollBar(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxHeight(),
+            state = state,
+            visible = state.canScrollForward
         )
     }
 }
