@@ -114,8 +114,8 @@ internal fun CreatingProject(
                 DropdownMenu(
                     modifier = Modifier
                         .width(with(density) { columnWidthPx.toDp() })
-                        .background(CodeTogetherTheme.colors.primaryBackground)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
+                    containerColor = CodeTogetherTheme.colors.primaryBackground,
                     expanded = programingLanguagesListExpanded,
                     onDismissRequest = onDismissRequest
                 ) {
