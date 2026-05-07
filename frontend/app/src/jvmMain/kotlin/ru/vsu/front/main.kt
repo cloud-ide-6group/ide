@@ -1,31 +1,27 @@
 package ru.vsu.front
 
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import front.app.generated.resources.Res
 import front.app.generated.resources.app_icon
-import front.app.generated.resources.logout_24dp
-import front.app.generated.resources.notifications_24dp
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.Const
 import ru.vsu.front.component.TopBarButtons
-import ru.vsu.front.designsystem.common.NecessaryAppButtons
-import ru.vsu.front.designsystem.component.CodeTogetherIconButton
-import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.di.initKoin
 import ru.vsu.front.navigation.Navigation
 import ru.vsu.front.navigation.Route
 import ru.vsu.front.network.MainHttpClientManager
 import ru.vsu.front.window.DesktopScreenMetricsProvider
 import java.awt.Dimension
+
+private const val MIN_WINDOW_WIDTH = 1000
+private const val MIN_WINDOW_HEIGHT = 720
 
 /**
  * Точка входа в приложение.
@@ -36,8 +32,8 @@ fun main() {
     initKoin()
     application {
         val windowState = rememberWindowState(
-            width = 1280.dp,
-            height = 800.dp
+            width = MIN_WINDOW_WIDTH.dp,
+            height = MIN_WINDOW_HEIGHT.dp
         )
 
         val authManager: AuthManager = koinInject()
@@ -112,17 +108,13 @@ fun main() {
 
 /**
  * Задает минимально допустимые размеры окна.
- * Рассчитывается исходя из размера базовых кастомных кнопок управления окном и иконки приложения.
  */
 @Composable
 private fun WindowScope.setupWindow() {
     LaunchedEffect(Unit) {
-        /**
-         * Иконка приложения так же находится в верхней панели, но это не кнопка, так что + 1
-         */
         window.minimumSize = Dimension(
-            ((NecessaryAppButtons.entries.size + 1) * NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP),
-            NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP
+            MIN_WINDOW_WIDTH,
+            MIN_WINDOW_HEIGHT
         )
     }
 }
