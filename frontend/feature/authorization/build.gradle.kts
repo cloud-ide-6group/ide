@@ -17,6 +17,7 @@ kotlin {
             implementation(libs.koin.compose.viewModel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.koin.core)
+            implementation(libs.compose.uiToolingPreview)
             implementation(projects.core.designsystem)
             implementation(projects.core.common)
             implementation(projects.core.data)
