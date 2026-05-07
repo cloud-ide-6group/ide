@@ -55,7 +55,7 @@ internal fun ProjectsButton(
         ) {
             CodeTogetherText(
                 text = "Projects",
-                color = CodeTogetherTheme.colors.primaryText,
+                color = CodeTogetherTheme.colors.primary,
                 style = CodeTogetherTheme.typography.style.copy(fontSize = 16.sp)
             )
 
