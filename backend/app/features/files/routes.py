@@ -1,11 +1,12 @@
 from . import files_bp
-from flask import request, make_response
+from flask import request
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
+from .service import create_file
 
 
 @files_bp.route("/files/create", methods=["POST"])
@@ -59,5 +60,17 @@ def create_file():
     if result == ResultsCodes.NO_TOKEN:
         response = create_unauthorized_response()
         return response
-    
-    
+
+    data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 403
+
+    result = create_file(
+        data["name"], data["project_name"], data["parent_name"], data["is_folder"]
+    )
+
+    if result == ResultsCodes.OK:
+        return {}, 201
+    else:
+        return {"message": result}, 409

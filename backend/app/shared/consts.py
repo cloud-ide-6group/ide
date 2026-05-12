@@ -32,3 +32,5 @@ class ResultsCodes:
     USER_IS_IN_ALREADY = "Пользователь уже в проекте"
     CANT_INVITE = "Вы не можете пригласить сами себя"
     NO_TOKEN = "Токен не предоставлен"
+    NO_PARENT = "Родительской папки нет"
+    CREATE_FILE_ERROR = "Ошибка создания файла"
