@@ -62,7 +62,6 @@ fun CodeTogetherScaffold(
                     SnackbarHost(
                         hostState = state,
                         modifier = Modifier
-                            .widthIn(min = 300.dp)
                             .padding(16.dp)
                             .clip(CircleShape),
                     ) {
