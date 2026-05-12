@@ -29,5 +29,12 @@ kotlin {
             implementation(projects.core.datastore)
             implementation(projects.core.auth)
         }
+
+        jvmTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.mockk)
+            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.cash.turbine.test)
+        }
     }
 }
