@@ -4,6 +4,7 @@ import jwt
 from ...consts import ResultsCodes
 import os
 from dotenv import load_dotenv
+from flask import request, make_response
 
 load_dotenv()
 
@@ -86,3 +87,34 @@ def get_id(token):
         return user_id, ResultsCodes.OK
     except jwt.ExpiredSignatureError:
         return None, ResultsCodes.ACCESS_TOKEN_EXPIRED
+
+
+def get_jwt_from_header(auth_header):
+    """
+    Получает jwt токен из заголовка запроса.
+
+    Args:
+        auth_header (str): Заголовок
+
+    Returns:
+        access_token (str): Jwt токен или None
+        result_code (ResultCodes): Результат выполнения
+    """
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return None, ResultsCodes.NO_TOKEN
+
+    access_token = auth_header.split(" ")[1]
+
+    return access_token, ResultsCodes.OK
+
+
+def create_unauthorized_response():
+    """
+    Создает стандартный ответ для отсутствия токена
+
+    Returns:
+        response (json): Json ответ
+    """
+    response = make_response({"message": ResultsCodes.NO_TOKEN}, 401)
+    response.headers["WWW-Authenticate"] = "Bearer"
+    return response
