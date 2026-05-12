@@ -47,7 +47,7 @@ internal fun LeftSide(
 
 @Composable
 @Preview
-private fun AuthCardPreview() {
+private fun LeftSidePreview() {
     BackgroundPreview {
         LeftSide()
     }

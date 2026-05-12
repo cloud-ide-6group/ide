@@ -34,7 +34,7 @@ internal fun SideColumn(
 
 @Composable
 @Preview
-private fun AuthCardPreview() {
+private fun SideColumnPreview() {
     BackgroundPreview {
         SideColumn {
 
