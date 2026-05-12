@@ -66,6 +66,7 @@ class NotificationsViewModel(
                         }
 
                         is Response.Success<*> -> {
+                            _events.emit(NotificationsEffect.ShowMessage("Уведомление удалено"))
                         }
                     }
                 }
