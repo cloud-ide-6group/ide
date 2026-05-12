@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -63,6 +64,7 @@ fun CodeTogetherScaffold(
                         hostState = state,
                         modifier = Modifier
                             .padding(16.dp)
+                            .shadow(elevation = 8.dp, shape = CircleShape)
                             .clip(CircleShape),
                     ) {
                         CodeTogetherText(
