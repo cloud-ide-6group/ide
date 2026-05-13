@@ -6,7 +6,8 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
-from .service import create_file, delete_file
+from .service import create_file, delete_file, save_file_content
+from app.shared.extensions import socketio
 
 
 @files_bp.route("/files/create", methods=["POST"])
@@ -140,3 +141,23 @@ def delete_file_route():
         return {}, 201
     else:
         return {"message": result}, 409
+
+
+@socketio.on("update_file_content")
+def update_file_content(data):
+    """
+    Получает новый контент файла от клиента.
+    """
+    auth_header = request.headers.get("Authorization")
+    token, result = get_jwt_from_header(auth_header)
+    if result != ResultsCodes.OK:
+        return create_unauthorized_response()
+
+    id, result = get_id(token)
+
+    file_id = data.get("file_id")
+    new_content = data.get("content")
+
+    save_file_content(file_id, new_content)
+
+    return True

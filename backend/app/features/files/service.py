@@ -78,6 +78,13 @@ def get_file_content(file_id):
     return content
 
 
+def save_file_content(file_id, file_content):
+    file = file_repo.get_by_id(file_id)
+    file_path = get_file_path(file, "")
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(file_content)
+
+
 def send_file_content_to_klients(file_id):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
