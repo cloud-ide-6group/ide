@@ -38,14 +38,13 @@ def get_notifications(user_id):
     return notifications
 
 
-def send_to_klient(invited_user_id):
+def send_notifications_to_klient(invited_user_id):
     """
-    Посылает клиенту все уведомления по сокету.
+    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 
     Args:
         invited_user_id (int): Id пользователя
     """
-    print(get_notifications(invited_user_id))
     socketio.emit(
         "notifications_list",
         {"notifications": get_notifications(invited_user_id)},

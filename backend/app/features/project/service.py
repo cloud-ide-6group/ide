@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
-from .repository import project_repo
+from .repository import project_repo, file_repo
+from app.shared.extensions import socketio
 
 load_dotenv()
 
@@ -59,3 +60,34 @@ def create_project(user_id, project_name, language_id):
     if project == None:
         return None, ResultsCodes.PROJECT_CREATE_ERROR
     return project, ResultsCodes.OK
+
+
+def jsonify_file(file):
+    children = file_repo.get_children(file.id)
+    children_json = []
+    for c in children:
+        children_json.append(jsonify_file(c))
+
+    return {
+        "id": file.id,
+        "name": file.name,
+        "is_folder": file.is_folder,
+        "children": children_json,
+    }
+
+
+def send_files_to_klient(project_id, user_id):
+    """
+    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
+
+    Args:
+        invited_user_id (int): Id пользователя
+    """
+    root_file = file_repo.get_root_file(project_id)
+    files = jsonify_file(root_file)
+
+    socketio.emit(
+        "files_list",
+        {"files_tree": files},
+        room=str(user_id),
+    )

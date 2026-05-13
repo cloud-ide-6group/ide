@@ -1,4 +1,4 @@
-from app.shared.dbmodels import Project
+from app.shared.dbmodels import Project, File
 from app.shared.extensions import db
 
 
@@ -47,4 +47,25 @@ class ProjectRepository:
         return db.session.query(Project).filter(_name == Project.name).first()
 
 
+class FileRepository:
+    """
+    Репозиторий для работы с проектами.
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель Project
+    """
+
+    def get_root_file(self, id):
+        return (
+            db.session.query(File)
+            .filter(File.project_id == id & File.parent_id == None)
+            .first()
+        )
+
+    def get_children(self, parent_id):
+        return db.session.query(File).filter(File.parent_id == parent_id).all()
+
+
 project_repo = ProjectRepository()
+file_repo = FileRepository()
