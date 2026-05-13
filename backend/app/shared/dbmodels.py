@@ -62,9 +62,15 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey("file.id"), nullable=True)
+    parent_id = db.Column(db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     is_folder = db.Column(db.Boolean, nullable=False)
+
+    children = db.relationship(
+        "File",
+        backref=db.backref("parent", remote_side=[id]),
+        cascade="all, delete-orphan",
+    )
 
     @validates("name")
     def validate_name(self, key, name):
@@ -220,7 +226,7 @@ class UserInProject(db.Model):
     __tablename__ = "user_in_project"
 
     __table_args__ = (
-        db.UniqueConstraint('project_id', 'user_id', name='uq_project_user'),
+        db.UniqueConstraint("project_id", "user_id", name="uq_project_user"),
     )
 
     id = db.Column(db.Integer, primary_key=True)
@@ -250,7 +256,7 @@ class Notification(db.Model):
     __tablename__ = "notification"
 
     __table_args__ = (
-        db.UniqueConstraint('project_id', 'receiver_id', name='uq_project_receiver'),
+        db.UniqueConstraint("project_id", "receiver_id", name="uq_project_receiver"),
     )
 
     id = db.Column(db.Integer, primary_key=True)

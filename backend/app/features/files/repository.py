@@ -61,6 +61,23 @@ class FileRepository:
         )
         db.session.add(file)
 
+    def delete_file(self, _id):
+        """
+        Получить проект по имени.
+
+        Args:
+            name (str): Название проекта.
+
+        Returns:
+            Project: Проект.
+        """
+        file = db.session.query(File).filter(File.id == _id).first()
+        if file:
+            db.session.delete(file)
+            db.session.commit()
+            return True
+        return False
+
 
 class ProjectRepository:
     """

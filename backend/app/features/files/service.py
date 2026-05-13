@@ -45,3 +45,10 @@ def create_file_on_disk(name, parent, project_name):
     except Exception as e:
         print(f"Ошибка создания файла: {e}")
         return ResultsCodes.CREATE_FILE_ERROR
+
+
+def delete_file(file_id):
+    was_deleted = file_repo.delete_file(file_id)
+    if was_deleted == True:
+        return ResultsCodes.OK
+    return ResultsCodes.FILE_NOT_EXIST

@@ -34,3 +34,4 @@ class ResultsCodes:
     NO_TOKEN = "Токен не предоставлен"
     NO_PARENT = "Родительской папки нет"
     CREATE_FILE_ERROR = "Ошибка создания файла"
+    FILE_NOT_EXIST = "Файла не существует"
