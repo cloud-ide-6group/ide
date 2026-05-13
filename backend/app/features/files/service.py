@@ -85,7 +85,9 @@ def send_file_content_to_klients(file_id):
     Args:
         invited_user_id (int): Id пользователя
     """
+    file = file_repo.get_by_id(file_id)
     socketio.emit(
         "get_file_content",
         {"content": get_file_content(file_id)},
+        room=f"project_{file.project_id}",
     )

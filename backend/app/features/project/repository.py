@@ -1,4 +1,4 @@
-from app.shared.dbmodels import Project, File
+from app.shared.dbmodels import Project, File, UserInProject
 from app.shared.extensions import db
 
 
@@ -45,6 +45,34 @@ class ProjectRepository:
             Project: Проект
         """
         return db.session.query(Project).filter(_name == Project.name).first()
+
+    def get_by_id(self, id):
+        """
+        Получить проект из базы по имени
+
+        Args:
+            _name (str): Имя проекта
+
+        Returns:
+            Project: Проект
+        """
+        return db.session.query(Project).filter(Project.id == id).first()
+
+    def is_user_invited(self, project_id, user_id):
+        userInProject = (
+            db.session.query(UserInProject)
+            .filter(
+                UserInProject.project_id
+                == project_id & UserInProject.user_id
+                == user_id
+            )
+            .first()
+        )
+
+        if userInProject:
+            return True
+
+        return False
 
 
 class FileRepository:

@@ -99,6 +99,10 @@ def get_jwt_from_header(auth_header):
     Returns:
         access_token (str): Jwt токен или None
         result_code (ResultCodes): Результат выполнения
+    
+    Example:
+        > auth_header = request.headers.get("Authorization")
+        > token, result = get_jwt_from_header(auth_header)
     """
     if not auth_header or not auth_header.startswith("Bearer "):
         return None, ResultsCodes.NO_TOKEN
