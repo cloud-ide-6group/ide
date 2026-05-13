@@ -78,6 +78,12 @@ class FileRepository:
             return True
         return False
 
+    def get_project_id(self, file_id):
+        file = db.session.query(File).filter(File.id == file_id).first()
+        if file:
+            return file.id
+        return None
+
 
 class ProjectRepository:
     """

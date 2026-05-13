@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from app.shared.extensions import socketio
+from app.features.project.service import send_files_to_clients
 
 load_dotenv()
 
@@ -27,6 +28,7 @@ def create_file(name, project_name, parent_name, is_folder):
             result = create_file_on_disk(name, parent, project_name)
             if result == ResultsCodes.OK:
                 file_repo.create_file(name, parent.id, project.id, is_folder)
+                send_files_to_clients(project.id)
                 return ResultsCodes.OK
             else:
                 return result
@@ -54,8 +56,11 @@ def create_file_on_disk(name, parent, project_name):
 
 
 def delete_file(file_id):
+    project_id = file_repo.get_project_id(file_id)
     was_deleted = file_repo.delete_file(file_id)
     if was_deleted == True:
+        if project_id:
+            send_files_to_clients(project_id)
         return ResultsCodes.OK
     return ResultsCodes.FILE_NOT_EXIST
 
@@ -77,6 +82,7 @@ def save_file_content(file_id, file_content):
     file_path = get_file_path(file, "")
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(file_content)
+        send_file_content_to_clients(file_id)
 
 
 def send_file_content_to_clients(file_id):
