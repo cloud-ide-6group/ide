@@ -39,13 +39,7 @@ def create_file(name, project_name, parent_name, is_folder):
 def create_file_on_disk(name, parent, project_name):
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
-    current_file = parent
-    file_path = ""
-    while current_file.parent_id:
-        parent_file = file_repo.get_by_id(current_file.parent_id)
-        parent_name = parent_file.name
-        file_path = os.path.join(parent_name, file_path)
-        current_file = parent_file
+    file_path = get_file_path(parent, "")
 
     file_path = os.path.join(project_dir, file_path, name)
 
