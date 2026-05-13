@@ -76,7 +76,7 @@ def jsonify_file(file):
     }
 
 
-def send_files_to_klient(project_id, user_id):
+def send_files_to_klients(project_id):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 
@@ -89,5 +89,4 @@ def send_files_to_klient(project_id, user_id):
     socketio.emit(
         "files_list",
         {"files_tree": files},
-        room=str(user_id),
     )

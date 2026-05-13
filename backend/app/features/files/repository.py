@@ -100,6 +100,18 @@ class ProjectRepository:
         """
         return db.session.query(Project).filter(Project.name == name).first()
 
+    def get_by_id(self, id):
+        """
+        Получить проект по имени.
+
+        Args:
+            name (str): Название проекта.
+
+        Returns:
+            Project: Проект.
+        """
+        return db.session.query(Project).filter(Project.id == id).first()
+
 
 file_repo = FileRepository()
 project_repo = ProjectRepository()

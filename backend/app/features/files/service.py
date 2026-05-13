@@ -3,8 +3,20 @@ from app.shared.consts import ResultsCodes
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+from app.shared.extensions import socketio
 
 load_dotenv()
+
+
+def get_file_path(current_file, file_path):
+    if current_file.parent_id:
+        parent_file = file_repo.get_by_id(current_file.parent_id)
+        parent_name = parent_file.name
+        file_path = os.path.join(parent_name, file_path)
+
+        file_path = get_file_path(current_file, file_path)
+
+    return file_path
 
 
 def create_file(name, project_name, parent_name, is_folder):
@@ -52,3 +64,28 @@ def delete_file(file_id):
     if was_deleted == True:
         return ResultsCodes.OK
     return ResultsCodes.FILE_NOT_EXIST
+
+
+def get_file_content(file_id):
+    file = file_repo.get_by_id(file_id)
+    file_path = get_file_path(file)
+    project = project_repo.get_by_id(file.project_id)
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project.name)
+    file_path = os.path.join(project_dir, file_path, file.name)
+    content = ""
+    with open(file_path, "r", encoding="utf-8") as f:
+        content = f.read()
+    return content
+
+
+def send_file_content_to_klients(file_id):
+    """
+    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
+
+    Args:
+        invited_user_id (int): Id пользователя
+    """
+    socketio.emit(
+        "get_file_content",
+        {"content": get_file_content(file_id)},
+    )

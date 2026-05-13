@@ -1,6 +1,5 @@
 from app import create_app
 from app.shared.extensions import socketio
-from app.shared.features.socket import connect
 
 app = create_app()
 
