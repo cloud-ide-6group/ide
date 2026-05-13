@@ -3,7 +3,7 @@ from flask_socketio import join_room
 from flask import request
 from app.shared.consts import ResultsCodes
 from app.shared.features.jwt_token.service import get_id
-from app.shared.features.notifications.service import send_notifications_to_klient
+from app.shared.features.notifications.service import send_notifications_to_client
 
 
 @socketio.on("connect")
@@ -30,5 +30,5 @@ def connect(auth):
 
     join_room(str(user_id))
 
-    send_notifications_to_klient(user_id)
+    send_notifications_to_client(user_id)
     return True

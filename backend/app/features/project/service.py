@@ -83,7 +83,7 @@ def jsonify_file(file):
     }
 
 
-def send_files_to_klients(project_id):
+def send_files_to_clients(project_id):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 

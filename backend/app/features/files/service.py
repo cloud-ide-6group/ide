@@ -85,7 +85,7 @@ def save_file_content(file_id, file_content):
         f.write(file_content)
 
 
-def send_file_content_to_klients(file_id):
+def send_file_content_to_clients(file_id):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 

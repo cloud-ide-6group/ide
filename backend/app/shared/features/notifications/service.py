@@ -38,7 +38,7 @@ def get_notifications(user_id):
     return notifications
 
 
-def send_notifications_to_klient(invited_user_id):
+def send_notifications_to_client(invited_user_id):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 
