@@ -91,11 +91,14 @@ def send_files_to_clients(project_id):
     Args:
         invited_user_id (int): Id пользователя
     """
-    root_file = file_repo.get_root_file(project_id)
-    files = jsonify_file(root_file)
+    root_files = file_repo.get_root_files(project_id)
+    files_trees = []
+    for root_file in root_files:
+        file_tree = jsonify_file(root_file)
+        files_trees.append(file_tree)
 
     socketio.emit(
         "files_list",
-        {"files_tree": files},
+        {"files_trees": files_trees},
         room=f"project_{project_id}",
     )

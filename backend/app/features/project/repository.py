@@ -83,11 +83,11 @@ class FileRepository:
         model: Модель Project
     """
 
-    def get_root_file(self, id):
+    def get_root_files(self, id):
         return (
             db.session.query(File)
             .filter((File.project_id == id) & (File.parent_id == None))
-            .first()
+            .all()
         )
 
     def get_children(self, parent_id):
