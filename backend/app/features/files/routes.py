@@ -46,12 +46,6 @@ def create_file_route():
     responses:
       201:
         description: Успешное создание
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
       401:
         description: Проблема с токеном
         schema:
@@ -125,13 +119,7 @@ def delete_file_route():
               example: 23
     responses:
       200:
-        description: Успешное пришлашение
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
+        description: Успешное удаление
       401:
         description: Проблема с токеном
         schema:

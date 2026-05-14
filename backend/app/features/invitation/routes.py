@@ -34,13 +34,7 @@ def invite():
               example: "test@mail.ru"
     responses:
       200:
-        description: Успешное пришлашение
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
+        description: Успешное приглашение
       409:
         description: Ошибка приглашения
         schema:
@@ -102,12 +96,6 @@ def delete_invited():
     responses:
       200:
         description: Успешное удаление
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
       409:
         description: Ошибка удаления
         schema:
