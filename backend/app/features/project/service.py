@@ -98,30 +98,3 @@ def send_files_to_clients(project_id):
         {"files_tree": files},
         room=f"project_{project_id}",
     )
-
-
-@socketio.on("join_project_room")
-def join_project_room(data):
-    """
-    Подключение к комнате проекта.
-    Клиент вызывает это событие, когда открывает проект.
-    """
-    auth_header = request.headers.get("Authorization")
-    token, result = get_jwt_from_header(auth_header)
-
-    if result != ResultsCodes.OK:
-        return create_unauthorized_response()
-
-    id, result = get_id(token)
-    project_id = data.get("project_id")
-    project = project_repo.get_by_id(project_id)
-    if project:
-        if project.owner_id == id or project_repo.is_user_invited(project_id, id):
-            for room in session.get("project_rooms", []):
-                leave_room(room)
-            new_room = f"project_{project_id}"
-            join_room(new_room)
-            session["project_rooms"] = [new_room]
-            return True
-
-    return False

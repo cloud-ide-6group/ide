@@ -13,7 +13,7 @@ from app.shared.extensions import socketio
 @files_bp.route("/files/create", methods=["POST"])
 def create_file_route():
     """
-    Приглашение пользователя в проект
+    Создание файла
     ---
     tags:
       - features/files
