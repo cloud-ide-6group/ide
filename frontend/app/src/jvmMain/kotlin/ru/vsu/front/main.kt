@@ -12,11 +12,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.Const
+import ru.vsu.front.component.Settings
 import ru.vsu.front.component.TopBarButtons
 import ru.vsu.front.di.initKoin
 import ru.vsu.front.navigation.Navigation
 import ru.vsu.front.navigation.Route
 import ru.vsu.front.network.MainHttpClientManager
+import ru.vsu.front.settings.Settings
 import ru.vsu.front.window.DesktopScreenMetricsProvider
 import java.awt.Dimension
 
@@ -38,6 +40,7 @@ fun main() {
 
         val authManager: AuthManager = koinInject()
         val mainHttpClientManager: MainHttpClientManager = koinInject()
+        val settings: Settings = koinInject()
 
         Window(
             onCloseRequest = {
@@ -59,9 +62,10 @@ fun main() {
             setupWindow()
 
             val navController = rememberNavController()
-
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
+
+            var isSettingsVisible by remember { mutableStateOf(false) }
 
             App(
                 onMinimizeClick = {
@@ -94,12 +98,24 @@ fun main() {
                         },
                         onBackClick = {
                             navController.popBackStack()
+                        },
+                        onSettingsClick = {
+                            isSettingsVisible = true
                         }
                     )
                 }
             ) {
-                Navigation(
-                    navController = navController
+                Settings(
+                    visible = isSettingsVisible,
+                    onDismissRequest = {
+                        isSettingsVisible = false
+                    },
+                    onColorClick = { color ->
+                        settings.savePrimaryColor(color)
+                    },
+                    content = {
+                        Navigation(navController = navController)
+                    }
                 )
             }
         }

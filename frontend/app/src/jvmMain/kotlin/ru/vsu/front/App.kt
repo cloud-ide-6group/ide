@@ -3,11 +3,15 @@ package ru.vsu.front
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.WindowScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.compose.koinInject
 import ru.vsu.front.designsystem.component.WindowTopBar
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.designsystem.theme.CodeTogetherThemeVariant
+import ru.vsu.front.settings.Settings
 
 /**
  * Корневой Composable-компонент, задающий общую структуру окна приложения.
@@ -25,11 +29,15 @@ fun WindowScope.App(
     onMinimizeClick: () -> Unit,
     onMaximizeClick: () -> Unit,
     onCloseClick: () -> Unit,
+    settings: Settings = koinInject(),
     topBarContent: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
+    val primaryColor by settings.primaryColor.collectAsStateWithLifecycle()
+
     CodeTogetherTheme(
-        themeVariant = CodeTogetherThemeVariant.Omni
+        themeVariant = CodeTogetherThemeVariant.Omni,
+        primaryColor = primaryColor
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             WindowTopBar(
