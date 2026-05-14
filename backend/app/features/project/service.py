@@ -9,7 +9,8 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
     get_id,
 )
-from flask_socketio import join_room, session, leave_room
+from flask_socketio import join_room, leave_room
+from flask import session
 
 load_dotenv()
 

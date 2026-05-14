@@ -18,7 +18,7 @@ def create_file_route():
     tags:
       - features/files
     description: |
-      Добавляет пользователя в проект
+      Создает файл
     parameters:
       - name: Authorization
         in: header
@@ -31,21 +31,43 @@ def create_file_route():
         schema:
           type: object
           properties:
+            name:
+              type: string
+              example: "main.txt"
             project_name:
               type: string
               example: "TestProject"
-            invited_user_email:
+            parent_name:
               type: string
-              example: "test@mail.ru"
+              example: "file.py"
+            is_folder:
+              type: boolean
+              example: false
     responses:
-      200:
-        description: Успешное пришлашение
+      201:
+        description: Успешное создание
         schema:
           type: object
           properties:
               project_id:
                 type: int
                 example: 25
+      401:
+        description: Проблема с токеном
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Токен недействителен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Неверные учетные данные"
       409:
         description: Ошибка приглашения
         schema:
@@ -80,12 +102,12 @@ def create_file_route():
 @files_bp.route("/files/delete", methods=["POST"])
 def delete_file_route():
     """
-    Приглашение пользователя в проект
+    Удаляет файл
     ---
     tags:
       - features/files
     description: |
-      Добавляет пользователя в проект
+      Удалить файл
     parameters:
       - name: Authorization
         in: header
@@ -98,12 +120,9 @@ def delete_file_route():
         schema:
           type: object
           properties:
-            project_name:
-              type: string
-              example: "TestProject"
-            invited_user_email:
-              type: string
-              example: "test@mail.ru"
+            file_id:
+              type: int
+              example: 23
     responses:
       200:
         description: Успешное пришлашение
@@ -113,6 +132,22 @@ def delete_file_route():
               project_id:
                 type: int
                 example: 25
+      401:
+        description: Проблема с токеном
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Токен недействителен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        schema:
+          type: object
+          properties:
+              message:
+                type: string
+                example: "Неверные учетные данные"
       409:
         description: Ошибка приглашения
         schema:
@@ -146,7 +181,13 @@ def delete_file_route():
 @socketio.on("update_file_content")
 def update_file_content(data):
     """
-    Получает новый контент файла от клиента.
+    Клиент посылает новое содержимое файла.
+
+    Args:
+        data (dict): {
+            file_id (int): Id файла,
+            content (str): Новое содержимое
+        }
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

@@ -98,8 +98,12 @@ def create_new_project():
 @socketio.on("join_project_room")
 def join_project_room(data):
     """
-    Подключение к комнате проекта.
-    Клиент вызывает это событие, когда открывает проект.
+    Клиент открывает проект и попадает в его комнату. Название события -- join_project_room
+
+    Args:
+        data (dict): {
+            project_id (int): Id проекта
+        }
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

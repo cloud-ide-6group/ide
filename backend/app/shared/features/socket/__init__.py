@@ -14,7 +14,9 @@ def connect(auth):
     Возможные события:
         - notifications_list -- уведомления
         - files_list -- список файлов проекта
-        - get_file_content -- обновить файл
+        - get_file_content -- получить данные файла
+        - update_file_content -- послать новые данные в файл
+        - join_project_room -- подключиться к проекту
 
     Args:
         auth (str): Authorization Bearer header
