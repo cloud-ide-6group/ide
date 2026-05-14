@@ -6,7 +6,7 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
-from .service import create_file, delete_file, save_file_content
+from .service import create_file, delete_file, save_file_content, get_file_content
 from app.shared.extensions import socketio
 
 
@@ -185,5 +185,31 @@ def update_file_content(data):
     new_content = data.get("content")
 
     save_file_content(file_id, new_content)
+
+    return True
+
+
+@socketio.on("get_file_content")
+def get_file_content_socket(data):
+    """
+    Клиент посылает новое содержимое файла.
+
+    Args:
+        data (dict): {
+            file_id (int): Id файла,
+            content (str): Новое содержимое
+        }
+    """
+    id = session.get("user_id")
+    if not id:
+        return False
+
+    file_id = data.get("file_id")
+
+    socketio.emit(
+        "send_file_content",
+        {"content": get_file_content(file_id)},
+        room=f"{id}",
+    )
 
     return True

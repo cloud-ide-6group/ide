@@ -16,6 +16,8 @@ def connect(auth):
         - files_list -- список файлов проекта
         - get_file_content -- получить данные файла
         - update_file_content -- послать новые данные в файл
+        - get_file_content -- запрос клиента на получение даннх
+        - send_file_content -- отправка клиенту
         - join_project_room -- подключиться к проекту
 
     Args:

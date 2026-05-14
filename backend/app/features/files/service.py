@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 from app.shared.extensions import socketio
-from app.features.project.service import send_files_to_clients
+from app.features.project.service import send_files_to_all_clients
 import shutil
 
 load_dotenv()
@@ -19,7 +19,7 @@ def get_file_path(current_file, file_path):
         parent_name = parent_file.name
         file_path = os.path.join(parent_name, file_path)
 
-        file_path = get_file_path(current_file, file_path)
+        file_path = get_file_path(parent_file, file_path)
 
     return file_path
 
@@ -35,7 +35,7 @@ def create_file(name, project_name, parent_name, is_folder, user_id):
             file_repo.create_file(
                 name, None if parent is None else parent.id, project.id, is_folder
             )
-            send_files_to_clients(project.id)
+            send_files_to_all_clients(project.id)
             return ResultsCodes.OK
         else:
             return result
@@ -101,32 +101,44 @@ def delete_file(file_id, user_id):
     was_deleted = file_repo.delete_file(file_id)
     if was_deleted == True:
         delete_file_from_disk(file.name, parent, project.name, file.is_folder)
-        send_files_to_clients(project.id)
+        send_files_to_all_clients(project.id)
         return ResultsCodes.OK
     return ResultsCodes.FILE_NOT_EXIST
 
 
 def get_file_content(file_id):
     file = file_repo.get_by_id(file_id)
-    file_path = get_file_path(file)
+    file_path = get_file_path(file, "")
     project = project_repo.get_by_id(file.project_id)
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project.name)
     file_path = os.path.join(project_dir, file_path, file.name)
-    content = ""
     with open(file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    return content
+        return content
+    return ""
 
 
 def save_file_content(file_id, file_content):
     file = file_repo.get_by_id(file_id)
+    if not file:
+        return ResultsCodes.FILE_NOT_EXIST
+    if file.is_folder:
+        return ResultsCodes.THIS_IS_FOLDER
+    project = project_repo.get_by_id(file.project_id)
+    if not project:
+        return ResultsCodes.PROJECT_NOT_FOUND
     file_path = get_file_path(file, "")
+    file_path = os.path.join(file_path, file.name)
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project.name)
+    file_path = os.path.join(project_dir, file_path)
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(file_content)
-        send_file_content_to_clients(file_id)
+        send_file_content_to_clients(file_id, file_content)
+        return ResultsCodes.OK
+    return ResultsCodes.OK
 
 
-def send_file_content_to_clients(file_id):
+def send_file_content_to_clients(file_id, new_content):
     """
     Посылает клиенту все уведомления по сокету. Название события -- notifications_list
 
@@ -135,7 +147,7 @@ def send_file_content_to_clients(file_id):
     """
     file = file_repo.get_by_id(file_id)
     socketio.emit(
-        "get_file_content",
-        {"content": get_file_content(file_id)},
+        "send_file_content",
+        {"content": new_content},
         room=f"project_{file.project_id}",
     )

@@ -36,3 +36,4 @@ class ResultsCodes:
     CREATE_FILE_ERROR = "Ошибка создания файла"
     FILE_NOT_EXIST = "Файла не существует"
     CANT_CHANGE_FILE = "У пользователя нет прав на работу с файлом"
+    THIS_IS_FOLDER="Это папка, а не файл"

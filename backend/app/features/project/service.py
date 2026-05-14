@@ -3,14 +3,6 @@ from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
 from .repository import project_repo, file_repo
 from app.shared.extensions import socketio
-from flask import request
-from app.shared.features.jwt_token.service import (
-    get_jwt_from_header,
-    create_unauthorized_response,
-    get_id,
-)
-from flask_socketio import join_room, leave_room
-from flask import session
 
 load_dotenv()
 
@@ -84,21 +76,32 @@ def jsonify_file(file):
     }
 
 
-def send_files_to_clients(project_id):
-    """
-    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
-
-    Args:
-        invited_user_id (int): Id пользователя
-    """
+def get_project_files_trees(project_id):
     root_files = file_repo.get_root_files(project_id)
     files_trees = []
     for root_file in root_files:
         file_tree = jsonify_file(root_file)
         files_trees.append(file_tree)
 
+    return files_trees
+
+
+def send_files_to_all_clients(project_id):
+    """
+    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
+
+    Args:
+        invited_user_id (int): Id пользователя
+    """
     socketio.emit(
         "files_list",
-        {"files_trees": files_trees},
+        {"files_trees": get_project_files_trees(project_id)},
         room=f"project_{project_id}",
     )
+
+
+def is_user_invited(project_id, user_id):
+    return project_repo.is_user_invited(project_id, user_id)
+
+def get_project_by_id(project_id):
+    return project_repo.get_by_id(project_id)
