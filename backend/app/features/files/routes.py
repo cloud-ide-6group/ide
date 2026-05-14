@@ -99,7 +99,7 @@ def create_file_route():
         return {"message": result}, 409
 
 
-@files_bp.route("/files/delete", methods=["POST"])
+@files_bp.route("/files/delete", methods=["DELETE"])
 def delete_file_route():
     """
     Удаляет файл
@@ -170,7 +170,7 @@ def delete_file_route():
         return {"message": id_result}, 403
 
     file_id = data["file_id"]
-    result = delete_file(file_id)
+    result = delete_file(file_id, id)
 
     if result == ResultsCodes.OK:
         return {}, 201

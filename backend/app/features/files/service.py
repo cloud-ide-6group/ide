@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 from app.shared.extensions import socketio
 from app.features.project.service import send_files_to_clients
+import shutil
 
 load_dotenv()
 
@@ -69,12 +70,38 @@ def create_file_on_disk(name, parent, project_name, is_folder):
         return ResultsCodes.CREATE_FILE_ERROR
 
 
-def delete_file(file_id):
-    project_id = file_repo.get_project_id(file_id)
+def delete_file_from_disk(name, parent, project_name, is_folder):
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
+
+    file_path = get_file_path(parent, "")
+
+    file_path = os.path.join(project_dir, file_path)
+    if parent:
+        file_path = os.path.join(file_path, parent.name)
+    file_path = os.path.join(file_path, name)
+
+    path = Path(file_path)
+    if path.exists():
+        if is_folder:
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+
+
+def delete_file(file_id, user_id):
+    file = file_repo.get_by_id(file_id)
+    if not file:
+        return ResultsCodes.FILE_NOT_EXIST
+    project = file_repo.get_project(file_id)
+    if not project:
+        return ResultsCodes.PROJECT_NOT_FOUND
+    if not is_user_in_project(user_id, project.id):
+        return ResultsCodes.CANT_CHANGE_FILE
+    parent = file_repo.get_by_id(file.parent_id)
     was_deleted = file_repo.delete_file(file_id)
     if was_deleted == True:
-        if project_id:
-            send_files_to_clients(project_id)
+        delete_file_from_disk(file.name, parent, project.name, file.is_folder)
+        send_files_to_clients(project.id)
         return ResultsCodes.OK
     return ResultsCodes.FILE_NOT_EXIST
 
