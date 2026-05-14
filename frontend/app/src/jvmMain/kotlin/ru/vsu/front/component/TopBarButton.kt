@@ -16,7 +16,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param icon Иконка кнопки.
  */
 @Composable
-fun TopBarButton(
+internal fun TopBarButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     icon: DrawableResource
