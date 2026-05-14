@@ -31,7 +31,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             authModule,
             authorizationModule,
             profileModule,
-            notificationsModule
+            notificationsModule,
+            settingsModule,
         )
     }
 }
