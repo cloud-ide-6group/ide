@@ -62,9 +62,8 @@ class ProjectRepository:
         userInProject = (
             db.session.query(UserInProject)
             .filter(
-                UserInProject.project_id
-                == project_id & UserInProject.user_id
-                == user_id
+                (UserInProject.project_id == project_id)
+                & (UserInProject.user_id == user_id)
             )
             .first()
         )
@@ -87,7 +86,7 @@ class FileRepository:
     def get_root_file(self, id):
         return (
             db.session.query(File)
-            .filter(File.project_id == id & File.parent_id == None)
+            .filter((File.project_id == id) & (File.parent_id == None))
             .first()
         )
 

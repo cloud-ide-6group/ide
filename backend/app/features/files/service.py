@@ -10,6 +10,9 @@ load_dotenv()
 
 
 def get_file_path(current_file, file_path):
+    if current_file == None:
+        return file_path
+
     if current_file.parent_id:
         parent_file = file_repo.get_by_id(current_file.parent_id)
         parent_name = parent_file.name
@@ -21,34 +24,39 @@ def get_file_path(current_file, file_path):
 
 
 def create_file(name, project_name, parent_name, is_folder):
-    parent = file_repo.get_by_name(parent_name)
-    if parent:
-        project = project_repo.get_by_name(project_name)
-        if project:
-            result = create_file_on_disk(name, parent, project_name)
-            if result == ResultsCodes.OK:
-                file_repo.create_file(name, parent.id, project.id, is_folder)
-                send_files_to_clients(project.id)
-                return ResultsCodes.OK
-            else:
-                return result
+    project = project_repo.get_by_name(project_name)
+    if project:
+        parent = file_repo.get_by_name(parent_name)
+        result = create_file_on_disk(name, parent, project_name, is_folder)
+        if result == ResultsCodes.OK:
+            file_repo.create_file(
+                name, None if parent is None else parent.id, project.id, is_folder
+            )
+            send_files_to_clients(project.id)
+            return ResultsCodes.OK
         else:
-            return ResultsCodes.PROJECT_NOT_FOUND
+            return result
     else:
-        return ResultsCodes.NO_PARENT
+        return ResultsCodes.PROJECT_NOT_FOUND
 
 
-def create_file_on_disk(name, parent, project_name):
+def create_file_on_disk(name, parent, project_name, is_folder):
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
     file_path = get_file_path(parent, "")
 
-    file_path = os.path.join(project_dir, file_path, name)
+    file_path = os.path.join(project_dir, file_path)
+    if parent:
+        file_path = os.path.join(file_path, parent.name)
+    file_path = os.path.join(file_path, name)
 
     try:
         path_obj = Path(file_path)
-        path_obj.parent.mkdir(parents=True, exist_ok=True)
-        path_obj.touch()
+        if is_folder:
+            path_obj.mkdir(parents=True, exist_ok=True)
+        else:
+            path_obj.parent.mkdir(parents=True, exist_ok=True)
+            path_obj.touch()
         return ResultsCodes.OK
     except Exception as e:
         print(f"Ошибка создания файла: {e}")

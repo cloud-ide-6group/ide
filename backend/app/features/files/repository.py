@@ -26,7 +26,7 @@ class FileRepository:
         """
         return (
             db.session.query(File)
-            .filter(File.name == name & File.parent_id == parent_id)
+            .filter((File.name == name) & (File.parent_id == parent_id))
             .first()
         )
 
@@ -59,6 +59,7 @@ class FileRepository:
             parent_id=_parent_id,
         )
         db.session.add(file)
+        db.session.commit()
 
     def delete_file(self, _id):
         """
