@@ -1,8 +1,9 @@
-package ru.vsu.front.profile
+package ru.vsu.front
 
 import app.cash.turbine.test
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
@@ -11,6 +12,10 @@ import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.UserProfile
+import ru.vsu.front.profile.ProfileCommand
+import ru.vsu.front.profile.ProfileEffect
+import ru.vsu.front.profile.ProfileViewModel
+import ru.vsu.front.profile.UiStatusProfile
 import kotlin.test.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -21,6 +26,7 @@ class ProfileViewModelTest {
     private lateinit var updateProfileDataUseCase: UpdateProfileDataUseCase
     private lateinit var updateProfilePasswordUseCase: UpdateProfilePasswordUseCase
     private lateinit var updateProfilePhotoUseCase: UpdateProfilePhotoUseCase
+    private lateinit var observeNotificationsUseCase: ObserveNotificationsUseCase
     private lateinit var dispatcherProvider: DispatcherProvider
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -44,12 +50,15 @@ class ProfileViewModelTest {
         updateProfileDataUseCase = mockk()
         updateProfilePasswordUseCase = mockk()
         updateProfilePhotoUseCase = mockk()
+        observeNotificationsUseCase = mockk()
 
         dispatcherProvider = mockk {
             every { main } returns testDispatcher
             every { io } returns testDispatcher
             every { default } returns testDispatcher
         }
+
+        every { observeNotificationsUseCase() } returns emptyFlow()
 
         mockkObject(EmailMatcher)
         every { EmailMatcher.isValid(any()) } returns true
@@ -72,6 +81,7 @@ class ProfileViewModelTest {
             updateProfileDataUseCase = updateProfileDataUseCase,
             updateProfilePasswordUseCase = updateProfilePasswordUseCase,
             updateProfilePhotoUseCase = updateProfilePhotoUseCase,
+            observeNotificationsUseCase = observeNotificationsUseCase,
             dispatcherProvider = dispatcherProvider
         )
     }

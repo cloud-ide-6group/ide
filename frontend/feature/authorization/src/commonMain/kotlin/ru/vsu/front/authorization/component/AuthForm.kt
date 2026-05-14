@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vsu.front.authorization.AuthCommand
 import ru.vsu.front.authorization.AuthViewModel
+import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
@@ -51,7 +52,7 @@ internal fun AuthForm(
                     style = TextStyle(fontSize = 24.sp, fontFamily = FontFamily.Monospace)
                 )
 
-                AnimatedVisibility(
+                CodeTogetherAnimatedVisibility(
                     visible = isSignUpMode,
                     enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
                     exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
@@ -89,7 +90,7 @@ internal fun AuthForm(
                     onValueChange = { authViewModel.processCommand(AuthCommand.ChangePassword(it)) }
                 )
 
-                AnimatedVisibility(
+                CodeTogetherAnimatedVisibility(
                     visible = isSignUpMode,
                     enter = expandVertically(expandFrom = Alignment.Bottom) + fadeIn(),
                     exit = shrinkVertically() + fadeOut()

@@ -14,9 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.localIconRes
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.CodeTogetherTextButton
 import ru.vsu.front.designsystem.component.Section
@@ -112,8 +114,8 @@ internal fun CreatingProject(
                 DropdownMenu(
                     modifier = Modifier
                         .width(with(density) { columnWidthPx.toDp() })
-                        .background(CodeTogetherTheme.colors.primaryBackground)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
+                    containerColor = CodeTogetherTheme.colors.primaryBackground,
                     expanded = programingLanguagesListExpanded,
                     onDismissRequest = onDismissRequest
                 ) {
@@ -135,5 +137,32 @@ internal fun CreatingProject(
                 onCreateProjectClick()
             }
         }
+    }
+}
+
+@Composable
+@Preview
+private fun CreatingProjectPreview() {
+    BackgroundPreview {
+        CreatingProject(
+            projectName = "Test Project",
+            selectedProgramingLanguage = ProgramingLanguage(id = 1, name = "Java", description = "description"),
+            programingLanguagesListExpanded = false,
+            programingLanguages = emptyList(),
+            onProjectNameChange = {
+            },
+            onProgramingLanguageClick = {
+
+            },
+            onSelectedProgramingLanguageClick = {
+
+            },
+            onCreateProjectClick = {
+
+            },
+            onDismissRequest = {
+
+            },
+        )
     }
 }

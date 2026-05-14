@@ -6,13 +6,13 @@ kotlin {
     jvm()
 
     sourceSets {
-        commonMain.dependencies {
+        jvmMain.dependencies {
             implementation(libs.koin.core)
             implementation(libs.coroutines)
             implementation(projects.core.datastore)
         }
 
-        jvmMain.dependencies {
+        jvmTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.mockk)
             implementation(libs.cash.turbine.test)

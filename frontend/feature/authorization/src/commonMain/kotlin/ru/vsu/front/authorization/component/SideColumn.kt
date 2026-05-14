@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import ru.vsu.front.designsystem.component.BackgroundPreview
 
 /**
  * Вспомогательный контейнер столбик для распределения
@@ -27,5 +29,15 @@ internal fun SideColumn(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         content()
+    }
+}
+
+@Composable
+@Preview
+private fun SideColumnPreview() {
+    BackgroundPreview {
+        SideColumn {
+
+        }
     }
 }

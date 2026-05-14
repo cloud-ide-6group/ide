@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import front.feature.profile.generated.resources.Res
@@ -20,9 +21,11 @@ import front.feature.profile.generated.resources.add_2_24dp
 import front.feature.profile.generated.resources.code_horizontal_24dp
 import front.feature.profile.generated.resources.code_vertical_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.model.entity.Project
 
 /**
  * Контейнер с кнопками добавления проекта и изменения видимости проектов.
@@ -55,7 +58,7 @@ internal fun ProjectsButton(
         ) {
             CodeTogetherText(
                 text = "Projects",
-                color = CodeTogetherTheme.colors.primaryText,
+                color = CodeTogetherTheme.colors.primary,
                 style = CodeTogetherTheme.typography.style.copy(fontSize = 16.sp)
             )
 
@@ -88,4 +91,22 @@ internal fun ProjectsButton(
     }
 }
 
+@Composable
+@Preview
+internal fun ProjectsButtonPreview() {
+    BackgroundPreview {
+        ProjectsButton(
+            projectsAreVisible = true,
+            onCreateProjectClick = {},
+            onChangeVisibleClick = {}
+        )
 
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
+        ProjectsButton(
+            projectsAreVisible = false,
+            onCreateProjectClick = {},
+            onChangeVisibleClick = {}
+        )
+    }
+}

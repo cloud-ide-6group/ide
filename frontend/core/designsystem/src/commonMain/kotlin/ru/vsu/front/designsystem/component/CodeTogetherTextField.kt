@@ -3,6 +3,7 @@ package ru.vsu.front.designsystem.component
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
@@ -66,7 +67,9 @@ fun CodeTogetherTextField(
             focusedIndicatorColor = CodeTogetherTheme.colors.primary,
             errorTextColor = CodeTogetherTheme.colors.error,
             errorIndicatorColor = CodeTogetherTheme.colors.error,
-            errorCursorColor = textColor
+            errorCursorColor = textColor,
+            textSelectionColors = CodeTogetherTheme.selectionColors,
+            cursorColor = CodeTogetherTheme.colors.primary
         ),
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation

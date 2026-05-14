@@ -24,13 +24,13 @@ fun initKoin(config: KoinAppDeclaration? = null) {
         modules(
             dataModule,
             domainModule,
-            authorizationModule,
-            profileModule,
             datastoreModule,
             commonModule,
             networkModule,
             appModule,
             authModule,
+            authorizationModule,
+            profileModule,
             notificationsModule
         )
     }

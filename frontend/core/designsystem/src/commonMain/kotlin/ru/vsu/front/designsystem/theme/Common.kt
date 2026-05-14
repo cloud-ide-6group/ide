@@ -1,5 +1,6 @@
 package ru.vsu.front.designsystem.theme
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -49,6 +50,10 @@ object CodeTogetherTheme {
     val typography: CodeTogetherTypography
         @Composable
         get() = LocalCodeTogetherTypography.current
+
+    val selectionColors: TextSelectionColors
+        @Composable
+        get() = LocalCodeTogetherSelectionColors.current
 }
 
 /**
@@ -70,4 +75,11 @@ val LocalCodeTogetherColors = staticCompositionLocalOf<CodeTogetherColors> {
  */
 val LocalCodeTogetherTypography = staticCompositionLocalOf<CodeTogetherTypography> {
     error("Стиль не предоставлен")
+}
+
+/**
+ * Провайдер текущих цветов выделения текста.
+ */
+val LocalCodeTogetherSelectionColors = staticCompositionLocalOf<TextSelectionColors> {
+    error("Цвета не предоставлены")
 }

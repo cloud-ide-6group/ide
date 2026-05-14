@@ -7,9 +7,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.vsu.front.designsystem.component.BackgroundPreview
+import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVerticalScrollBar
+import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.model.entity.Project
 
@@ -50,7 +57,7 @@ internal fun ProjectsSection(
 
             Spacer(Modifier.height(8.dp))
 
-            AnimatedVisibility(
+            CodeTogetherAnimatedVisibility(
                 visible = projectsAreVisible,
                 enter = expandVertically(expandFrom = Alignment.Bottom) + fadeIn(),
                 exit = shrinkVertically(shrinkTowards = Alignment.Bottom) + fadeOut()
@@ -64,19 +71,39 @@ internal fun ProjectsSection(
             }
         }
 
-        AnimatedVisibility(
-            visible = projectsAreVisible,
-            enter = expandHorizontally(expandFrom = Alignment.End) + fadeIn(),
-            exit = shrinkHorizontally(shrinkTowards = Alignment.End) + fadeOut()
-        ) {
-            VerticalScrollbar(
-                modifier = Modifier.padding(horizontal = 8.dp).fillMaxHeight(),
-                adapter = rememberScrollbarAdapter(projectsState),
-                style = LocalScrollbarStyle.current.copy(
-                    unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
-                    hoverColor = CodeTogetherTheme.colors.primary
-                )
-            )
-        }
+        CodeTogetherAnimatedVerticalScrollBar(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .fillMaxHeight(),
+            state = projectsState,
+            visible = projectsAreVisible && (projectsState.canScrollForward || projectsState.canScrollBackward)
+        )
+    }
+}
+
+
+
+@Composable
+@Preview
+internal fun ProjectsSectionPreview() {
+    BackgroundPreview {
+        ProjectsSection(
+            projects = buildList {
+                repeat(10) {
+                    val project = Project(id = it, name = "Project $it")
+                    add(project)
+                }
+            },
+            projectsAreVisible = true,
+            onChangeVisibleClick = {
+
+            },
+            onCreateProjectClick = {
+
+            },
+            onProjectClick = {
+
+            }
+        )
     }
 }

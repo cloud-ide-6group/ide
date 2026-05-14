@@ -1,4 +1,4 @@
-package ru.vsu.front.authorization
+package ru.vsu.front
 
 import app.cash.turbine.test
 import io.mockk.*
@@ -6,6 +6,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import ru.vsu.front.auth.AuthManager
+import ru.vsu.front.authorization.AuthCommand
+import ru.vsu.front.authorization.AuthEffect
+import ru.vsu.front.authorization.AuthViewModel
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase

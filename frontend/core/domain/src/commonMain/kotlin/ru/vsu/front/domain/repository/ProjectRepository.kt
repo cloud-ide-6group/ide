@@ -7,7 +7,7 @@ interface ProjectRepository {
     /**
      * Выполняет создание проекта.
 
-     * @return [Response] с результатом создания проекта, 201 или другие ошибки.
+     * @return [Response] с идентификатором проекта, либо с ошибкой.
      */
     suspend fun createProject(
         programingLanguageId: Int,

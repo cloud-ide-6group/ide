@@ -1,12 +1,17 @@
 package ru.vsu.front.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.model.entity.Project
 
 /**
@@ -37,5 +42,26 @@ internal fun Projects(
                 }
             )
         }
+    }
+}
+
+
+
+@Composable
+@Preview
+internal fun ProjectsPreview() {
+    BackgroundPreview {
+        Projects(
+            projects = buildList {
+                repeat(10) {
+                    val project = Project(id = it, name = "Project $it")
+                    add(project)
+                }
+            },
+            state = rememberLazyListState(),
+            onProjectClick = {
+
+            }
+        )
     }
 }

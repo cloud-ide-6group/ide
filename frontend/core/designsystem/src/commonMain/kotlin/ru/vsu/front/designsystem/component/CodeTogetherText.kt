@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,6 +29,27 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 @Composable
 fun CodeTogetherText(
     text: String,
+    modifier: Modifier = Modifier,
+    color: Color = CodeTogetherTheme.colors.primaryText,
+    style: TextStyle = CodeTogetherTheme.typography.style,
+    textAlign: TextAlign? = null,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = 1,
+) {
+    Text(
+        text = text,
+        modifier = modifier,
+        color = color,
+        style = style,
+        textAlign = textAlign,
+        overflow = overflow,
+        maxLines = maxLines
+    )
+}
+
+@Composable
+fun CodeTogetherText(
+    text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = CodeTogetherTheme.colors.primaryText,
     style: TextStyle = CodeTogetherTheme.typography.style,

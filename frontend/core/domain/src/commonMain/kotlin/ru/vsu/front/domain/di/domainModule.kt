@@ -16,6 +16,8 @@ import ru.vsu.front.domain.usecase.*
  * - [UpdateProfileDataUseCase] - Обновление имени и почты пользователя.
  * - [UpdateProfilePasswordUseCase] - Обновление пароля пользователя.
  * - [UpdateProfilePhotoUseCase] - Обновление аватара пользователя.
+ * - [ObserveNotificationsUseCase] - Подписка на уведомления.
+ * - [DeleteNotificationUseCase] - Удаление уведомления.
  */
 val domainModule = module {
     single {
@@ -52,5 +54,13 @@ val domainModule = module {
 
     single {
         UpdateProfilePhotoUseCase(get())
+    }
+
+    single {
+        ObserveNotificationsUseCase(get())
+    }
+
+    single {
+        DeleteNotificationUseCase(get())
     }
 }
