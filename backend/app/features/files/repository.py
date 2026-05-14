@@ -56,7 +56,6 @@ class FileRepository:
             name=_name,
             is_folder=_is_folder,
             project_id=_project_id,
-            is_folder=_is_folder,
             parent_id=_parent_id,
         )
         db.session.add(file)

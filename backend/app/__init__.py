@@ -12,12 +12,14 @@ def register_features(app):
     from .features.project.routes import project_bp
     from .features.invitation.routes import invitation_bp
     from .shared.features.notifications.routes import notifications_bp
+    from .features.files import files_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(invitation_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(files_bp)
 
 
 def register_shared_features(app):
