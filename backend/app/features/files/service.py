@@ -23,9 +23,11 @@ def get_file_path(current_file, file_path):
     return file_path
 
 
-def create_file(name, project_name, parent_name, is_folder):
+def create_file(name, project_name, parent_name, is_folder, user_id):
     project = project_repo.get_by_name(project_name)
     if project:
+        if not is_user_in_project(user_id, project.id):
+            return ResultsCodes.CANT_CHANGE_FILE
         parent = file_repo.get_by_name(parent_name)
         result = create_file_on_disk(name, parent, project_name, is_folder)
         if result == ResultsCodes.OK:
@@ -38,6 +40,10 @@ def create_file(name, project_name, parent_name, is_folder):
             return result
     else:
         return ResultsCodes.PROJECT_NOT_FOUND
+
+
+def is_user_in_project(user_id, project_id):
+    return project_repo.is_user_in_project(user_id, project_id)
 
 
 def create_file_on_disk(name, parent, project_name, is_folder):

@@ -1,5 +1,5 @@
 from app.shared.extensions import db
-from app.shared.dbmodels import File, Project
+from app.shared.dbmodels import File, Project, UserInProject
 
 
 class FileRepository:
@@ -117,6 +117,25 @@ class ProjectRepository:
             Project: Проект.
         """
         return db.session.query(Project).filter(Project.id == id).first()
+
+    def is_user_in_project(self, user_id, project_id):
+        project = db.session.query(Project).filter(Project.id == project_id).first()
+        if project.owner_id == user_id:
+            return True
+
+        userInProject = (
+            db.session.query(UserInProject)
+            .filter(
+                (UserInProject.project_id == project_id)
+                & (UserInProject.user_id == user_id)
+            )
+            .first()
+        )
+
+        if userInProject:
+            return True
+
+        return False
 
 
 file_repo = FileRepository()

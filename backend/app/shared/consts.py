@@ -35,3 +35,4 @@ class ResultsCodes:
     NO_PARENT = "Родительской папки нет"
     CREATE_FILE_ERROR = "Ошибка создания файла"
     FILE_NOT_EXIST = "Файла не существует"
+    CANT_CHANGE_FILE = "У пользователя нет прав на работу с файлом"

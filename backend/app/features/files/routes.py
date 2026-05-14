@@ -90,7 +90,7 @@ def create_file_route():
         return {"message": id_result}, 403
 
     result = create_file(
-        data["name"], data["project_name"], data["parent_name"], data["is_folder"]
+        data["name"], data["project_name"], data["parent_name"], data["is_folder"], id
     )
 
     if result == ResultsCodes.OK:
