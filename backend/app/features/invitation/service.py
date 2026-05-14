@@ -19,6 +19,8 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
 
     if project and project.owner_id == owner_id:
         added_user = user_repo.get_by_email(invited_user_email)
+        if not added_user:
+            return ResultsCodes.USER_NOT_FOUND
         if added_user.id == owner_id:
             return ResultsCodes.CANT_INVITE
         if added_user and user_repo.user_exists(owner_id):
