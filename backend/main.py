@@ -6,7 +6,7 @@ app = create_app()
 
 if __name__ == "__main__":
     print("Server run")
-    socketio.run(app, debug=True, port=3000)
+    socketio.run(app, debug=True, port=3000, host="0.0.0.0")
 
 
 # sphinx-build -b html source build/html

@@ -1,6 +1,6 @@
 from app.shared.extensions import socketio
 from flask_socketio import join_room
-from flask import request
+from flask import request, session
 from app.shared.consts import ResultsCodes
 from app.shared.features.jwt_token.service import get_id
 from app.shared.features.notifications.service import send_notifications_to_client
@@ -21,16 +21,15 @@ def connect(auth):
     Args:
         auth (str): Authorization Bearer header
     """
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
+    token = auth.get("token")
+    if not token:
         return False
-    
-    access_token = auth_header.split(" ")[1]
-    user_id, id_result = get_id(access_token)
+
+    user_id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
         return False
 
+    session["user_id"] = user_id
     join_room(str(user_id))
-
     send_notifications_to_client(user_id)
     return True

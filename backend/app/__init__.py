@@ -36,6 +36,8 @@ def create_app(config_class=DebugConfig):
     CORS(app, resources={r"/*": {"origins": "*"}})
     socketio.init_app(app, cors_allowed_origins="*", cors_credentials=True)
 
+    from app.shared.features.socket import connect
+
     db.init_app(app)
     if not app.config["DB_TEST"]:
         migrate.init_app(app, db)

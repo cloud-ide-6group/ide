@@ -1,5 +1,5 @@
 from . import files_bp
-from flask import request
+from flask import request, session
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,
@@ -177,12 +177,9 @@ def update_file_content(data):
             content (str): Новое содержимое
         }
     """
-    auth_header = request.headers.get("Authorization")
-    token, result = get_jwt_from_header(auth_header)
-    if result != ResultsCodes.OK:
-        return create_unauthorized_response()
-
-    id, result = get_id(token)
+    id = session.get("user_id")
+    if not id:
+        return False
 
     file_id = data.get("file_id")
     new_content = data.get("content")

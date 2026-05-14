@@ -105,13 +105,11 @@ def join_project_room(data):
             project_id (int): Id проекта
         }
     """
-    auth_header = request.headers.get("Authorization")
-    token, result = get_jwt_from_header(auth_header)
+    id = session.get("user_id")
+    print(id)
+    if not id:
+        return False
 
-    if result != ResultsCodes.OK:
-        return create_unauthorized_response()
-
-    id, result = get_id(token)
     project_id = data.get("project_id")
     project = project_repo.get_by_id(project_id)
     if project:
@@ -121,6 +119,7 @@ def join_project_room(data):
             new_room = f"project_{project_id}"
             join_room(new_room)
             session["project_rooms"] = [new_room]
+            print("connected")
             return True
 
     return False
