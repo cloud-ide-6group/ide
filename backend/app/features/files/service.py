@@ -233,6 +233,8 @@ def rename_file(file_id, new_name, user_id):
 
     os.rename(old_path, new_path)
 
+    send_files_to_all_clients(project.id)
+
     return ResultsCodes.OK
 
 
