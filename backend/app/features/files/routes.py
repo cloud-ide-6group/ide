@@ -280,8 +280,7 @@ def get_file_content_socket(data):
 
     Args:
         data (dict): {
-            file_id (int): Id файла,
-            content (str): Новое содержимое
+            file_id (int): Id файла
         }
     """
     id = session.get("user_id")

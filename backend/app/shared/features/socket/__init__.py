@@ -21,7 +21,7 @@ def connect(auth):
         - join_project_room -- подключиться к проекту
 
     Args:
-        auth (str): Authorization Bearer header
+        auth (str): Токен в json
     """
     token = auth.get("token")
     if not token:

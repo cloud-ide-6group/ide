@@ -20,9 +20,10 @@ documentation for details.
    modules/dbmodels
    modules/jwt_token
    modules/consts
-   modules/new_project
+   modules/project
    modules/languages
    modules/password_hash
    modules/notifications
    modules/invitation
    modules/files
+   modules/socket
