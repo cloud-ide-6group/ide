@@ -86,6 +86,22 @@ class FileRepository:
             )
         return None
 
+    def is_file_exists(self, name, is_folder, project_id, parent):
+        files = (
+            db.session.query(File)
+            .filter(
+                File.project_id == project_id,
+                File.parent_id == (parent.id if parent is not None else None),
+                File.name == name,
+                File.is_folder == is_folder,
+            )
+            .all()
+        )
+        if files:
+            return True
+        else:
+            return False
+
 
 class ProjectRepository:
     """

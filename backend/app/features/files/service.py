@@ -30,6 +30,8 @@ def create_file(name, project_name, parent_name, is_folder, user_id):
         if not is_user_in_project(user_id, project.id):
             return ResultsCodes.CANT_CHANGE_FILE
         parent = file_repo.get_by_name(parent_name)
+        if file_repo.is_file_exists(name, is_folder, project.id, parent):
+            return ResultsCodes.FILE_ALREADY_EXIST
         result = create_file_on_disk(name, parent, project_name, is_folder)
         if result == ResultsCodes.OK:
             file_repo.create_file(
