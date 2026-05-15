@@ -63,6 +63,20 @@ def create_project(user_id, project_name, language_id):
 
 
 def jsonify_file(file):
+    """
+    Превращает файл проекта в json объект-дерево.
+
+    Args:
+        file (File): Файл
+
+    Returns:
+        data (dict): {
+            id (int): Id файла,
+            name (str): Имя файлы,
+            is_folder (str): Папка ли,
+            list[dict]: Массив словарей json проектов
+        }
+    """
     children = file_repo.get_children(file.id)
     children_json = []
     for c in children:
@@ -77,6 +91,15 @@ def jsonify_file(file):
 
 
 def get_project_files_trees(project_id):
+    """
+    Возвращает json деревья всех файлов.
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        list[dict]: Массив словарей json проектов
+    """
     root_files = file_repo.get_root_files(project_id)
     files_trees = []
     for root_file in root_files:
@@ -86,22 +109,45 @@ def get_project_files_trees(project_id):
     return files_trees
 
 
-def send_files_to_all_clients(project_id):
+def is_user_invited(project_id, user_id):
     """
-    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
+    Приглашен ли пользователь в проект
 
     Args:
-        invited_user_id (int): Id пользователя
+        project_id (int): Id проекта
+        user_id (int): Id пользователя
+
+    Returns:
+        bool: True, если пользователь уже в проекте, иначе False
+    """
+    return project_repo.is_user_invited(project_id, user_id)
+
+
+def get_project_by_id(project_id):
+    """
+    Получить проект по id
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        Project: Проект или None
+    """
+    return project_repo.get_by_id(project_id)
+
+
+def send_files_to_all_clients(project_id):
+    """
+    Возвращает json деревья всех файлов всем пользователям в комнате проекта по сокету
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        list[dict]: Массив словарей json проектов
     """
     socketio.emit(
         "files_list",
         {"files_trees": get_project_files_trees(project_id)},
         room=f"project_{project_id}",
     )
-
-
-def is_user_invited(project_id, user_id):
-    return project_repo.is_user_invited(project_id, user_id)
-
-def get_project_by_id(project_id):
-    return project_repo.get_by_id(project_id)

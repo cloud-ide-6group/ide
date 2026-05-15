@@ -1,16 +1,16 @@
-Проекты
+Работа с файлами
 ===============
 
 Сервисы
 -------
-.. automodule:: app.features.project.service
+.. automodule:: app.features.files.service
    :members:
    :undoc-members:
    :show-inheritance:
 
 Репозитории
 -------
-.. automodule:: app.features.project.repository
+.. automodule:: app.features.files.repository
    :members:
    :undoc-members:
    :show-inheritance:

@@ -11,6 +11,16 @@ load_dotenv()
 
 
 def get_file_path(current_file, file_path):
+    """
+    Получить путь к файлу на диске, работает рекурсивно.
+
+    Args:
+        current_file (File): Файла.
+        file_path (str): Путь к файлу.
+
+    Returns:
+        str: Путь к файлу.
+    """
     if current_file == None:
         return file_path
 
@@ -25,6 +35,19 @@ def get_file_path(current_file, file_path):
 
 
 def create_file(name, project_name, parent_name, is_folder, user_id):
+    """
+    Создать файл.
+
+    Args:
+        name (str): Имя файла.
+        project_name (str): Имя проекта.
+        parent_name (str): Имя файла-родителя.
+        is_folder (bool): Папка ли.
+        user_id (int): Id пользователя.
+
+    Returns:
+        ResultCodes: Результат выполнения операции.
+    """
     project = project_repo.get_by_name(project_name)
     if project:
         if not is_user_in_project(user_id, project.id):
@@ -48,10 +71,32 @@ def create_file(name, project_name, parent_name, is_folder, user_id):
 
 
 def is_user_in_project(user_id, project_id):
+    """
+    В проекте ли пользователь.
+
+    Args:
+        user_id (int): Id пользователя.
+        project_id (int): Id проекта.
+
+    Returns:
+        boolean: True, если пользователь приглашен или владеет проектом.
+    """
     return project_repo.is_user_in_project(user_id, project_id)
 
 
 def create_file_on_disk(name, parent, project_name, is_folder):
+    """
+    Создать файл на диске.
+
+    Args:
+        name (str): Имя файла.
+        parent (File): Файл-родитель.
+        project_name (str): Имя проекта.
+        is_folder (bool): Папка ли.
+
+    Returns:
+        ResultCodes: Результат выполнения операции.
+    """
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
     file_path = get_file_path(parent, "")
@@ -75,6 +120,15 @@ def create_file_on_disk(name, parent, project_name, is_folder):
 
 
 def delete_file_from_disk(name, parent, project_name, is_folder):
+    """
+    Удалить файл с диска.
+
+    Args:
+        name (str): Имя файла.
+        parent (File): Файл-родитель.
+        project_name (str): Имя проекта.
+        is_folder (bool): Папка ли.
+    """
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
     file_path = get_file_path(parent, "")
@@ -93,6 +147,16 @@ def delete_file_from_disk(name, parent, project_name, is_folder):
 
 
 def delete_file(file_id, user_id):
+    """
+    Удалить файл.
+
+    Args:
+        file_id (int): Id файла.
+        user_id (int): Id пользователя.
+
+    Returns:
+        ResultCodes: Результат выполнения операции.
+    """
     file = file_repo.get_by_id(file_id)
     if not file:
         return ResultsCodes.FILE_NOT_EXIST
@@ -111,6 +175,15 @@ def delete_file(file_id, user_id):
 
 
 def get_file_content(file_id):
+    """
+    Получить содержимое файла.
+
+    Args:
+        file_id (int): Id файла.
+
+    Returns:
+        str: Содержимое файла.
+    """
     file = file_repo.get_by_id(file_id)
     file_path = get_file_path(file, "")
     project = project_repo.get_by_id(file.project_id)
@@ -123,6 +196,16 @@ def get_file_content(file_id):
 
 
 def save_file_content(file_id, file_content):
+    """
+    Установить содержимое файла.
+
+    Args:
+        file_id (int): Id файла.
+        file_content (str): Содержимое файла.
+
+    Returns:
+        ResultCodes: Результат выполнения операции.
+    """
     file = file_repo.get_by_id(file_id)
     if not file:
         return ResultsCodes.FILE_NOT_EXIST
@@ -144,10 +227,11 @@ def save_file_content(file_id, file_content):
 
 def send_file_content_to_clients(file_id, new_content):
     """
-    Посылает клиенту все уведомления по сокету. Название события -- notifications_list
+    Посылает содержимое файла по сокету. Название события -- send_file_content
 
     Args:
-        invited_user_id (int): Id пользователя
+        file_id (int): Id файла
+        new_content (str): Содержимое файла
     """
     file = file_repo.get_by_id(file_id)
     socketio.emit(

@@ -25,3 +25,4 @@ documentation for details.
    modules/password_hash
    modules/notifications
    modules/invitation
+   modules/files

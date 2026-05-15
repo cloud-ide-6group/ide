@@ -12,45 +12,38 @@ class FileRepository:
     """
 
     def get_by_id(self, id):
-        return db.session.query(File).filter(File.id == id).first()
-
-    def get_by_name_in_parent(self, name, parent_id):
         """
-        Получить проект по имени.
+        Получить файл по id.
 
         Args:
-            name (str): Название проекта.
+            id (int): Id файла.
 
         Returns:
-            Project: Проект.
+            File: Файл.
         """
-        return (
-            db.session.query(File)
-            .filter((File.name == name) & (File.parent_id == parent_id))
-            .first()
-        )
+        return db.session.query(File).filter(File.id == id).first()
 
     def get_by_name(self, name):
         """
-        Получить проект по имени.
+        Получить файл по имени.
 
         Args:
-            name (str): Название проекта.
+            name (str): Название файла.
 
         Returns:
-            Project: Проект.
+            File: Файл.
         """
         return db.session.query(File).filter(File.name == name).first()
 
     def create_file(self, _name, _parent_id, _project_id, _is_folder):
         """
-        Получить проект по имени.
+        Создать файл.
 
         Args:
-            name (str): Название проекта.
-
-        Returns:
-            Project: Проект.
+            _name (str): Название файла.
+            _parent_id (int): Id родителя.
+            _project_id (int): Id проекта.
+            _is_folder (boolean): Папка ли.
         """
         file = File(
             name=_name,
@@ -63,10 +56,10 @@ class FileRepository:
 
     def delete_file(self, _id):
         """
-        Получить проект по имени.
+        Удалить файл.
 
         Args:
-            name (str): Название проекта.
+            _id (int): Id файла.
 
         Returns:
             Project: Проект.
@@ -79,6 +72,15 @@ class FileRepository:
         return False
 
     def get_project(self, file_id):
+        """
+        Получить проект, в котором содержится файл.
+
+        Args:
+            file_id (int): Id файла.
+
+        Returns:
+            File: Файл.
+        """
         file = db.session.query(File).filter(File.id == file_id).first()
         if file:
             return (
@@ -87,6 +89,18 @@ class FileRepository:
         return None
 
     def is_file_exists(self, name, is_folder, project_id, parent):
+        """
+        Существует ли такой же файл.
+
+        Args:
+            name (str): Имя файла.
+            is_folder (boolean): Папка ли.
+            project_id (int): Id проекта.
+            parent (File): Файл-родитель.
+
+        Returns:
+            boolean: True, если файл существует, иначе False.
+        """
         files = (
             db.session.query(File)
             .filter(
@@ -126,10 +140,10 @@ class ProjectRepository:
 
     def get_by_id(self, id):
         """
-        Получить проект по имени.
+        Получить проект по id.
 
         Args:
-            name (str): Название проекта.
+            id (int): Id проекта.
 
         Returns:
             Project: Проект.
@@ -137,6 +151,16 @@ class ProjectRepository:
         return db.session.query(Project).filter(Project.id == id).first()
 
     def is_user_in_project(self, user_id, project_id):
+        """
+        В проекте ли человек.
+
+        Args:
+            user_id (int): Id пользователя.
+            project_id (int): Id проекта.
+
+        Returns:
+            boolean: True, если пользователь приглашен или владеет проектом.
+        """
         project = db.session.query(Project).filter(Project.id == project_id).first()
         if project.owner_id == user_id:
             return True
