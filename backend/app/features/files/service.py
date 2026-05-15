@@ -55,7 +55,7 @@ def create_file(name, project_name, parent_name, is_folder, user_id):
         parent = file_repo.get_by_name(parent_name)
         if not parent:
             return ResultsCodes.PARENT_NOT_EXIST
-        if file_repo.is_file_exists(name, is_folder, project.id, parent):
+        if file_repo.is_file_exists(name, project.id, parent):
             return ResultsCodes.FILE_ALREADY_EXIST
         result = create_file_on_disk(name, parent, project_name, is_folder)
         if result == ResultsCodes.OK:
@@ -195,6 +195,47 @@ def get_file_content(file_id):
     return ""
 
 
+def rename_file(file_id, new_name, user_id):
+    """
+    Переименовать файл.
+
+    Args:
+        file_id (int): Id файла.
+        new_name (str): Новые имя.
+        user_id (int): Id пользователя.
+
+    Returns:
+        ResultCodes: Результат выполнения операции.
+    """
+    file = file_repo.get_by_id(file_id)
+    if not file:
+        return ResultsCodes.FILE_NOT_EXIST
+    project = file_repo.get_project(file_id)
+    if not project:
+        return ResultsCodes.PROJECT_NOT_FOUND
+    if not is_user_in_project(user_id, project.id):
+        return ResultsCodes.CANT_CHANGE_FILE
+    parent = file_repo.get_by_id(file.parent_id)
+    if file_repo.is_file_exists(new_name, file.project_id, parent):
+        return ResultsCodes.FILE_ALREADY_EXIST
+
+    old_name = file.name
+
+    result = file_repo.rename_file(file_id, new_name)
+    if result != ResultsCodes.OK:
+        return result
+
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project.name)
+    file_path = get_file_path(file, "")
+    file_path = os.path.join(project_dir, file_path)
+    old_path = os.path.join(file_path, old_name)
+    new_path = os.path.join(file_path, new_name)
+
+    os.rename(old_path, new_path)
+
+    return ResultsCodes.OK
+
+
 def save_file_content(file_id, file_content):
     """
     Установить содержимое файла.
@@ -214,6 +255,7 @@ def save_file_content(file_id, file_content):
     project = project_repo.get_by_id(file.project_id)
     if not project:
         return ResultsCodes.PROJECT_NOT_FOUND
+
     file_path = get_file_path(file, "")
     file_path = os.path.join(file_path, file.name)
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project.name)

@@ -1,5 +1,6 @@
 from app.shared.extensions import db
 from app.shared.dbmodels import File, Project, UserInProject
+from app.shared.consts import ResultsCodes
 
 
 class FileRepository:
@@ -88,13 +89,12 @@ class FileRepository:
             )
         return None
 
-    def is_file_exists(self, name, is_folder, project_id, parent):
+    def is_file_exists(self, name, project_id, parent):
         """
         Существует ли такой же файл.
 
         Args:
             name (str): Имя файла.
-            is_folder (boolean): Папка ли.
             project_id (int): Id проекта.
             parent (File): Файл-родитель.
 
@@ -107,7 +107,6 @@ class FileRepository:
                 File.project_id == project_id,
                 File.parent_id == (parent.id if parent is not None else None),
                 File.name == name,
-                File.is_folder == is_folder,
             )
             .all()
         )
@@ -115,6 +114,24 @@ class FileRepository:
             return True
         else:
             return False
+
+    def rename_file(self, id, new_name):
+        """
+        Переименовывает файл в БД
+
+        Args:
+            id (int): Id файла.
+            name (str): Новое имя файла.
+
+        Returns:
+            boolean: True, если файл существует, иначе False.
+        """
+        file = db.session.query(File).filter(File.id == id).first()
+        if file:
+            file.name = new_name
+            db.session.commit()
+            return ResultsCodes.OK
+        return ResultsCodes.FILE_NOT_EXIST
 
 
 class ProjectRepository:
