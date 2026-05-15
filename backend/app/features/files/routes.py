@@ -43,9 +43,9 @@ def create_file_route():
             project_name:
               type: string
               example: "TestProject"
-            parent_name:
-              type: string
-              example: "file.py"
+            parent_id:
+              type: int
+              example: 13
             is_folder:
               type: boolean
               example: false
@@ -90,7 +90,7 @@ def create_file_route():
         return {"message": id_result}, 403
 
     result = create_file(
-        data["name"], data["project_name"], data["parent_name"], data["is_folder"], id
+        data["name"], data["project_name"], data["parent_id"], data["is_folder"], id
     )
 
     if result == ResultsCodes.OK:

@@ -34,14 +34,14 @@ def get_file_path(current_file, file_path):
     return file_path
 
 
-def create_file(name, project_name, parent_name, is_folder, user_id):
+def create_file(name, project_name, parent_id, is_folder, user_id):
     """
     Создать файл.
 
     Args:
         name (str): Имя файла.
         project_name (str): Имя проекта.
-        parent_name (str): Имя файла-родителя.
+        parent_id (int): Id файла-родителя.
         is_folder (bool): Папка ли.
         user_id (int): Id пользователя.
 
@@ -52,8 +52,8 @@ def create_file(name, project_name, parent_name, is_folder, user_id):
     if project:
         if not is_user_in_project(user_id, project.id):
             return ResultsCodes.CANT_CHANGE_FILE
-        parent = file_repo.get_by_name(parent_name)
-        if not parent:
+        parent = file_repo.get_by_id(parent_id)
+        if parent_id != "" and parent_id != None and not parent:
             return ResultsCodes.PARENT_NOT_EXIST
         if file_repo.is_file_exists(name, project.id, parent):
             return ResultsCodes.FILE_ALREADY_EXIST
