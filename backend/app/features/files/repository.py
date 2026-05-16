@@ -22,7 +22,9 @@ class FileRepository:
         Returns:
             File: Файл.
         """
-        return db.session.query(File).filter(File.id == id).first()
+        if id == "" or id is None:
+            return None
+        return db.session.query(File).filter(File.id == int(id)).first()
 
     def get_by_name(self, name):
         """
