@@ -62,7 +62,9 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True)
+    parent_id = db.Column(
+        db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True
+    )
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     is_folder = db.Column(db.Boolean, nullable=False)
 
@@ -106,6 +108,7 @@ class Language(db.Model):
     name = db.Column(db.Text)
     description = db.Column(db.Text)
     image_name = db.Column(db.Text)
+    command = db.Column(db.Text)
 
 
 class Chat(db.Model):
