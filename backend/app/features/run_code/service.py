@@ -1,6 +1,7 @@
 from .repository import project_repo, language_repo
 from app.shared.consts import ResultsCodes
 import docker
+import json
 import os
 from dotenv import load_dotenv
 
@@ -20,7 +21,14 @@ def run_code(project_id, user_id):
     run_docker(project_dir)
 
     language = language_repo.get_by_id(project.language_id)
-    run_docker(project_dir, language.name)
+    if not language:
+        return "", ResultsCodes.INCORRECT_LANG
+
+    image_command = (
+        language.command + " " + "app/" + read_start_file_from_conf(project_dir)
+    )
+    logs = run_docker(project_dir, language.name, image_command)
+    return logs, ResultsCodes.OK
 
 
 def run_docker(project_dir, image_name, image_command):
@@ -44,3 +52,21 @@ def run_docker(project_dir, image_name, image_command):
     client.close()
 
     return logs
+
+
+CONFIG = "conf.ctgson"
+
+
+def read_start_file_from_conf(project_dir):
+    conf_file = os.path.join(project_dir, CONFIG)
+
+    if not os.path.exists(conf_file):
+        return None
+
+    with open(conf_file) as f:
+        data = json.load(f)
+
+    if "start_file" not in data:
+        return None
+
+    return data["start_file"]

@@ -6,10 +6,11 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
+from .service import run_code
 
 
 @run_code_bp.route("/code/run", methods=["POST"])
-def run_code():
+def run_code_route():
     """
     Запуск проекта
     ---
@@ -78,3 +79,10 @@ def run_code():
         return {"message": id_result}, 403
 
     data = request.json
+
+    code_result, result = run_code(data["project_id"], id)
+
+    if result == ResultsCodes.OK:
+        return {"result": code_result}, 200
+    else:
+        return {"message": result}, 409
