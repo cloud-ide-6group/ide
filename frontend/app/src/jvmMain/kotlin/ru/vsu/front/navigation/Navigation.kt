@@ -23,6 +23,8 @@ import ru.vsu.front.authorization.AuthViewModel
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
+import ru.vsu.front.notifications.ProjectScreen
+import ru.vsu.front.notifications.ProjectViewModel
 import ru.vsu.front.profile.ProfileScreen
 import ru.vsu.front.profile.ProfileViewModel
 
@@ -61,7 +63,7 @@ fun Navigation(
             ProfileScreen(
                 viewModel = viewModel,
                 onProjectInfoClick = { projectId ->
-                    navController.navigate(Route.ProjectInfo(projectId))
+                    navController.navigate(Route.Project(projectId))
                 }
             )
         }
@@ -77,6 +79,13 @@ fun Navigation(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CodeTogetherText(text = "Project Info Screen")
             }
+        }
+
+        composable<Route.Project> {
+            val viewModel = koinViewModel<ProjectViewModel>()
+            ProjectScreen(
+                viewModel = viewModel
+            )
         }
     }
 }
