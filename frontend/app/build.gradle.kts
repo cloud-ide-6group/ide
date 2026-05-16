@@ -41,6 +41,7 @@ kotlin {
             implementation(projects.core.navigation)
             implementation(projects.core.datastore)
             implementation(projects.core.auth)
+            implementation(projects.core.settings)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -3,10 +3,15 @@ package ru.vsu.front.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Цветовая палитра "Omni".
+ * Стандартный первичный цвет.
+ */
+val DEFAULT_PRIMARY_COLOR = Color(0xFFFF79C6)
+
+/**
+ * Цветовая палитра приложения.
  */
 val omniPalette = CodeTogetherColors(
-    primary = Color(0xFFFF79C6),
+    primary = DEFAULT_PRIMARY_COLOR,
     primaryText = Color(0xFFE1E1E6),
     primaryBackground = Color(0xFF13111B),
     secondaryText = Color(0x80888888),

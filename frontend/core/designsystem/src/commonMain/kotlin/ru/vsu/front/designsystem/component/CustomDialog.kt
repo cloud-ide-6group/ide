@@ -1,6 +1,9 @@
-package ru.vsu.front.profile.component
+package ru.vsu.front.designsystem.component
 
-import androidx.compose.animation.*
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -14,8 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.vsu.front.designsystem.component.BackgroundPreview
-import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
 import ru.vsu.front.model.entity.ProgramingLanguage
 
 /**
@@ -27,7 +28,7 @@ import ru.vsu.front.model.entity.ProgramingLanguage
  * @param content Внутреннее содержимое диалога (например, карточка с формой).
  */
 @Composable
-internal fun CustomDialog(
+fun CustomDialog(
     show: Boolean,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit
@@ -69,27 +70,9 @@ private fun CustomDialogPreview() {
 
             },
             content = {
-                CreatingProject(
-                    modifier = Modifier.padding(16.dp),
-                    projectName = "Test Project",
-                    selectedProgramingLanguage = ProgramingLanguage(id = 1, name = "Java", description = "description"),
-                    programingLanguagesListExpanded = false,
-                    programingLanguages = emptyList(),
-                    onProjectNameChange = {
-                    },
-                    onProgramingLanguageClick = {
+                ErrorScreen {
 
-                    },
-                    onSelectedProgramingLanguageClick = {
-
-                    },
-                    onCreateProjectClick = {
-
-                    },
-                    onDismissRequest = {
-
-                    },
-                )
+                }
             }
         )
     }

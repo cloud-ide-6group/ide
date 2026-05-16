@@ -7,6 +7,7 @@ import front.app.generated.resources.Res
 import front.app.generated.resources.back_24dp
 import front.app.generated.resources.logout_24dp
 import front.app.generated.resources.notifications_24dp
+import front.app.generated.resources.settings_24dp
 import ru.vsu.front.navigation.Route
 
 /**
@@ -17,20 +18,32 @@ import ru.vsu.front.navigation.Route
  * @param onLogoutClick Коллбек, вызываемый при нажатии на кнопку выхода из аккаунта.
  * @param onNotificationsClick Коллбек, вызываемый при нажатии на кнопку перехода к уведомлениям.
  * @param onBackClick Коллбек, вызываемый при нажатии на кнопку возврата на предыдущий экран.
+ * @param onSettingsClick Коллбек, вызываемый при нажатии на кнопку настроек.
  */
 @Composable
-fun TopBarButtons(
+internal fun TopBarButtons(
     navDestination: NavDestination?,
     onLogoutClick: () -> Unit,
     onNotificationsClick: () -> Unit,
     onBackClick: () -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     when {
+        navDestination?.hasRoute<Route.Auth>() == true -> {
+            TopBarButton(onClick = onSettingsClick, icon = Res.drawable.settings_24dp)
+        }
         navDestination?.hasRoute<Route.Profile>() == true -> {
+            TopBarButton(onClick = onSettingsClick, icon = Res.drawable.settings_24dp)
             TopBarButton(onClick = onLogoutClick, icon = Res.drawable.logout_24dp)
             TopBarButton(onClick = onNotificationsClick, icon = Res.drawable.notifications_24dp)
         }
         navDestination?.hasRoute<Route.Notifications>() == true -> {
+            TopBarButton(onClick = onSettingsClick, icon = Res.drawable.settings_24dp)
+            TopBarButton(onClick = onLogoutClick, icon = Res.drawable.logout_24dp)
+            TopBarButton(onClick = onBackClick, icon = Res.drawable.back_24dp)
+        }
+        navDestination?.hasRoute<Route.ProjectInfo>() == true -> {
+            TopBarButton(onClick = onSettingsClick, icon = Res.drawable.settings_24dp)
             TopBarButton(onClick = onLogoutClick, icon = Res.drawable.logout_24dp)
             TopBarButton(onClick = onBackClick, icon = Res.drawable.back_24dp)
         }
