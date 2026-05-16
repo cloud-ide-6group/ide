@@ -1,4 +1,12 @@
 from . import run_code_bp
+from flask import request
+from app.shared.features.jwt_token.service import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
+from app.shared.consts import ResultsCodes
+
 
 @run_code_bp.route("/code/run", methods=["POST"])
 def run_code():
@@ -8,7 +16,7 @@ def run_code():
     tags:
       - features/code
     description: |
-      Создает файл
+      Запускает проект
     parameters:
       - name: Authorization
         in: header
@@ -21,21 +29,18 @@ def run_code():
         schema:
           type: object
           properties:
-            project_name:
-              type: string
-              example: "TestProject"
-            language_id:
+            project_id:
               type: int
-              example: 7
+              example: 12
     responses:
       201:
         description: Успешное создание
         schema:
           type: object
           properties:
-              project_id:
-                type: int
-                example: 25
+              result_data:
+                type: str
+                example: "Hello, world!!!"
       401:
         description: Неверный access токен, доступ запрещен
         schema:
@@ -53,12 +58,23 @@ def run_code():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка создания проекта
+        description: Ошибка запуска проекта
         schema:
           type: object
           properties:
               message:
                 type: string
-                example: "Проект уже существует"
+                example: "Error on line 4, column 6 ... "
     """
     auth_header = request.headers.get("Authorization")
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
+        return response
+
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 403
+
+    data = request.json
