@@ -96,16 +96,9 @@ def handle_run_code(data):
     user_id = session.get("user_id")
     project_id = data["project_id"]
 
-    # ПОЛУЧАЕМ APP ДО ФОНОВОЙ ЗАДАЧИ
     app = current_app._get_current_object()
 
-    print(f"Запуск кода от пользователя {user_id}, проект {project_id}")
-
-    # ЗАПУСКАЕМ В ФОНЕ С ПЕРЕДАЧЕЙ APP
     socketio.start_background_task(run_code, project_id, user_id, app)
-
-    # ОТВЕЧАЕМ СРАЗУ
-    socketio.emit("run_started", {"project_id": project_id}, room=str(user_id))
 
 
 @socketio.on("send_input")
@@ -113,12 +106,10 @@ def handle_input(data):
     """ОТПРАВКА ВВОДА В КОНТЕЙНЕР"""
     user_id = session.get("user_id")
     project_id = data["project_id"]
-    user_input = data["input"]
+    user_input = str(data["input"])
 
     session_key = f"{user_id}_{project_id}"
 
     if session_key in active_containers:
-        container = active_containers[session_key]["container"]
-        socket = container.attach_socket(params={"stdin": 1, "stream": 1})
-        socket.write(user_input.encode())
-        socket.close()
+        stdin_socket = active_containers[session_key]["stdin_socket"]
+        stdin_socket.sendall((user_input + "\n").encode())
