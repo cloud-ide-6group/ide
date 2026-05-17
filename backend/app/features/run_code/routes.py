@@ -112,4 +112,4 @@ def handle_input(data):
 
     if session_key in active_containers:
         stdin_socket = active_containers[session_key]["stdin_socket"]
-        stdin_socket.sendall((user_input + "\n").encode())
+        stdin_socket.sendall((user_input + "\n").encode("utf-8"))

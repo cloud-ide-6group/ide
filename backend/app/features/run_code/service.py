@@ -3,6 +3,7 @@ from app.shared.consts import ResultsCodes, MOUNT_DIR, CONFIG_FILE
 from app.shared.extensions import socketio
 from flask_socketio import join_room
 import docker
+import chardet
 from flask import session, request
 import json
 import os
@@ -64,6 +65,14 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
         tty=True,
         remove=False,
         stdin_open=True,
+        environment={
+            "LANG": "C.UTF-8",
+            "LC_ALL": "C.UTF-8",
+            "PYTHONIOENCODING": "utf-8",
+            "PYTHONUTF8": "1",
+            "NODE_OPTIONS": "--input-encoding=utf-8",
+            "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8",
+        },
     )
 
     stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
@@ -75,11 +84,24 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
         "stdin_socket": stdin_socket,
     }
 
-    for line in container.logs(stream=True, follow=True):
-        decoded_line = line.decode("utf-8", errors="replace")
-        socketio.emit("console_output", {"data": decoded_line}, room=str(user_id))
+    buffer = b""
 
-    socketio.emit("console_end", {"project_id": project_id}, room=str(user_id))
+    for chunk in container.logs(stream=True, follow=True):
+        buffer += chunk
+
+        while b"\n" in buffer:
+            line_bytes, buffer = buffer.split(b"\n", 1)
+
+            detected = chardet.detect(line_bytes)
+            encoding = detected["encoding"] if detected["encoding"] else "utf-8"
+
+            try:
+                line = line_bytes.decode(encoding)
+            except:
+                line = line_bytes.decode("utf-8", errors="replace")
+
+            if line.strip():
+                socketio.emit("console_output", {"data": line}, room=str(user_id))
 
     if session_key in active_containers:
         active_containers[session_key]["stdin_socket"].close()
