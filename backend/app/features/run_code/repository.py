@@ -33,7 +33,7 @@ class ProjectRepository:
             >>> user = repo.get_by_id(123)
         """
         project = db.session.query(Project).filter(Project.id == project_id).first()
-        if project:
+        if not project:
             return False, ResultsCodes.PROJECT_NOT_FOUND
         if project.owner_id == user_id:
             return True, ResultsCodes.OK

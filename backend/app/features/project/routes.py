@@ -14,6 +14,7 @@ from flask_socketio import join_room, leave_room
 from flask import session
 from app.shared.extensions import socketio
 
+
 # TODO: удаление проекта
 # TODO: вынести сокеты в отдельный файл
 # TODO: базовые реализации репозиториев
@@ -110,12 +111,31 @@ def create_new_project():
 @socketio.on("join_project_room")
 def join_project_room(data):
     """
-    Клиент открывает проект и попадает в его комнату. Название события -- join_project_room
+    Клиент открывает проект и попадает в его комнату. Необходимо вызывать при открытии проекта.
 
     Args:
-        data (dict): {
-            project_id (int): Id проекта
+        data (dict): Словарь с данными проекта.
+            {
+                project_id (int): Уникальный идентификатор проекта
+            }
+
+    Returns:
+        bool: True при успешном подключении, False при ошибке
+
+    Emits:
+        files_list (dict): {
+            "files_trees": [
+                {
+                    "id": int,
+                    "name": str,
+                    "is_folder": bool,
+                    "children": list  # рекурсивно та же структура
+                }
+            ]
         }
+
+    Example:
+        >>> data = {"project_id": 42}
     """
     id = session.get("user_id")
     if not id:
@@ -131,8 +151,8 @@ def join_project_room(data):
             join_room(new_room)
             session["project_rooms"] = [new_room]
             socketio.emit(
-                "files_list",
-                {"files_trees": get_project_files_trees(project_id)},
+                "files_trees_list",
+                {"files_trees_list": get_project_files_trees(project_id)},
                 room=f"{id}",
             )
             return True

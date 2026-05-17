@@ -1,4 +1,5 @@
-import os
+MOUNT_DIR = "/app/"
+CONFIG_FILE = "conf.ctgson"
 
 
 class ResultsCodes:

@@ -4,6 +4,10 @@ from .consts import ResultsCodes
 import re
 from email_validator import validate_email, EmailNotValidError
 
+"""
+Модели. id инкрементно ставится БД, при создании его не задаем.
+"""
+
 
 class Project(db.Model):
     """Модель проекта в IDE.
@@ -92,13 +96,15 @@ class Language(db.Model):
         name (str): Имя языка
         description (str): Описание языка
         image_name (str): Docker образ для создания контейнера
+        command (str): Команда для запуска кода
 
     Example:
         >>> lang = Language(
         ...     name="Java 17",
         ...     parent_id=1,
         ...     description="Java 17 and maven",
-        ...     image_name="java-17"
+        ...     image_name="java-17",
+        ...     command="run"
         ... )
     """
 

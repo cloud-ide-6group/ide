@@ -1,5 +1,5 @@
 from .repository import project_repo, language_repo
-from app.shared.consts import ResultsCodes
+from app.shared.consts import ResultsCodes, MOUNT_DIR, CONFIG_FILE
 import docker
 import json
 import os
@@ -18,16 +18,16 @@ def run_code(project_id, user_id):
     if project is None:
         return "", ResultsCodes.PROJECT_NOT_FOUND
     project_dir = os.path.join(projects_dir, project.name)
-    run_docker(project_dir)
 
     language = language_repo.get_by_id(project.language_id)
     if not language:
         return "", ResultsCodes.INCORRECT_LANG
 
     image_command = (
-        language.command + " " + "app/" + read_start_file_from_conf(project_dir)
+        language.command + " " + MOUNT_DIR + read_start_file_from_conf(project_dir)
     )
-    logs = run_docker(project_dir, language.name, image_command)
+    logs = run_docker(project_dir, language.image_name, image_command)
+    print(logs)
     return logs, ResultsCodes.OK
 
 
@@ -35,9 +35,9 @@ def run_docker(project_dir, image_name, image_command):
     client = docker.from_env()
 
     container = client.containers.run(
-        image_name,
+        image_name.lower(),
         command=image_command,
-        volumes={project_dir: {"bind": "/app", "mode": "ro"}},
+        volumes={project_dir: {"bind": MOUNT_DIR, "mode": "ro"}},
         network_mode="none",
         cap_drop=["ALL"],
         read_only=True,
@@ -46,6 +46,7 @@ def run_docker(project_dir, image_name, image_command):
     )
 
     result = container.wait()
+    print(result)
     logs = container.logs().decode("utf-8")
 
     container.remove()
@@ -54,11 +55,8 @@ def run_docker(project_dir, image_name, image_command):
     return logs
 
 
-CONFIG = "conf.ctgson"
-
-
 def read_start_file_from_conf(project_dir):
-    conf_file = os.path.join(project_dir, CONFIG)
+    conf_file = os.path.join(project_dir, CONFIG_FILE)
 
     if not os.path.exists(conf_file):
         return None

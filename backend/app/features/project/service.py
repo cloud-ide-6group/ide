@@ -147,7 +147,7 @@ def send_files_to_all_clients(project_id):
         list[dict]: Массив словарей json проектов
     """
     socketio.emit(
-        "files_list",
-        {"files_trees": get_project_files_trees(project_id)},
+        "files_trees_list",
+        {"files_trees_list": get_project_files_trees(project_id)},
         room=f"project_{project_id}",
     )
