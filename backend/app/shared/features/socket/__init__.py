@@ -43,4 +43,5 @@ def connect(auth):
     session["user_id"] = user_id
     join_room(str(user_id))
     send_notifications_to_client(user_id)
+    print("connected")
     return True

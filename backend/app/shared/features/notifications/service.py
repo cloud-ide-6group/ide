@@ -45,6 +45,7 @@ def send_notifications_to_client(invited_user_id):
     Args:
         invited_user_id (int): Id пользователя
     """
+    print(invited_user_id)
     socketio.emit(
         "notifications_list",
         {"notifications": get_notifications(invited_user_id)},

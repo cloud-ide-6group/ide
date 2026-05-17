@@ -1,12 +1,13 @@
 from . import run_code_bp
-from flask import request
+from flask import request, session, current_app
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
-from .service import run_code
+from app.shared.extensions import socketio
+from .service import active_containers, run_code
 
 
 @run_code_bp.route("/code/run", methods=["POST"])
@@ -80,9 +81,44 @@ def run_code_route():
 
     data = request.json
 
-    code_result, result = run_code(data["project_id"], id)
+    socketio.emit(
+        "console_output",
+        {"data": "jjjjj"},
+        room=str(id),
+    )
 
-    if result == ResultsCodes.OK:
-        return {"result": code_result}, 200
-    else:
-        return {"message": result}, 409
+    return {}, 200
+
+
+@socketio.on("run_code")
+def handle_run_code(data):
+    """ЗАПУСК КОДА ЧЕРЕЗ СОКЕТ"""
+    user_id = session.get("user_id")
+    project_id = data["project_id"]
+
+    # ПОЛУЧАЕМ APP ДО ФОНОВОЙ ЗАДАЧИ
+    app = current_app._get_current_object()
+
+    print(f"Запуск кода от пользователя {user_id}, проект {project_id}")
+
+    # ЗАПУСКАЕМ В ФОНЕ С ПЕРЕДАЧЕЙ APP
+    socketio.start_background_task(run_code, project_id, user_id, app)
+
+    # ОТВЕЧАЕМ СРАЗУ
+    socketio.emit("run_started", {"project_id": project_id}, room=str(user_id))
+
+
+@socketio.on("send_input")
+def handle_input(data):
+    """ОТПРАВКА ВВОДА В КОНТЕЙНЕР"""
+    user_id = session.get("user_id")
+    project_id = data["project_id"]
+    user_input = data["input"]
+
+    session_key = f"{user_id}_{project_id}"
+
+    if session_key in active_containers:
+        container = active_containers[session_key]["container"]
+        socket = container.attach_socket(params={"stdin": 1, "stream": 1})
+        socket.write(user_input.encode())
+        socket.close()

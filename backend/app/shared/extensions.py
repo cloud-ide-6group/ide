@@ -5,3 +5,4 @@ from flask_socketio import SocketIO
 db = SQLAlchemy()
 migrate = Migrate()
 socketio = SocketIO()
+app = None

@@ -36,7 +36,9 @@ def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}})
-    socketio.init_app(app, cors_allowed_origins="*", cors_credentials=True)
+    socketio.init_app(
+        app, cors_allowed_origins="*", cors_credentials=True, async_mode="threading"
+    )
 
     from app.shared.features.socket import connect
 
