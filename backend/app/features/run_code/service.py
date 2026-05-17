@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# TODO: заменить на redis. также с refresh токенами
 active_containers = {}
 
 
@@ -105,6 +106,8 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
 
     if session_key in active_containers:
         active_containers[session_key]["stdin_socket"].close()
+        container.stop()
+        container.remove()
         del active_containers[session_key]
 
 
