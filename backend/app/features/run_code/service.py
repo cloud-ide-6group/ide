@@ -6,11 +6,10 @@ import docker
 import chardet
 import json
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# TODO: заменить на redis. также с refresh токенами
 
 
 def run_code(project_id, user_id, app):
@@ -107,6 +106,7 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
                 line = line_bytes.decode("utf-8", errors="replace")
 
             if line.strip():
+                line = re.sub(r"[\r\n\t\x0b\x0c]", "", line)
                 socketio.emit("console_output", {"data": line}, room=str(user_id))
 
     container_id = redis_client.get(session_key)
