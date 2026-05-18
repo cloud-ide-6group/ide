@@ -1,11 +1,5 @@
 from . import run_code_bp
-from flask import request, session, current_app
-from app.shared.features.jwt_token.service import (
-    get_id,
-    get_jwt_from_header,
-    create_unauthorized_response,
-)
-from app.shared.consts import ResultsCodes
+from flask import session, current_app
 from app.shared.extensions import socketio
 from .service import active_containers, run_code
 

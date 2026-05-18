@@ -1,10 +1,9 @@
 from .repository import project_repo, language_repo
 from app.shared.consts import ResultsCodes, MOUNT_DIR, CONFIG_FILE
+from app.shared.extensions import redis_client
 from app.shared.extensions import socketio
-from flask_socketio import join_room
 import docker
 import chardet
-from flask import session, request
 import json
 import os
 from dotenv import load_dotenv
@@ -12,7 +11,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # TODO: заменить на redis. также с refresh токенами
-active_containers = {}
 
 
 def run_code(project_id, user_id, app):
@@ -79,11 +77,7 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
     stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
 
     session_key = f"{user_id}_{project_id}"
-    active_containers[session_key] = {
-        "container": container,
-        "client": client,
-        "stdin_socket": stdin_socket,
-    }
+    redis_client.setex(session_key, 3600, container.id)
 
     buffer = b""
 
@@ -104,11 +98,12 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
             if line.strip():
                 socketio.emit("console_output", {"data": line}, room=str(user_id))
 
-    if session_key in active_containers:
-        active_containers[session_key]["stdin_socket"].close()
+    container_id = redis_client.get(session_key)
+    if container_id:
+        stdin_socket.close()
         container.stop()
         container.remove()
-        del active_containers[session_key]
+        redis_client.delete(session_key)
 
 
 def read_start_file_from_conf(project_dir):
