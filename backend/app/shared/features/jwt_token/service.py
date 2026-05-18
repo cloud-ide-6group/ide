@@ -4,9 +4,15 @@ import jwt
 from ...consts import ResultsCodes
 import os
 from dotenv import load_dotenv
-from flask import request, make_response
+from flask import make_response
+from app.shared.extensions import redis_client
 
 load_dotenv()
+
+DAYS = 20
+HOURS = 24
+MINS = 60
+SECS = 60
 
 
 def create_token(id, key, token_lifetime, is_access):
@@ -54,6 +60,9 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     Example:
         >>> access = get_access_token("token", "r_key", "a_key")
     """
+    if redis_client.get(token):
+        return {"result": ResultsCodes.REFRESH_TOKEN_EXPIRED}
+
     data = jwt.decode(token, refresh_key, algorithms=["HS256"])
     if data["is_access"]:
         return {
@@ -62,6 +71,7 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     else:
         access = create_token(data["id"], access_key, timedelta(minutes=15), True)
         refresh = create_token(data["id"], refresh_key, timedelta(days=7), False)
+        redis_client.setex(token, DAYS * HOURS * MINS * SECS, "used")
         return {"access": access, "refresh": refresh, "result": ResultsCodes.OK}
 
 
@@ -99,7 +109,7 @@ def get_jwt_from_header(auth_header):
     Returns:
         access_token (str): Jwt токен или None
         result_code (ResultCodes): Результат выполнения
-    
+
     Example:
         > auth_header = request.headers.get("Authorization")
         > token, result = get_jwt_from_header(auth_header)
