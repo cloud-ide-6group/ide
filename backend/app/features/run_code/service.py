@@ -53,6 +53,18 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
     """ЗАПУСК ДОКЕР КОНТЕЙНЕРА"""
     client = docker.from_env()
 
+    session_key = f"{user_id}_{project_id}"
+
+    old_container_id = redis_client.get(session_key)
+    if old_container_id:
+        try:
+            old_container = client.containers.get(old_container_id)
+            old_container.stop()
+            old_container.remove()
+        except Exception as e:
+            print(f"Старый контейнер не найден: {e}")
+        redis_client.delete(session_key)
+
     container = client.containers.run(
         image_name.lower(),
         command=image_command,
@@ -76,7 +88,6 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
 
     stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
 
-    session_key = f"{user_id}_{project_id}"
     redis_client.setex(session_key, 3600, container.id)
 
     buffer = b""
