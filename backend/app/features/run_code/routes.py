@@ -1,7 +1,8 @@
 from . import run_code_bp
 from flask import session, current_app
 from app.shared.extensions import socketio
-from .service import active_containers, run_code
+from .service import run_code, get_container
+from app.shared.extensions import redis_client
 
 
 @socketio.on("run_code")
@@ -24,6 +25,9 @@ def handle_input(data):
 
     session_key = f"{user_id}_{project_id}"
 
-    if session_key in active_containers:
-        stdin_socket = active_containers[session_key]["stdin_socket"]
+    container_id = redis_client.get(session_key)
+    container = get_container(container_id)
+    if container:
+        stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
         stdin_socket.sendall((user_input + "\n").encode("utf-8"))
+        stdin_socket.close()

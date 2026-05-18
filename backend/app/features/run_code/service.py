@@ -130,3 +130,13 @@ def read_start_file_from_conf(project_dir):
         return None
 
     return data["start_file"]
+
+
+def get_container(container_id):
+    if container_id:
+        try:
+            client = docker.from_env()
+            container = client.containers.get(container_id)
+            return container
+        except Exception as e:
+            return None
