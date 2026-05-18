@@ -5,7 +5,6 @@ from ...consts import ResultsCodes
 import os
 from dotenv import load_dotenv
 from flask import make_response
-from app.shared.extensions import redis_client
 
 load_dotenv()
 
@@ -60,6 +59,8 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     Example:
         >>> access = get_access_token("token", "r_key", "a_key")
     """
+    from app.shared.extensions import redis_client
+
     if redis_client.get(token):
         return {"result": ResultsCodes.REFRESH_TOKEN_EXPIRED}
 

@@ -6,7 +6,7 @@ from app.shared.extensions import redis_client
 
 
 @socketio.on("run_code")
-def handle_run_code(data):
+def run_code_socket(data):
     """ЗАПУСК КОДА ЧЕРЕЗ СОКЕТ"""
     user_id = session.get("user_id")
     project_id = data["project_id"]
@@ -17,7 +17,7 @@ def handle_run_code(data):
 
 
 @socketio.on("send_input")
-def handle_input(data):
+def input_socket(data):
     """ОТПРАВКА ВВОДА В КОНТЕЙНЕР"""
     user_id = session.get("user_id")
     project_id = data["project_id"]
@@ -31,3 +31,25 @@ def handle_input(data):
         stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
         stdin_socket.sendall((user_input + "\n").encode("utf-8"))
         stdin_socket.close()
+
+
+@socketio.on("stop_code")
+def stop_code_socket(data):
+    """ОСТАНОВКА КОНТЕЙНЕРА ПО ЗАПРОСУ"""
+    user_id = session.get("user_id")
+    project_id = data["project_id"]
+    session_key = f"{user_id}_{project_id}"
+
+    container_id = redis_client.get(session_key)
+    if not container_id:
+        return
+
+    container = get_container(container_id)
+    if container:
+        try:
+            container.stop()
+            container.remove()
+        except Exception as e:
+            print(f"Ошибка: {e}")
+
+    redis_client.delete(session_key)

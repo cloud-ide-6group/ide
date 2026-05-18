@@ -112,9 +112,14 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
     container_id = redis_client.get(session_key)
     if container_id:
         stdin_socket.close()
-        container.stop()
-        container.remove()
-        redis_client.delete(session_key)
+        try:
+            if container:
+                container.stop()
+                container.remove()
+        except Exception as e:
+            print(f"Ошибка при удалении контейнера: {e}")
+        finally:
+            redis_client.delete(session_key)
 
 
 def read_start_file_from_conf(project_dir):

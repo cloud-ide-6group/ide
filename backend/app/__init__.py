@@ -1,9 +1,8 @@
 from flask import Flask, request, Response
 from flasgger import Swagger
 from config import DebugConfig
-from app.shared.extensions import db, migrate, socketio, redis_client
+from app.shared.extensions import db, migrate, socketio
 from flask_cors import CORS
-from redis import Redis
 
 
 def register_features(app):
@@ -39,8 +38,6 @@ def create_app(config_class=DebugConfig):
     socketio.init_app(
         app, cors_allowed_origins="*", cors_credentials=True, async_mode="threading"
     )
-
-    redis_client = Redis.from_url(app.config["REDIS_URL"], decode_responses=True)
 
     from app.shared.features.socket import connect
 
