@@ -12,12 +12,14 @@ def register_features(app):
     from .features.project.routes import project_bp
     from .features.invitation.routes import invitation_bp
     from .shared.features.notifications.routes import notifications_bp
+    from .features.files import files_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(invitation_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(files_bp)
 
 
 def register_shared_features(app):
@@ -33,6 +35,8 @@ def create_app(config_class=DebugConfig):
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}})
     socketio.init_app(app, cors_allowed_origins="*", cors_credentials=True)
+
+    from app.shared.features.socket import connect
 
     db.init_app(app)
     if not app.config["DB_TEST"]:

@@ -1,10 +1,22 @@
 from . import project_bp
 from ...shared.features.jwt_token.routes import get_id
 from app.shared.features.languages.service import lang_exists
+from app.shared.consts import ResultsCodes
 from flask import request, make_response
-from .service import *
+from .service import (
+    create_project_dir,
+    create_project,
+    is_user_invited,
+    get_project_by_id,
+    get_project_files_trees,
+)
+from flask_socketio import join_room, leave_room
+from flask import session
+from app.shared.extensions import socketio
 
-
+# TODO: удаление проекта
+# TODO: вынести сокеты в отдельный файл
+# TODO: базовые реализации репозиториев
 @project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
@@ -93,3 +105,36 @@ def create_new_project():
         return {"message": result}, 409
 
     return {"project_id": project.id}, 201
+
+
+@socketio.on("join_project_room")
+def join_project_room(data):
+    """
+    Клиент открывает проект и попадает в его комнату. Название события -- join_project_room
+
+    Args:
+        data (dict): {
+            project_id (int): Id проекта
+        }
+    """
+    id = session.get("user_id")
+    if not id:
+        return False
+
+    project_id = data.get("project_id")
+    project = get_project_by_id(project_id)
+    if project:
+        if project.owner_id == id or is_user_invited(project_id, id):
+            for room in session.get("project_rooms", []):
+                leave_room(room)
+            new_room = f"project_{project_id}"
+            join_room(new_room)
+            session["project_rooms"] = [new_room]
+            socketio.emit(
+                "files_list",
+                {"files_trees": get_project_files_trees(project_id)},
+                room=f"{id}",
+            )
+            return True
+
+    return False
