@@ -16,6 +16,7 @@ class DebugConfig:
     ACCESS = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH = os.getenv("REFRESH", "iZdMl8QF0X")
     REDIS_URL = os.getenv("REDIS_URL")
+    PLATFORM = os.getenv("PLATFORM")
 
 
 class DBTestConfig:
@@ -30,6 +31,7 @@ class DBTestConfig:
     ACCESS = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH = os.getenv("REFRESH", "iZdMl8QF0X")
     REDIS_URL = os.getenv("REDIS_URL")
+    PLATFORM = os.getenv("PLATFORM")
 
 
 config = {"debug": DebugConfig, "dbtest": DBTestConfig}

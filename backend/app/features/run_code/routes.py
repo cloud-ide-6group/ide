@@ -3,6 +3,7 @@ from flask import session, current_app
 from app.shared.extensions import socketio
 from .service import run_code, get_container
 from app.shared.extensions import redis_client
+from config import DebugConfig
 
 
 @socketio.on("run_code")
@@ -29,7 +30,10 @@ def input_socket(data):
     container = get_container(container_id)
     if container:
         stdin_socket = container.attach_socket(params={"stdin": 1, "stream": 1})
-        stdin_socket.sendall((user_input + "\n").encode("utf-8"))
+        if DebugConfig.PLATFORM == "LINUX":
+            stdin_socket._sock.sendall((user_input + "\n").encode("utf-8"))
+        elif DebugConfig.PLATFORM == "WINDOWS":
+            stdin_socket.sendall((user_input + "\n").encode("utf-8"))
         stdin_socket.close()
 
 
