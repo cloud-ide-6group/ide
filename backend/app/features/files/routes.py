@@ -16,6 +16,7 @@ from .service import (
 from app.shared.extensions import socketio
 
 
+# TODO: валидировать токен
 @files_bp.route("/files/create", methods=["POST"])
 def create_file_route():
     """
@@ -45,7 +46,7 @@ def create_file_route():
               example: "TestProject"
             parent_id:
               type: int
-              example: 13
+              example: 13 | "" если родителя нет
             is_folder:
               type: boolean
               example: false
@@ -253,13 +254,17 @@ def rename_file_route():
 @socketio.on("update_file_content")
 def update_file_content(data):
     """
-    Клиент посылает новое содержимое файла.
+    Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
 
     Args:
-        data (dict): {
-            file_id (int): Id файла,
-            content (str): Новое содержимое
-        }
+        data (dict): Словарь с данными файла.
+          {
+            file_id (int): Уникальный идентификатор файла
+            content (str): Новое содержимое файла
+          }
+
+    Example:
+        >>> data = {"file_id": 3, "content": "The file content"}
     """
     id = session.get("user_id")
     if not id:
@@ -276,12 +281,15 @@ def update_file_content(data):
 @socketio.on("get_file_content")
 def get_file_content_socket(data):
     """
-    Клиент посылает новое содержимое файла.
+    Клиент посылает id файла и получает содержимое файла.
 
     Args:
         data (dict): {
-            file_id (int): Id файла
+            "file_id": int
         }
+
+    Example:
+        >>> data = {"file_id": 3}
     """
     id = session.get("user_id")
     if not id:

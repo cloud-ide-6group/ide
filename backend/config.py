@@ -15,6 +15,8 @@ class DebugConfig:
     SWAGGER_SECRET_USER = os.getenv("SWAGGER_USER", "GhptWyANiUq3e8")
     ACCESS = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH = os.getenv("REFRESH", "iZdMl8QF0X")
+    REDIS_URL = os.getenv("REDIS_URL")
+    PLATFORM = os.getenv("PLATFORM")
 
 
 class DBTestConfig:
@@ -28,6 +30,8 @@ class DBTestConfig:
     SWAGGER_SECRET_USER = None
     ACCESS = os.getenv("ACCESS", "UMLFphza4e")
     REFRESH = os.getenv("REFRESH", "iZdMl8QF0X")
+    REDIS_URL = os.getenv("REDIS_URL")
+    PLATFORM = os.getenv("PLATFORM")
 
 
 config = {"debug": DebugConfig, "dbtest": DBTestConfig}

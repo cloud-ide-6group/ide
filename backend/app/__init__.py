@@ -1,8 +1,7 @@
 from flask import Flask, request, Response
 from flasgger import Swagger
 from config import DebugConfig
-from .shared.extensions import db, migrate, socketio
-from flask_socketio import SocketIO
+from app.shared.extensions import db, migrate, socketio
 from flask_cors import CORS
 
 
@@ -11,30 +10,34 @@ def register_features(app):
     from .features.profile.routes import profile_bp
     from .features.project.routes import project_bp
     from .features.invitation.routes import invitation_bp
-    from .shared.features.notifications.routes import notifications_bp
     from .features.files import files_bp
+    from .features.run_code import run_code_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(invitation_bp)
-    app.register_blueprint(notifications_bp)
     app.register_blueprint(files_bp)
+    app.register_blueprint(run_code_bp)
 
 
 def register_shared_features(app):
     from .shared.features.jwt_token import jwt_token_bp
     from .shared.features.languages import languages_bp
+    from .shared.features.notifications.routes import notifications_bp
 
     app.register_blueprint(jwt_token_bp)
     app.register_blueprint(languages_bp)
+    app.register_blueprint(notifications_bp)
 
 
 def create_app(config_class=DebugConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
     CORS(app, resources={r"/*": {"origins": "*"}})
-    socketio.init_app(app, cors_allowed_origins="*", cors_credentials=True)
+    socketio.init_app(
+        app, cors_allowed_origins="*", cors_credentials=True, async_mode="threading"
+    )
 
     from app.shared.features.socket import connect
 

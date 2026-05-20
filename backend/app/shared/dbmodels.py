@@ -4,6 +4,10 @@ from .consts import ResultsCodes
 import re
 from email_validator import validate_email, EmailNotValidError
 
+"""
+Модели. id инкрементно ставится БД, при создании его не задаем.
+"""
+
 
 class Project(db.Model):
     """Модель проекта в IDE.
@@ -62,7 +66,9 @@ class File(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    parent_id = db.Column(db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True)
+    parent_id = db.Column(
+        db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True
+    )
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
     is_folder = db.Column(db.Boolean, nullable=False)
 
@@ -90,13 +96,15 @@ class Language(db.Model):
         name (str): Имя языка
         description (str): Описание языка
         image_name (str): Docker образ для создания контейнера
+        command (str): Команда для запуска кода
 
     Example:
         >>> lang = Language(
         ...     name="Java 17",
         ...     parent_id=1,
         ...     description="Java 17 and maven",
-        ...     image_name="java-17"
+        ...     image_name="java-17",
+        ...     command="run"
         ... )
     """
 
@@ -106,6 +114,7 @@ class Language(db.Model):
     name = db.Column(db.Text)
     description = db.Column(db.Text)
     image_name = db.Column(db.Text)
+    command = db.Column(db.Text)
 
 
 class Chat(db.Model):

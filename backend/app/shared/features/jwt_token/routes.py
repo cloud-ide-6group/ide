@@ -69,7 +69,7 @@ def refresh():
         else:
             return {"message": result["result"]}, 401
 
-    except jwt.ExpiredSignaturemessage:
+    except jwt.ExpiredSignatureError:
         return {"message": ResultsCodes.REFRESH_TOKEN_EXPIRED}, 401
     except jwt.InvalidTokenError as e:
         print(f"InvalidTokenmessage: {e}")
