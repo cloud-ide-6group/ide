@@ -6,7 +6,14 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
-from .service import create_chat, delete_chat, send_message
+from .service import (
+    create_chat,
+    delete_chat,
+    send_message,
+    get_messages,
+    get_chat_project_id,
+)
+from app.shared.extensions import socketio
 
 
 @chat_bp.route("/chat/create", methods=["POST"])
@@ -175,7 +182,7 @@ def delete_chat_route():
         return {"message": result}, 409
 
 
-@chat_bp.route("/message/send", methods=["POST"])
+@chat_bp.route("/message/create", methods=["POST"])
 def create_message_route():
     """
     Создание сообщения
@@ -255,6 +262,15 @@ def create_message_route():
     result = send_message(chat_id, message_text, author_id)
 
     if result:
+        project_id, get_project_id_result = get_chat_project_id(chat_id)
+        try:
+            socketio.emit(
+                "send_messages",
+                {"messages": get_messages(chat_id)},
+                room=f"project_{project_id}",
+            )
+        except Exception as e:
+            print(f"Error: {e}, ResultCodes: {get_project_id_result}")
         return {}, 200
     else:
         return {"message": result}, 409

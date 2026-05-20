@@ -24,6 +24,7 @@ def connect(auth):
         - notifications_list -- уведомления
         - files_trees_list -- массив деревьев файлов проекта
         - console_output -- вывод в консоль
+        - send_messages -- получить сообщения чата
 
     Args:
         auth (str): Токен в json БЕЗ BEARER

@@ -44,3 +44,5 @@ class ResultsCodes:
     DELETE_ERROR = "Ошибка удаления"
     USER_IS_NOT_CHAT_CREATOR = "Вы не можете удалить чат, так как вы не его создатель"
     CHAT_NOT_FOUND = "Чат не найден"
+    UNKNOWN_USER = "-"
+    UNEXPECTED_ERROR = "Внутреняя ошибка сервера"

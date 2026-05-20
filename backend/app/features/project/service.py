@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
-from .repository import project_repo, file_repo
+from .repository import project_repo, file_repo, message_repo, user_repo
 from app.shared.extensions import socketio
 
 load_dotenv()
@@ -151,3 +151,30 @@ def send_files_to_all_clients(project_id):
         {"files_trees_list": get_project_files_trees(project_id)},
         room=f"project_{project_id}",
     )
+
+
+def get_messages(chat_id):
+    try:
+        messages_raw = message_repo.get_chat_messages(chat_id), ResultsCodes.OK
+        messages = []
+        for m in messages_raw:
+            messages.append(
+                {
+                    "id": m.id,
+                    "text": m.text,
+                    "author": user_repo.get_name_by_id(m.author_id),
+                    "send_time": m.send_time,
+                }
+            )
+        return messages, ResultsCodes.OK
+    except Exception as e:
+        print(e)
+        return None, ResultsCodes.CHAT_NOT_FOUND
+
+
+def get_chats(project_id):
+    try:
+        return project_repo.get_chats(project_id), ResultsCodes.OK
+    except Exception as e:
+        print(e)
+        return [], ResultsCodes.CHAT_NOT_FOUND
