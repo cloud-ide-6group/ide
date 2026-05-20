@@ -65,7 +65,7 @@ class FileRepository:
             _id (int): Id файла.
 
         Returns:
-            Project: Проект.
+            boolean: Удалось ли удалить файл
         """
         file = db.session.query(File).filter(File.id == _id).first()
         if file:
@@ -126,7 +126,7 @@ class FileRepository:
             name (str): Новое имя файла.
 
         Returns:
-            boolean: True, если файл существует, иначе False.
+            ResultsCodes: результат переименования файла
         """
         file = db.session.query(File).filter(File.id == id).first()
         if file:

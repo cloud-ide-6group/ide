@@ -20,17 +20,15 @@ class ProjectRepository:
 
     def is_user_in_project(self, user_id, project_id):
         """
-        Получить пользователя по id.
+        Проверяет в проекте ли человек
 
         Args:
             user_id (int): Id пользователя.
+            project_id (int): Id проекта.
 
         Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_id(123)
+            bool: в проекте ли
+            ResultCode: результат операции
         """
         project = db.session.query(Project).filter(Project.id == project_id).first()
         if not project:
@@ -50,6 +48,17 @@ class ProjectRepository:
         return False, ResultsCodes.CANT_CHANGE_FILE
 
     def get_by_id(self, project_id):
+        """
+        Получить по id
+
+        Args:
+            user_id (int): Id пользователя.
+            project_id (int): Id проекта.
+
+        Returns:
+            bool: в проекте ли
+            ResultCode: результат операции
+        """
         if project_id == "" or project_id == None:
             return None
         return db.session.query(Project).filter(Project.id == project_id).first()

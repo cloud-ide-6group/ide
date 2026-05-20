@@ -74,7 +74,7 @@ def jsonify_file(file):
             id (int): Id файла,
             name (str): Имя файлы,
             is_folder (str): Папка ли,
-            list[dict]: Массив словарей json проектов
+            children (list[dict]): Массив словарей json проектов
         }
     """
     children = file_repo.get_children(file.id)

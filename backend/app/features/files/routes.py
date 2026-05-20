@@ -70,7 +70,7 @@ def create_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка приглашения
+        description: Ошибка создания файла
         schema:
           type: object
           properties:
@@ -144,7 +144,7 @@ def delete_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка приглашения
+        description: Ошибка удаления файла
         schema:
           type: object
           properties:
@@ -220,7 +220,7 @@ def rename_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка приглашения
+        description: Ошибка переименования файла
         schema:
           type: object
           properties:

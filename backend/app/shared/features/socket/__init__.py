@@ -6,7 +6,6 @@ from app.shared.features.jwt_token.service import get_id
 from app.shared.features.notifications.service import send_notifications_to_client
 
 
-# TODO: НЕ ЗАБЫТЬ ЗАМЕНИТЬ НА files_trees_list
 @socketio.on("connect")
 def connect(auth):
     """
@@ -16,11 +15,15 @@ def connect(auth):
         - update_file_content -- послать новые данные в файл
         - get_file_content -- запрос клиента на получение данных
         - join_project_room -- подключиться к проекту
+        - run_code -- запустить программу
+        - send_input -- отправить ввод в программу
+        - stop_code -- остановить выполнение программы
 
     Возможные события ОТ СЕРВЕРА КЛИЕНТУ, ПОДПИСЫВАЕМСЯ НА НИХ:
         - send_file_content -- посылает всем клиентам обновленное содержимое файла
         - notifications_list -- уведомления
-        - files_list -- массив деревьев файлов проекта
+        - files_trees_list -- массив деревьев файлов проекта
+        - console_output -- вывод в консоль
 
     Args:
         auth (str): Токен в json БЕЗ BEARER
