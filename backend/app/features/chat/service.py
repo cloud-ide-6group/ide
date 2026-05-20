@@ -24,3 +24,19 @@ def delete_chat(chat_id, id):
         return ResultsCodes.OK
     except Exception as e:
         return ResultsCodes.DELETE_ERROR
+
+
+def send_message(chat_id, id):
+    chat = chat_repo.get_by_id(chat_id)
+
+    if chat is None:
+        return ResultsCodes.CHAT_NOT_FOUND
+
+    if chat.author_id == id:
+        return ResultsCodes.USER_IS_NOT_CHAT_CREATOR
+
+    try:
+        chat_repo.delete_chat(chat_id)
+        return ResultsCodes.OK
+    except Exception as e:
+        return ResultsCodes.DELETE_ERROR

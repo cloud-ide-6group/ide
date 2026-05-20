@@ -138,6 +138,12 @@ class Chat(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
 
+    messages = db.relationship(
+        "Message",
+        backref=db.backref("parent", remote_side=[id]),
+        cascade="all, delete-orphan",
+    )
+
 
 class Message(db.Model):
     """Модель сообщения в чате.
@@ -163,7 +169,9 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    chat_id = db.Column(db.Integer, db.ForeignKey("chat.id"), nullable=False)
+    chat_id = db.Column(
+        db.Integer, db.ForeignKey("chat.id", ondelete="CASCADE"), nullable=False
+    )
     send_time = db.Column(db.DateTime, nullable=False)
 
 
