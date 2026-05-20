@@ -46,3 +46,4 @@ class ResultsCodes:
     CHAT_NOT_FOUND = "Чат не найден"
     UNKNOWN_USER = "-"
     UNEXPECTED_ERROR = "Внутреняя ошибка сервера"
+    USER_IS_NOT_IN_PROJECT = "Пользователь не в проекте"

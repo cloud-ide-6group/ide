@@ -1,5 +1,5 @@
 from app.shared.extensions import db
-from app.shared.dbmodels import Chat, Message, User
+from app.shared.dbmodels import Chat, Message, User, Project, UserInProject
 from app.shared.consts import ResultsCodes
 
 
@@ -132,6 +132,38 @@ class ProjectRepository:
             return db.session.query(Chat).filter(Chat.project_id == project_id).all()
         except Exception as e:
             raise RuntimeError(f"Getting chats error: {e}")
+
+    def get_by_id(self, project_id):
+        return db.session.query(Project).filter(Project.id == project_id).first()
+
+    def is_user_in_project(self, user_id, project_id):
+        """
+        В проекте ли человек.
+
+        Args:
+            user_id (int): Id пользователя.
+            project_id (int): Id проекта.
+
+        Returns:
+            boolean: True, если пользователь приглашен или владеет проектом.
+        """
+        project = db.session.query(Project).filter(Project.id == project_id).first()
+        if project.owner_id == user_id:
+            return True
+
+        userInProject = (
+            db.session.query(UserInProject)
+            .filter(
+                (UserInProject.project_id == project_id)
+                & (UserInProject.user_id == user_id)
+            )
+            .first()
+        )
+
+        if userInProject:
+            return True
+
+        return False
 
 
 chat_repo = ChatRepository()

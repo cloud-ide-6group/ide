@@ -4,6 +4,9 @@ from datetime import datetime
 
 
 def create_chat(project_id, author_id):
+    if project_repo.is_user_in_project(author_id, project_id) == False:
+        return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
+
     try:
         chat = chat_repo.add_chat(project_id, author_id)
         return chat, ResultsCodes.OK
@@ -31,6 +34,13 @@ def delete_chat(chat_id, id):
 
 
 def send_message(chat_id, message_text, author_id):
+    chat = chat_repo.get_by_id(chat_id)
+    if chat is None:
+        return ResultsCodes.CHAT_NOT_FOUND
+
+    if project_repo.is_user_in_project(author_id, chat.project_id) == False:
+        return ResultsCodes.USER_IS_NOT_IN_PROJECT
+
     try:
         message_repo.create_message(chat_id, message_text, author_id, datetime.now())
         return ResultsCodes.OK
