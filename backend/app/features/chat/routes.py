@@ -287,11 +287,13 @@ def create_message_route():
     if result == ResultsCodes.OK:
         project_id, get_project_id_result = get_chat_project_id(chat_id)
         try:
-            socketio.emit(
-                "get_messages",
-                {"chat_id": chat_id, "messages": get_messages(chat_id)},
-                room=f"project_{project_id}",
-            )
+            messages, code = get_messages(chat_id)
+            if code == ResultsCodes.OK:
+                socketio.emit(
+                    "get_messages",
+                    {"chat_id": chat_id, "messages": messages},
+                    room=f"project_{project_id}",
+                )
         except Exception as e:
             print(f"Error: {e}, ResultCodes: {get_project_id_result}")
         return {}, 200

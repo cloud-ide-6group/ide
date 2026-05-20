@@ -16,12 +16,12 @@ def delete_chat(chat_id, id):
     chat = chat_repo.get_by_id(chat_id)
 
     if chat is None:
-        return ResultsCodes.CHAT_NOT_FOUND
+        return None, ResultsCodes.CHAT_NOT_FOUND
 
     project_id = chat.project_id
 
     if chat.author_id != id:
-        return ResultsCodes.USER_IS_NOT_CHAT_CREATOR
+        return None, ResultsCodes.USER_IS_NOT_CHAT_CREATOR
 
     try:
         chat_repo.delete_chat(chat_id)
@@ -49,7 +49,7 @@ def get_messages(chat_id):
                     "id": m.id,
                     "text": m.text,
                     "author": user_repo.get_name_by_id(m.author_id),
-                    "send_time": m.send_time,
+                    "send_time": m.send_time.strftime("%Y-%m-%d %H:%M:%S"),
                 }
             )
         return messages, ResultsCodes.OK

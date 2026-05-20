@@ -6,7 +6,7 @@ from app.shared.extensions import socketio
 
 load_dotenv()
 
-
+# TODO: дублирование get_messages
 def create_project_dir(project_name):
     """
     Выделяет пространство на диске на проект
@@ -163,7 +163,7 @@ def get_messages(chat_id):
                     "id": m.id,
                     "text": m.text,
                     "author": user_repo.get_name_by_id(m.author_id),
-                    "send_time": m.send_time,
+                    "send_time": m.send_time.strftime("%Y-%m-%d %H:%M:%S"),
                 }
             )
         return messages, ResultsCodes.OK
