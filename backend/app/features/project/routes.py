@@ -157,7 +157,7 @@ def join_project_room(data):
                 {"files_trees_list": get_project_files_trees(project_id)},
                 room=f"{id}",
             )
-            chats = get_chats(project.id)
+            chats, result_code = get_chats(project.id)
             for c in chats:
                 socketio.emit(
                     "send_messages",

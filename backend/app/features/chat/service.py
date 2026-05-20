@@ -6,9 +6,10 @@ from datetime import datetime
 def create_chat(project_id, author_id):
     try:
         chat = chat_repo.add_chat(project_id, author_id)
-        return ResultsCodes.OK
+        return chat, ResultsCodes.OK
     except Exception as e:
-        return ResultsCodes.CREATE_ERROR
+        print(e)
+        return None, ResultsCodes.CREATE_ERROR
 
 
 def delete_chat(chat_id, id):
@@ -17,7 +18,7 @@ def delete_chat(chat_id, id):
     if chat is None:
         return ResultsCodes.CHAT_NOT_FOUND
 
-    if chat.author_id == id:
+    if chat.author_id != id:
         return ResultsCodes.USER_IS_NOT_CHAT_CREATOR
 
     try:
