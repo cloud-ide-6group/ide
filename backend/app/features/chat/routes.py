@@ -6,7 +6,7 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
-from .service import create_chat
+from .service import create_chat, delete_chat
 
 
 @chat_bp.route("/chat/create", methods=["POST"])
@@ -166,8 +166,13 @@ def delete_chat_route():
         return {"message": id_result}, 403
 
     chat_id = data["chat_id"]
-    message_text = data["message_text"]
-    author_id = data["author_id"]
+
+    result = delete_chat(chat_id)
+
+    if result:
+        return {}, 200
+    else:
+        return {"message": result}, 409
 
 
 @chat_bp.route("/message/send", methods=["POST"])

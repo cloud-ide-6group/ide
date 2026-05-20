@@ -41,3 +41,6 @@ class ResultsCodes:
     THIS_IS_FOLDER = "Это папка, а не файл"
     FILE_ALREADY_EXIST = "Файл уже существует"
     CREATE_ERROR = "Ошибка создания"
+    DELETE_ERROR = "Ошибка удаления"
+    USER_IS_NOT_CHAT_CREATOR = "Вы не можете удалить чат, так как вы не его создатель"
+    CHAT_NOT_FOUND = "Чат не найден"

@@ -37,6 +37,17 @@ class ChatRepository:
             db.session.rollback()
             raise RuntimeError(f"Ошибка {e}")
 
+    def delete_chat(self, chat_id):
+        chat = db.session.query(Chat).filter(Chat.id == chat_id).first()
+
+        db.session.delete(chat)
+
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise RuntimeError(f"Deletion error: {e}")
+
 
 class MessageRepository:
     """
