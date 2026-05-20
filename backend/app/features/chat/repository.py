@@ -26,11 +26,9 @@ class ChatRepository:
         return db.session.query(Chat).filter(Chat.id == int(id)).first()
 
     def add_chat(self, _project_id, _author_id):
-        chat = Chat(author_id=_author_id, project_id=_project_id)
-
-        db.session.add(chat)
-
         try:
+            chat = Chat(author_id=_author_id, project_id=_project_id)
+            db.session.add(chat)
             db.session.commit()
             return chat
         except Exception as e:
@@ -71,6 +69,20 @@ class MessageRepository:
         if id == "" or id is None:
             return None
         return db.session.query(Message).filter(Message.id == int(id)).first()
+
+    def create_message(self, _chat_id, message_text, _author_id, _send_time):
+        try:
+            message = Message(
+                text=message_text,
+                author_id=_author_id,
+                chat_id=_chat_id,
+                send_time=_send_time,
+            )
+            db.session.add(message)
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            raise RuntimeError(f"Message creation error: {e}")
 
 
 chat_repo = ChatRepository()

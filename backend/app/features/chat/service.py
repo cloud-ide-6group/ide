@@ -1,5 +1,6 @@
 from .repository import chat_repo, message_repo
 from app.shared.consts import ResultsCodes
+from datetime import datetime
 
 
 def create_chat(project_id, author_id):
@@ -26,17 +27,10 @@ def delete_chat(chat_id, id):
         return ResultsCodes.DELETE_ERROR
 
 
-def send_message(chat_id, id):
-    chat = chat_repo.get_by_id(chat_id)
-
-    if chat is None:
-        return ResultsCodes.CHAT_NOT_FOUND
-
-    if chat.author_id == id:
-        return ResultsCodes.USER_IS_NOT_CHAT_CREATOR
-
+def send_message(chat_id, message_text, author_id):
     try:
-        chat_repo.delete_chat(chat_id)
+        message_repo.create_message(chat_id, message_text, author_id, datetime.now())
         return ResultsCodes.OK
     except Exception as e:
-        return ResultsCodes.DELETE_ERROR
+        print(e)
+        return ResultsCodes.CREATE_ERROR
