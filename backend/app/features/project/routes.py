@@ -158,9 +158,13 @@ def join_project_room(data):
                 room=f"{id}",
             )
             chats, result_code = get_chats(project.id)
+            print(chats)
             chats_list = []
             for c in chats:
-                chats_list.append({"id": c.id, "messages": get_messages(c.id)})
+                print(c)
+                messages, result_getting_messages = get_messages(c.id)
+                if result_getting_messages == ResultsCodes.OK:
+                    chats_list.append({"id": c.id, "messages": messages})
             socketio.emit(
                 "get_chats",
                 {"chats_list": chats_list},

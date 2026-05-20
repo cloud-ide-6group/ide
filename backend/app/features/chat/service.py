@@ -41,7 +41,7 @@ def send_message(chat_id, message_text, author_id):
 
 def get_messages(chat_id):
     try:
-        messages_raw = message_repo.get_chat_messages(chat_id), ResultsCodes.OK
+        messages_raw = message_repo.get_chat_messages(chat_id)
         messages = []
         for m in messages_raw:
             messages.append(
