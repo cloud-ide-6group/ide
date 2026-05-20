@@ -118,6 +118,23 @@ class UserRepository:
             return ResultsCodes.UNKNOWN_USER
 
 
+class ProjectRepository:
+    """
+    Репозиторий для работы с проектами.
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель Project
+    """
+
+    def get_chats(self, project_id):
+        try:
+            return db.session.query(Chat).filter(Chat.project_id == project_id).all()
+        except Exception as e:
+            raise RuntimeError(f"Getting chats error: {e}")
+
+
 chat_repo = ChatRepository()
 message_repo = MessageRepository()
 user_repo = UserRepository()
+project_repo = ProjectRepository()

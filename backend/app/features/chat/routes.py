@@ -12,6 +12,7 @@ from .service import (
     send_message,
     get_messages,
     get_chat_project_id,
+    get_chats,
 )
 from app.shared.extensions import socketio
 
@@ -94,9 +95,13 @@ def create_chat_route():
     chat, result = create_chat(project_id, id)
 
     if result == ResultsCodes.OK:
+        chats, result_code = get_chats(project_id)
+        chats_list = []
+        for c in chats:
+            chats_list.append({"id": c.id, "messages": get_messages(c.id)})
         socketio.emit(
-            "send_messages",
-            {"messages": get_messages(chat.id)},
+            "get_chats",
+            {"chats_list": chats_list},
             room=f"project_{project_id}",
         )
         return {}, 201
@@ -179,9 +184,18 @@ def delete_chat_route():
 
     chat_id = data["chat_id"]
 
-    result = delete_chat(chat_id, id)
+    project_id, result = delete_chat(chat_id, id)
 
     if result == ResultsCodes.OK:
+        chats, result_code = get_chats(project_id)
+        chats_list = []
+        for c in chats:
+            chats_list.append({"id": c.id, "messages": get_messages(c.id)})
+        socketio.emit(
+            "get_chats",
+            {"chats_list": chats_list},
+            room=f"project_{project_id}",
+        )
         return {"deleted_chat_id": chat_id}, 200
     else:
         return {"message": result}, 409
@@ -270,8 +284,8 @@ def create_message_route():
         project_id, get_project_id_result = get_chat_project_id(chat_id)
         try:
             socketio.emit(
-                "send_messages",
-                {"messages": get_messages(chat_id)},
+                "get_messages",
+                {"chat_id": chat_id, "messages": get_messages(chat_id)},
                 room=f"project_{project_id}",
             )
         except Exception as e:

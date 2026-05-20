@@ -1,4 +1,4 @@
-from .repository import chat_repo, message_repo, user_repo
+from .repository import chat_repo, message_repo, user_repo, project_repo
 from app.shared.consts import ResultsCodes
 from datetime import datetime
 
@@ -18,14 +18,16 @@ def delete_chat(chat_id, id):
     if chat is None:
         return ResultsCodes.CHAT_NOT_FOUND
 
+    project_id = chat.project_id
+
     if chat.author_id != id:
         return ResultsCodes.USER_IS_NOT_CHAT_CREATOR
 
     try:
         chat_repo.delete_chat(chat_id)
-        return ResultsCodes.OK
+        return project_id, ResultsCodes.OK
     except Exception as e:
-        return ResultsCodes.DELETE_ERROR
+        return None, ResultsCodes.DELETE_ERROR
 
 
 def send_message(chat_id, message_text, author_id):
@@ -65,3 +67,11 @@ def get_chat_project_id(chat_id):
     except Exception as e:
         print(e)
         return None, ResultsCodes.UNEXPECTED_ERROR
+
+
+def get_chats(project_id):
+    try:
+        return project_repo.get_chats(project_id), ResultsCodes.OK
+    except Exception as e:
+        print(e)
+        return [], ResultsCodes.CHAT_NOT_FOUND
