@@ -6,12 +6,13 @@ from app.shared.features.jwt_token.service import (
     create_unauthorized_response,
 )
 from app.shared.consts import ResultsCodes
+from .service import create_chat
 
 
 @chat_bp.route("/chat/create", methods=["POST"])
 def create_chat_route():
     """
-    Создание чат
+    Создание чата
     ---
     tags:
       - features/chat
@@ -81,8 +82,14 @@ def create_chat_route():
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 403
 
-    author_id = data["author_id"]
     project_id = data["project_id"]
+
+    result = create_chat(project_id, id)
+
+    if result:
+        return {}, 201
+    else:
+        return {"message": result}, 409
 
 
 @chat_bp.route("/chat/delete", methods=["DELETE"])

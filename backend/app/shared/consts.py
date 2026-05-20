@@ -40,3 +40,4 @@ class ResultsCodes:
     CANT_CHANGE_FILE = "У пользователя нет прав на работу с файлом"
     THIS_IS_FOLDER = "Это папка, а не файл"
     FILE_ALREADY_EXIST = "Файл уже существует"
+    CREATE_ERROR = "Ошибка создания"
