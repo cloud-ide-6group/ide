@@ -39,6 +39,26 @@ def invite():
     responses:
       200:
         description: Успешное приглашение
+      401:
+        description: Проблема с токеном
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка приглашения
         content:
@@ -104,6 +124,26 @@ def delete_invited():
     responses:
       200:
         description: Успешное удаление
+      401:
+        description: Проблема с токеном
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка удаления
         content:

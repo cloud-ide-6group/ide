@@ -87,7 +87,7 @@ def create_chat_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     project_id = data["project_id"]
 
@@ -180,7 +180,7 @@ def delete_chat_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     chat_id = data["chat_id"]
 
@@ -276,7 +276,7 @@ def create_message_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     chat_id = data["chat_id"]
     message_text = data["message_text"]

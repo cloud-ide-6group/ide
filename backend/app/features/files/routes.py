@@ -96,7 +96,7 @@ def create_file_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     result = create_file(
         data["name"], data["project_id"], data["parent_id"], data["is_folder"], id
@@ -178,7 +178,7 @@ def delete_file_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     file_id = data["file_id"]
     result = delete_file(file_id, id)
@@ -262,7 +262,7 @@ def rename_file_route():
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     file_id = data["file_id"]
     new_name = data["new_name"]
