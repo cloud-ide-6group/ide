@@ -210,22 +210,18 @@ def get_project_info_route():
         tags:
           - features/project
         parameters:
-          - name: Authorization
-            in: header
-            required: true
-            schema:
-              type: string
-            example: "Bearer pbkdf2:sha256:260000$xyz..."
-        requestBody:
+        - name: Authorization
+          in: header
           required: true
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  project_id:
-                    type: integer
-                    example: 7
+          schema:
+            type: string
+          example: "Bearer pbkdf2:sha256:260000$xyz..."
+        - name: project_id
+          in: query  # ← В query параметр
+          required: true
+          schema:
+            type: integer
+          example: 7
         responses:
           200:
             description: Успешное получение
@@ -295,6 +291,7 @@ def get_project_info_route():
                       type: string
                       example: "Проект уже существует"
     """
+    print("ALL HEADERS:", dict(request.headers))
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
@@ -302,12 +299,11 @@ def get_project_info_route():
         response = create_unauthorized_response(result)
         return response
 
-    data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 401
 
-    project_id = data["project_id"]
+    project_id = request.args.get("project_id")
 
     project_info, result = get_project_info(project_id, id)
     if result != ResultsCodes.OK:

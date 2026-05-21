@@ -120,6 +120,7 @@ def get_jwt_from_header(auth_header):
         >>> token, result = get_jwt_from_header(auth_header)
     """
     if not auth_header or not auth_header.startswith("Bearer "):
+        print(auth_header)
         return None, ResultsCodes.NO_TOKEN
 
     access_token = auth_header.split(" ")[1]

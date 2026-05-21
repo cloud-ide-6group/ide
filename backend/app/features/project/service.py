@@ -247,7 +247,7 @@ def get_project_info(project_id, user_id):
     project = project_repo.get_by_id(project_id)
     if project:
         if project_repo.is_user_in_project(user_id, project_id) == False:
-            return ResultsCodes.USER_IS_NOT_IN_PROJECT
+            return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
 
         language = language_repo.get_lang_by_id(project.language_id)
 
