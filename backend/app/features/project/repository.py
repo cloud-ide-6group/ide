@@ -1,10 +1,11 @@
-from app.shared.dbmodels import Project, File, Chat
+from app.shared.dbmodels import Project, File, Chat, UserInProject, User
 from app.shared.extensions import db
 from app.shared.base_repositories import (
     BaseMessageRepository,
     BaseProjectRepository,
     BaseUserRepository,
     BaseFileRepository,
+    BaseLanguageRepository,
 )
 
 
@@ -100,6 +101,22 @@ class MessageRepository(BaseMessageRepository):
 
 
 class UserRepository(BaseUserRepository):
+    def get_by_project_id(self, project_id, owner_id):
+        usersInProjects = (
+            db.session.query(UserInProject)
+            .filter(UserInProject.project_id == project_id)
+            .all()
+        )
+        owner = db.session.query(User).filter(User.id == owner_id).first()
+
+        users = [owner]
+        for unip in usersInProjects:
+            users.append(self.get_by_id(unip.user_id))
+
+        return users
+
+
+class LanguageRepository(BaseLanguageRepository):
     pass
 
 
@@ -107,3 +124,4 @@ project_repo = ProjectRepository()
 file_repo = FileRepository()
 message_repo = MessageRepository()
 user_repo = UserRepository()
+language_repo = LanguageRepository()

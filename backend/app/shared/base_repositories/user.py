@@ -77,3 +77,19 @@ class BaseUserRepository:
             str: Хэш пароля
         """
         return db.session.query(User).filter(User.id == id).first().password_hash
+
+    def get_by_id(self, user_id):
+        """
+        Получить пользователя по id.
+
+        Args:
+            user_id (int): Id пользователя.
+
+        Returns:
+            User: Пользователь
+
+        Example:
+            >>> repo = UserRepository()
+            >>> user = repo.get_by_id(123)
+        """
+        return db.session.get(User, user_id)

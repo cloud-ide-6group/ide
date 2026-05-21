@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
-from .repository import project_repo, file_repo, message_repo, user_repo
+from .repository import project_repo, file_repo, message_repo, user_repo, language_repo
 from app.shared.extensions import socketio
 
 load_dotenv()
@@ -216,7 +216,7 @@ def delete_project(project_id, user_id):
     Returns:
         ResultCodes: Удален ли проект
     """
-    project = project_repo.get_by_id(user_id)
+    project = project_repo.get_by_id(project_id)
     if project:
         if project.owner_id != user_id:
             return ResultsCodes.USER_NOT_OWNER
@@ -226,3 +226,40 @@ def delete_project(project_id, user_id):
         return ResultsCodes.OK
 
     return ResultsCodes.DELETE_ERROR
+
+
+def get_project_info(project_id, user_id):
+    """
+    Возвращает информацию о проекте
+
+    Args:
+        project_id (int): Id проекта
+        user_id (int): Id пользователя
+
+    Returns:
+        dict: Информация о проекте
+            - "user_is_owner": True,
+            - "project_name": "Project",
+            - "project_id": 9,
+            - "language_name": "JAVA",
+            - "users": [ {"id": 9, "name": "UserName"} ]
+        ResultsCodes: Результат выполнения операции
+    """
+    project = project_repo.get_by_id(project_id)
+    if project:
+        language = language_repo.get_lang_by_id(project.language_id)
+
+        users_raw = user_repo.get_by_project_id(project_id, project.owner_id)
+        users = []
+        for u in users_raw:
+            users.append({"id": u.id, "name": u.name})
+
+        return {
+            "user_is_owner": project.owner_id == user_id,
+            "project_name": project.name,
+            "project_id": project.id,
+            "language_name": language.name if language else "",
+            "users": users,
+        }, ResultsCodes.OK
+
+    return None, ResultsCodes.PROJECT_NOT_FOUND
