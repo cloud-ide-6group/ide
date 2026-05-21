@@ -39,11 +39,11 @@ def create_file_route():
           type: object
           properties:
             name:
-              type: string
+              type: str
               example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
+            project_id:
+              type: int
+              example: 81
             parent_id:
               type: int
               example: 13 | "" если родителя нет
@@ -91,7 +91,7 @@ def create_file_route():
         return {"message": id_result}, 403
 
     result = create_file(
-        data["name"], data["project_name"], data["parent_id"], data["is_folder"], id
+        data["name"], data["project_id"], data["parent_id"], data["is_folder"], id
     )
 
     if result == ResultsCodes.OK:

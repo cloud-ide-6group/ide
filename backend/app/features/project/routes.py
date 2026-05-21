@@ -19,7 +19,6 @@ from app.shared.extensions import socketio
 
 # TODO: удаление проекта
 # TODO: вынести сокеты в отдельный файл
-# TODO: базовые реализации репозиториев
 @project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
