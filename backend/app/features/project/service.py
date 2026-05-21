@@ -1,12 +1,13 @@
 import os
 from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
-from .repository import project_repo, file_repo
+from .repository import project_repo, file_repo, message_repo, user_repo
 from app.shared.extensions import socketio
 
 load_dotenv()
 
 
+# TODO: дублирование get_messages
 def create_project_dir(project_name):
     """
     Выделяет пространство на диске на проект
@@ -72,9 +73,9 @@ def jsonify_file(file):
     Returns:
         data (dict): {
             id (int): Id файла,
-            name (str): Имя файлы,
+            name (str): Имя файла,
             is_folder (str): Папка ли,
-            list[dict]: Массив словарей json проектов
+            children (list[dict]): Массив словарей json проектов
         }
     """
     children = file_repo.get_children(file.id)
@@ -151,3 +152,54 @@ def send_files_to_all_clients(project_id):
         {"files_trees_list": get_project_files_trees(project_id)},
         room=f"project_{project_id}",
     )
+
+
+def get_messages(chat_id):
+    """
+    Получить все сообщения чата
+
+    Args:
+        chat_id (int): Id чата
+
+    Returns:
+        list[dict]: Список сообщений
+            - id (int): Id
+            - text(str): Текст
+            - author(str): Имя автора
+            - send_time (str): Время сообщения
+        ResultCodes: Результат выполнения операции
+    """
+    try:
+        messages_raw = message_repo.get_chat_messages(chat_id)
+        messages = []
+        for m in messages_raw:
+            messages.append(
+                {
+                    "id": m.id,
+                    "text": m.text,
+                    "author": user_repo.get_name_by_id(m.author_id),
+                    "send_time": m.send_time.strftime("%Y-%m-%d %H:%M:%S"),
+                }
+            )
+        return messages, ResultsCodes.OK
+    except Exception as e:
+        print(e)
+        return None, ResultsCodes.CHAT_NOT_FOUND
+
+
+def get_chats(project_id):
+    """
+    Получить все чаты проекта
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        list[Chat]: Список проектов
+        ResultCodes: Результат выполнения операции
+    """
+    try:
+        return project_repo.get_chats(project_id), ResultsCodes.OK
+    except Exception as e:
+        print(e)
+        return [], ResultsCodes.CHAT_NOT_FOUND

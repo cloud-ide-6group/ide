@@ -4,10 +4,6 @@ from .consts import ResultsCodes
 import re
 from email_validator import validate_email, EmailNotValidError
 
-"""
-Модели. id инкрементно ставится БД, при создании его не задаем.
-"""
-
 
 class Project(db.Model):
     """Модель проекта в IDE.
@@ -32,6 +28,12 @@ class Project(db.Model):
     name = db.Column(db.Text, unique=True, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
+
+    chats = db.relationship(
+        "Chat",
+        backref="project",
+        cascade="all, delete-orphan",
+    )
 
     @validates("name")
     def validate_name(self, key, name):
@@ -136,7 +138,15 @@ class Chat(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
+
+    messages = db.relationship(
+        "Message",
+        backref="chat",
+        cascade="all, delete-orphan",
+    )
 
 
 class Message(db.Model):
@@ -163,7 +173,9 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    chat_id = db.Column(db.Integer, db.ForeignKey("chat.id"), nullable=False)
+    chat_id = db.Column(
+        db.Integer, db.ForeignKey("chat.id", ondelete="CASCADE"), nullable=False
+    )
     send_time = db.Column(db.DateTime, nullable=False)
 
 

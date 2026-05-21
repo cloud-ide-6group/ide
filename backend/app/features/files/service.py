@@ -15,7 +15,7 @@ def get_file_path(current_file, file_path):
     Получить путь к файлу на диске, работает рекурсивно.
 
     Args:
-        current_file (File): Файла.
+        current_file (File): Файл.
         file_path (str): Путь к файлу.
 
     Returns:
@@ -201,7 +201,7 @@ def rename_file(file_id, new_name, user_id):
 
     Args:
         file_id (int): Id файла.
-        new_name (str): Новые имя.
+        new_name (str): Новое имя.
         user_id (int): Id пользователя.
 
     Returns:

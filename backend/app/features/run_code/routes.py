@@ -8,7 +8,15 @@ from config import DebugConfig
 
 @socketio.on("run_code")
 def run_code_socket(data):
-    """ЗАПУСК КОДА ЧЕРЕЗ СОКЕТ"""
+    """
+    Сокет запуска кода
+
+    Args:
+        project_id (int): Id проекта.
+
+    Example:
+        >>> { "project_id": 79 }
+    """
     user_id = session.get("user_id")
     project_id = data["project_id"]
 
@@ -19,7 +27,16 @@ def run_code_socket(data):
 
 @socketio.on("send_input")
 def input_socket(data):
-    """ОТПРАВКА ВВОДА В КОНТЕЙНЕР"""
+    """
+    Сокет отправки ввода в программу
+
+    Args:
+        project_id (int): Id проекта.
+        input (int/str): Данные ввода.
+
+    Example:
+        >>> { "project_id": 79, "input": "the line" }
+    """
     user_id = session.get("user_id")
     project_id = data["project_id"]
     user_input = str(data["input"])
@@ -39,7 +56,15 @@ def input_socket(data):
 
 @socketio.on("stop_code")
 def stop_code_socket(data):
-    """ОСТАНОВКА КОНТЕЙНЕРА ПО ЗАПРОСУ"""
+    """
+    Сокет прерывания выполнения программы
+
+    Args:
+        project_id (int): Id проекта.
+
+    Example:
+        >>> { "project_id": 79 }
+    """
     user_id = session.get("user_id")
     project_id = data["project_id"]
     session_key = f"{user_id}_{project_id}"

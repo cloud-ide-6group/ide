@@ -12,6 +12,7 @@ def register_features(app):
     from .features.invitation.routes import invitation_bp
     from .features.files import files_bp
     from .features.run_code import run_code_bp
+    from .features.chat import chat_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(profile_bp)
@@ -19,6 +20,7 @@ def register_features(app):
     app.register_blueprint(invitation_bp)
     app.register_blueprint(files_bp)
     app.register_blueprint(run_code_bp)
+    app.register_blueprint(chat_bp)
 
 
 def register_shared_features(app):

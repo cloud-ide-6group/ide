@@ -9,6 +9,8 @@ from .service import (
     is_user_invited,
     get_project_by_id,
     get_project_files_trees,
+    get_messages,
+    get_chats,
 )
 from flask_socketio import join_room, leave_room
 from flask import session
@@ -153,6 +155,17 @@ def join_project_room(data):
             socketio.emit(
                 "files_trees_list",
                 {"files_trees_list": get_project_files_trees(project_id)},
+                room=f"{id}",
+            )
+            chats, result_code = get_chats(project.id)
+            chats_list = []
+            for c in chats:
+                messages, result_getting_messages = get_messages(c.id)
+                if result_getting_messages == ResultsCodes.OK:
+                    chats_list.append({"id": c.id, "messages": messages})
+            socketio.emit(
+                "get_chats",
+                {"chats_list": chats_list},
                 room=f"{id}",
             )
             return True

@@ -1,5 +1,6 @@
-from app.shared.dbmodels import Project, File, UserInProject
+from app.shared.dbmodels import Project, File, UserInProject, Message, User, Chat
 from app.shared.extensions import db
+from app.shared.consts import ResultsCodes
 
 
 class ProjectRepository:
@@ -83,6 +84,12 @@ class ProjectRepository:
 
         return False
 
+    def get_chats(self, project_id):
+        try:
+            return db.session.query(Chat).filter(Chat.project_id == project_id).all()
+        except Exception as e:
+            raise RuntimeError(f"Getting chats error: {e}")
+
 
 class FileRepository:
     """
@@ -122,5 +129,49 @@ class FileRepository:
         return db.session.query(File).filter(File.parent_id == parent_id).all()
 
 
+class MessageRepository:
+    """
+    Репозиторий для работы с файлами
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель File
+    """
+
+    def get_chat_messages(self, chat_id):
+        try:
+            return db.session.query(Message).filter(Message.chat_id == chat_id).all()
+        except Exception as e:
+            raise RuntimeError(f"Getting messages error: {e}")
+
+
+class UserRepository:
+    """
+    Репозиторий для работы с файлами
+
+    Attributes:
+        session: Сессия SQLAlchemy для работы с БД
+        model: Модель File
+    """
+
+    def get_name_by_id(self, id):
+        """
+        Получить файл по id.
+
+        Args:
+            id (int): Id файла.
+
+        Returns:
+            File: Файл.
+        """
+        user = db.session.query(User).filter(User.id == int(id)).first()
+        if user:
+            return user.name
+        else:
+            return ResultsCodes.UNKNOWN_USER
+
+
 project_repo = ProjectRepository()
 file_repo = FileRepository()
+message_repo = MessageRepository()
+user_repo = UserRepository()

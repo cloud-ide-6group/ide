@@ -13,7 +13,14 @@ load_dotenv()
 
 
 def run_code(project_id, user_id, app):
-    """ЗАДАЧА ЗАПУСКА КОДА"""
+    """
+    Запуск кода
+
+    Args:
+        project_id (int): Id проекта.
+        user_id (int): Id пользователя.
+        app (): Объект приложения
+    """
     with app.app_context():
         user_in_project, result = project_repo.is_user_in_project(user_id, project_id)
         if result != ResultsCodes.OK or not user_in_project:
@@ -49,7 +56,16 @@ def run_code(project_id, user_id, app):
 
 
 def run_docker(project_dir, image_name, image_command, user_id, project_id):
-    """ЗАПУСК ДОКЕР КОНТЕЙНЕРА"""
+    """
+    Запуск контейнера с кодом
+
+    Args:
+        project_dir (str): Путь к проекту.
+        image_name (str): Имя изображения для создания контенера.
+        image_command (str): Команда для выполнения в контейнере.
+        user_id (int): Id пользователя.
+        project_id (int): Id проекта.
+    """
     client = docker.from_env()
 
     session_key = f"{user_id}_{project_id}"
@@ -123,6 +139,12 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
 
 
 def read_start_file_from_conf(project_dir):
+    """
+    Считывает стартовый файл из конфигураций
+
+    Args:
+        project_dir (str): Путь к проекту.
+    """
     conf_file = os.path.join(project_dir, CONFIG_FILE)
 
     if not os.path.exists(conf_file):
@@ -138,6 +160,12 @@ def read_start_file_from_conf(project_dir):
 
 
 def get_container(container_id):
+    """
+    Получить запущенный контейнер из докера
+
+    Args:
+        container_id (int): Id контейнера
+    """
     if container_id:
         try:
             client = docker.from_env()

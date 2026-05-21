@@ -1,4 +1,4 @@
-from . import files_bp
+from . import chat_bp
 from flask import request, session
 from app.shared.features.jwt_token.service import (
     get_id,
@@ -7,25 +7,25 @@ from app.shared.features.jwt_token.service import (
 )
 from app.shared.consts import ResultsCodes
 from .service import (
-    create_file,
-    delete_file,
-    save_file_content,
-    get_file_content,
-    rename_file,
+    create_chat,
+    delete_chat,
+    send_message,
+    get_messages,
+    get_chat_project_id,
+    get_chats,
 )
 from app.shared.extensions import socketio
 
 
-# TODO: валидировать токен
-@files_bp.route("/files/create", methods=["POST"])
-def create_file_route():
+@chat_bp.route("/chat/create", methods=["POST"])
+def create_chat_route():
     """
-    Создание файла
+    Создание чата
     ---
     tags:
-      - features/files
+      - features/chat
     description: |
-      Создает файл
+      Создает чат
     parameters:
       - name: Authorization
         in: header
@@ -38,18 +38,9 @@ def create_file_route():
         schema:
           type: object
           properties:
-            name:
-              type: string
-              example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
-            parent_id:
+            project_id:
               type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+              example: 80
     responses:
       201:
         description: Успешное создание
@@ -70,7 +61,7 @@ def create_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка создания файла
+        description: Ошибка создания чата
         schema:
           type: object
           properties:
@@ -90,25 +81,36 @@ def create_file_route():
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 403
 
-    result = create_file(
-        data["name"], data["project_name"], data["parent_id"], data["is_folder"], id
-    )
+    project_id = data["project_id"]
+
+    chat, result = create_chat(project_id, id)
 
     if result == ResultsCodes.OK:
+        chats, result_code = get_chats(project_id)
+        chats_list = []
+        for c in chats:
+            messages, result_getting_messages = get_messages(c.id)
+            if result_getting_messages == ResultsCodes.OK:
+                chats_list.append({"id": c.id, "messages": messages})
+        socketio.emit(
+            "get_chats",
+            {"chats_list": chats_list},
+            room=f"project_{project_id}",
+        )
         return {}, 201
     else:
         return {"message": result}, 409
 
 
-@files_bp.route("/files/delete", methods=["DELETE"])
-def delete_file_route():
+@chat_bp.route("/chat/delete", methods=["DELETE"])
+def delete_chat_route():
     """
-    Удаляет файл
+    Удаление чата
     ---
     tags:
-      - features/files
+      - features/chat
     description: |
-      Удалить файл
+      Создает чат
     parameters:
       - name: Authorization
         in: header
@@ -121,9 +123,9 @@ def delete_file_route():
         schema:
           type: object
           properties:
-            file_id:
+            chat_id:
               type: int
-              example: 23
+              example: 80
     responses:
       200:
         description: Успешное удаление
@@ -144,7 +146,7 @@ def delete_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка удаления файла
+        description: Ошибка удаления чата
         schema:
           type: object
           properties:
@@ -164,24 +166,36 @@ def delete_file_route():
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 403
 
-    file_id = data["file_id"]
-    result = delete_file(file_id, id)
+    chat_id = data["chat_id"]
+
+    project_id, result = delete_chat(chat_id, id)
 
     if result == ResultsCodes.OK:
-        return {}, 201
+        chats, result_code = get_chats(project_id)
+        chats_list = []
+        for c in chats:
+            messages, result_getting_messages = get_messages(c.id)
+            if result_getting_messages == ResultsCodes.OK:
+                chats_list.append({"id": c.id, "messages": messages})
+        socketio.emit(
+            "get_chats",
+            {"chats_list": chats_list},
+            room=f"project_{project_id}",
+        )
+        return {"deleted_chat_id": chat_id}, 200
     else:
         return {"message": result}, 409
 
 
-@files_bp.route("/files/rename", methods=["PUT"])
-def rename_file_route():
+@chat_bp.route("/message/create", methods=["POST"])
+def create_message_route():
     """
-    Переименовывает файл
+    Создание сообщения
     ---
     tags:
-      - features/files
+      - features/chat
     description: |
-      Переименовать файл
+      Создает сообщение
     parameters:
       - name: Authorization
         in: header
@@ -194,15 +208,15 @@ def rename_file_route():
         schema:
           type: object
           properties:
-            file_id:
+            chat_id:
               type: int
-              example: 23
-            new_name:
+              example: 80
+            message_text:
               type: str
-              example: "NewFileName"
+              example: "new message"
     responses:
-      200:
-        description: Успешное переименование
+      201:
+        description: Успешное создание
       401:
         description: Проблема с токеном
         schema:
@@ -220,7 +234,7 @@ def rename_file_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка переименования файла
+        description: Ошибка создания сообщения
         schema:
           type: object
           properties:
@@ -240,67 +254,24 @@ def rename_file_route():
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 403
 
-    file_id = data["file_id"]
-    new_name = data["new_name"]
+    chat_id = data["chat_id"]
+    message_text = data["message_text"]
+    author_id = id
 
-    result = rename_file(file_id, new_name, id)
+    result = send_message(chat_id, message_text, author_id)
 
     if result == ResultsCodes.OK:
+        project_id, get_project_id_result = get_chat_project_id(chat_id)
+        try:
+            messages, code = get_messages(chat_id)
+            if code == ResultsCodes.OK:
+                socketio.emit(
+                    "get_messages",
+                    {"chat_id": chat_id, "messages": messages},
+                    room=f"project_{project_id}",
+                )
+        except Exception as e:
+            print(f"Error: {e}, ResultCodes: {get_project_id_result}")
         return {}, 200
     else:
         return {"message": result}, 409
-
-
-@socketio.on("update_file_content")
-def update_file_content(data):
-    """
-    Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
-
-    Args:
-        data (dict): Словарь с данными файла.
-          {
-            file_id (int): Уникальный идентификатор файла
-            content (str): Новое содержимое файла
-          }
-
-    Example:
-        >>> data = {"file_id": 3, "content": "The file content"}
-    """
-    id = session.get("user_id")
-    if not id:
-        return False
-
-    file_id = data.get("file_id")
-    new_content = data.get("content")
-
-    save_file_content(file_id, new_content)
-
-    return True
-
-
-@socketio.on("get_file_content")
-def get_file_content_socket(data):
-    """
-    Клиент посылает id файла и получает содержимое файла.
-
-    Args:
-        data (dict): {
-            "file_id": int
-        }
-
-    Example:
-        >>> data = {"file_id": 3}
-    """
-    id = session.get("user_id")
-    if not id:
-        return False
-
-    file_id = data.get("file_id")
-
-    socketio.emit(
-        "send_file_content",
-        {"content": get_file_content(file_id)},
-        room=f"{id}",
-    )
-
-    return True

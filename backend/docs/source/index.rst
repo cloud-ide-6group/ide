@@ -27,3 +27,4 @@ documentation for details.
    modules/invitation
    modules/files
    modules/socket
+   modules/run_code
