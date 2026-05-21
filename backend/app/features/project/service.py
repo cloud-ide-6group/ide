@@ -205,16 +205,22 @@ def get_chats(project_id):
         return [], ResultsCodes.CHAT_NOT_FOUND
 
 
-def delete_project(project_id):
+def delete_project(project_id, user_id):
     """
     Удаляет проект
 
     Args:
         project_id (int): Id проекта
+        user_id (int): Id пользователя
 
     Returns:
         ResultCodes: Удален ли проект
     """
+    project = project_repo.get_by_id(user_id)
+    if project:
+        if project.owner_id != user_id:
+            return ResultsCodes.USER_NOT_OWNER
+
     result = project_repo.delete_project(project_id)
     if result == True:
         return ResultsCodes.OK

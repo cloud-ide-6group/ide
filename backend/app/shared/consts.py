@@ -48,3 +48,4 @@ class ResultsCodes:
     UNEXPECTED_ERROR = "Внутреняя ошибка сервера"
     USER_IS_NOT_IN_PROJECT = "Пользователь не в проекте"
     INVALID_TOKEN = "Токен некорректен"
+    USER_NOT_OWNER = "Пользователь не имеет права удалить проект"
