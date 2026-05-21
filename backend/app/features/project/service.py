@@ -73,7 +73,7 @@ def jsonify_file(file):
     Returns:
         data (dict): {
             id (int): Id файла,
-            name (str): Имя файлы,
+            name (str): Имя файла,
             is_folder (str): Папка ли,
             children (list[dict]): Массив словарей json проектов
         }

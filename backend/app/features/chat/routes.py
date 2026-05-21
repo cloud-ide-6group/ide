@@ -38,18 +38,9 @@ def create_chat_route():
         schema:
           type: object
           properties:
-            name:
-              type: string
-              example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
-            parent_id:
+            project_id:
               type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+              example: 80
     responses:
       201:
         description: Успешное создание
@@ -70,7 +61,7 @@ def create_chat_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка создания файла
+        description: Ошибка создания чата
         schema:
           type: object
           properties:
@@ -132,21 +123,12 @@ def delete_chat_route():
         schema:
           type: object
           properties:
-            name:
-              type: string
-              example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
-            parent_id:
+            chat_id:
               type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+              example: 80
     responses:
-      201:
-        description: Успешное создание
+      200:
+        description: Успешное удаление
       401:
         description: Проблема с токеном
         schema:
@@ -164,7 +146,7 @@ def delete_chat_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка создания файла
+        description: Ошибка удаления чата
         schema:
           type: object
           properties:
@@ -226,18 +208,12 @@ def create_message_route():
         schema:
           type: object
           properties:
-            name:
-              type: string
-              example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
-            parent_id:
+            chat_id:
               type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+              example: 80
+            message_text:
+              type: str
+              example: "new message"
     responses:
       201:
         description: Успешное создание
@@ -258,7 +234,7 @@ def create_message_route():
                 type: string
                 example: "Неверные учетные данные"
       409:
-        description: Ошибка создания файла
+        description: Ошибка создания сообщения
         schema:
           type: object
           properties:

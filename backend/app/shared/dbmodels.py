@@ -4,10 +4,6 @@ from .consts import ResultsCodes
 import re
 from email_validator import validate_email, EmailNotValidError
 
-"""
-Модели. id инкрементно ставится БД, при создании его не задаем.
-"""
-
 
 class Project(db.Model):
     """Модель проекта в IDE.
@@ -142,7 +138,9 @@ class Chat(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
 
     messages = db.relationship(
         "Message",

@@ -4,6 +4,17 @@ from datetime import datetime
 
 
 def create_chat(project_id, author_id):
+    """
+    Создать чат
+
+    Args:
+        project_id (int): Id проекта
+        author_id (int): Id пользователя
+
+    Returns:
+        Chat: Созданный чат
+        ResultCodes: Результат выполнения операции
+    """
     if project_repo.is_user_in_project(author_id, project_id) == False:
         return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
 
@@ -15,7 +26,18 @@ def create_chat(project_id, author_id):
         return None, ResultsCodes.CREATE_ERROR
 
 
-def delete_chat(chat_id, id):
+def delete_chat(chat_id, user_id):
+    """
+    Удалить чат
+
+    Args:
+        chat_id (int): Id чата
+        user_id (int): Id пользователя
+
+    Returns:
+        int: Id проекта, в котором был чат для оповещения
+        ResultCodes: Результат выполнения операции
+    """
     chat = chat_repo.get_by_id(chat_id)
 
     if chat is None:
@@ -23,7 +45,7 @@ def delete_chat(chat_id, id):
 
     project_id = chat.project_id
 
-    if chat.author_id != id:
+    if chat.author_id != user_id:
         return None, ResultsCodes.USER_IS_NOT_CHAT_CREATOR
 
     try:
@@ -34,6 +56,17 @@ def delete_chat(chat_id, id):
 
 
 def send_message(chat_id, message_text, author_id):
+    """
+    Отправить сообщение в чат
+
+    Args:
+        chat_id (int): Id чата
+        message_text (str): Текст сообщения
+        author_id (int): Id автора
+
+    Returns:
+        ResultCodes: Результат выполнения операции
+    """
     chat = chat_repo.get_by_id(chat_id)
     if chat is None:
         return ResultsCodes.CHAT_NOT_FOUND
@@ -50,6 +83,20 @@ def send_message(chat_id, message_text, author_id):
 
 
 def get_messages(chat_id):
+    """
+    Получить все сообщения чата
+
+    Args:
+        chat_id (int): Id чата
+
+    Returns:
+        list[dict]: Список сообщений
+            - id (int): Id
+            - text(str): Текст
+            - author(str): Имя автора
+            - send_time (str): Время сообщения
+        ResultCodes: Результат выполнения операции
+    """
     try:
         messages_raw = message_repo.get_chat_messages(chat_id)
         messages = []
@@ -69,6 +116,16 @@ def get_messages(chat_id):
 
 
 def get_chat_project_id(chat_id):
+    """
+    Получить id проекта в котором чат
+
+    Args:
+        chat_id (int): Id чата
+
+    Returns:
+        int: Id проекта
+        ResultCodes: Результат выполнения операции
+    """
     try:
         return chat_repo.get_by_id(chat_id).project_id, ResultsCodes.OK
     except AttributeError as e:
@@ -80,6 +137,16 @@ def get_chat_project_id(chat_id):
 
 
 def get_chats(project_id):
+    """
+    Получить все чаты проекта
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        list[Chat]: Список чатов
+        ResultCodes: Результат выполнения операции
+    """
     try:
         return project_repo.get_chats(project_id), ResultsCodes.OK
     except Exception as e:

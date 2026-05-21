@@ -21,11 +21,49 @@ def connect(auth):
 
     Возможные события ОТ СЕРВЕРА КЛИЕНТУ, ПОДПИСЫВАЕМСЯ НА НИХ:
         - send_file_content -- посылает всем клиентам обновленное содержимое файла
+            >>> {"content": "content example"}
         - notifications_list -- уведомления
+            >>> {"notifications": [
+            >>>     {
+            >>>         "sender_name": "username",
+            >>>         "send_time": "2026-05-21T15:30:45.123456",
+            >>>         "notification_id": 80,
+            >>>         "project_id": 79,
+            >>>         "project_name": "TestProject"
+            >>>     }
+            >>> ]}
         - files_trees_list -- массив деревьев файлов проекта
+            >>> {"files_trees_list": get_project_files_trees(project_id)
+            >>>     [
+            >>>         {
+            >>>             "id": 80,
+            >>>             "name": "NewFile.txt",
+            >>>             "is_folder": true,
+            >>>             "children": [ /рекурсивно дети с такой же структурой/ ]
+            >>>         }
+            >>>     ]
+            >>> }
         - console_output -- вывод в консоль
+            >>> {"data": "output"}
         - get_messages -- получить сообщения чата
+            >>> {"chat_id": 80,
+            >>>     "messages":
+            >>>         "id": 80,
+            >>>         "text": "message",
+            >>>         "author": "username",
+            >>>         "send_time": "2026-05-21 15:30:45"
+            >>> }
         - get_chats -- получить чаты с сообщениями
+            >>> {"chats_list": 
+            >>>     "id": 80,
+            >>>     "messages":
+            >>>         [
+            >>>             "id": 80,
+            >>>             "text": "message",
+            >>>             "author": "username",
+            >>>             "send_time": "2026-05-21 15:30:45"
+            >>>         ]
+            >>> }
 
     Args:
         auth (str): Токен в json БЕЗ BEARER
