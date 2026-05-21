@@ -33,6 +33,12 @@ class Project(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
 
+    chats = db.relationship(
+        "Chat",
+        backref="project",
+        cascade="all, delete-orphan",
+    )
+
     @validates("name")
     def validate_name(self, key, name):
         if name == None or name == "":
@@ -136,11 +142,11 @@ class Chat(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
 
     messages = db.relationship(
         "Message",
-        backref=db.backref("parent", remote_side=[id]),
+        backref="chat",
         cascade="all, delete-orphan",
     )
 

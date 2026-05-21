@@ -6,6 +6,7 @@ from app.shared.extensions import socketio
 
 load_dotenv()
 
+
 # TODO: дублирование get_messages
 def create_project_dir(project_name):
     """
@@ -154,6 +155,20 @@ def send_files_to_all_clients(project_id):
 
 
 def get_messages(chat_id):
+    """
+    Получить все сообщения чата
+
+    Args:
+        chat_id (int): Id чата
+
+    Returns:
+        list[dict]: Список сообщений
+            - id (int): Id
+            - text(str): Текст
+            - author(str): Имя автора
+            - send_time (str): Время сообщения
+        ResultCodes: Результат выполнения операции
+    """
     try:
         messages_raw = message_repo.get_chat_messages(chat_id)
         messages = []
@@ -173,6 +188,16 @@ def get_messages(chat_id):
 
 
 def get_chats(project_id):
+    """
+    Получить все чаты проекта
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        list[Chat]: Список проектов
+        ResultCodes: Результат выполнения операции
+    """
     try:
         return project_repo.get_chats(project_id), ResultsCodes.OK
     except Exception as e:
