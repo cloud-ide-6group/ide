@@ -110,7 +110,7 @@ def get_project_files_trees(project_id):
     return files_trees
 
 
-def is_user_invited(project_id, user_id):
+def user_is_in_project(project_id, user_id):
     """
     Приглашен ли пользователь в проект
 
@@ -121,7 +121,7 @@ def is_user_invited(project_id, user_id):
     Returns:
         bool: True, если пользователь уже в проекте, иначе False
     """
-    return project_repo.is_user_in_project(project_id, user_id)
+    return project_repo.is_user_in_project(user_id, project_id)
 
 
 def get_project_by_id(project_id):

@@ -6,7 +6,7 @@ from flask import request, make_response
 from .service import (
     create_project_dir,
     create_project,
-    is_user_invited,
+    user_is_in_project,
     get_project_by_id,
     get_project_files_trees,
     get_messages,
@@ -146,7 +146,7 @@ def join_project_room(data):
     project_id = data.get("project_id")
     project = get_project_by_id(project_id)
     if project:
-        if project.owner_id == id or is_user_invited(project_id, id):
+        if user_is_in_project(project_id, id):
             for room in session.get("project_rooms", []):
                 leave_room(room)
             new_room = f"project_{project_id}"
