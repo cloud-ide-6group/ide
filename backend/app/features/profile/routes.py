@@ -30,13 +30,8 @@ def profile():
       - features/profile
     description: |
       Получить профиль пользователя. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    security:
+      - BearerAuth: []
     responses:
       200:
         description: Получение данных
@@ -141,13 +136,6 @@ def update_profile():
       - features/profile
     description: |
       Обновить профиль. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -185,6 +173,8 @@ def update_profile():
                 message:
                   type: string
                   example: "Пользователь не найден, доступ запрещен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -215,13 +205,6 @@ def update_password():
       - features/profile
     description: |
       Обновить пароль профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -258,6 +241,8 @@ def update_password():
                 message:
                   type: string
                   example: "Новый пароль не введен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -294,13 +279,6 @@ def update_photo():
       - features/profile
     description: |
       Обновить фото профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -336,6 +314,8 @@ def update_photo():
                 message:
                   type: string
                   example: "Пользователь не найден, доступ запрещен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

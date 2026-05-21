@@ -20,13 +20,6 @@ def invite():
       - features/invitation
     description: |
       Добавляет пользователя в проект
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -73,6 +66,8 @@ def invite():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -105,13 +100,6 @@ def delete_invited():
       - features/invitation
     description: |
       Удаляет ранее приглашенного пользователя из проекта
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -158,6 +146,8 @@ def delete_invited():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

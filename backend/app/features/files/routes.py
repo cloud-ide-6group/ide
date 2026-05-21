@@ -25,13 +25,6 @@ def create_file_route():
       - features/files
     description: |
       Создает файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -84,6 +77,8 @@ def create_file_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -116,13 +111,6 @@ def delete_file_route():
       - features/files
     description: |
       Удалить файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -166,6 +154,8 @@ def delete_file_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -197,13 +187,6 @@ def rename_file_route():
       - features/files
     description: |
       Переименовать файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -250,6 +233,8 @@ def rename_file_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

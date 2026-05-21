@@ -19,13 +19,6 @@ def delete_notification_rout():
       - shared/features/notifications
     description: |
       Удаляет уведомление
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -69,6 +62,8 @@ def delete_notification_rout():
                 message:
                   type: string
                   example: "Пользователь не существует"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

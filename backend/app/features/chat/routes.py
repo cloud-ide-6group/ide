@@ -26,13 +26,6 @@ def create_chat_route():
       - features/chat
     description: |
       Создает чат
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -76,6 +69,8 @@ def create_chat_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -119,13 +114,6 @@ def delete_chat_route():
       - features/chat
     description: |
       Удаляет чат
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -169,6 +157,8 @@ def delete_chat_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -212,13 +202,6 @@ def create_message_route():
       - features/chat
     description: |
       Создает сообщение
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -265,6 +248,8 @@ def create_message_route():
                 message:
                   type: string
                   example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

@@ -30,13 +30,6 @@ def create_new_project():
     ---
     tags:
       - features/project
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -91,6 +84,8 @@ def create_new_project():
                 message:
                   type: string
                   example: "Проект уже существует"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -130,13 +125,6 @@ def delete_project_route():
     ---
     tags:
       - features/project
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        schema:
-          type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
     requestBody:
       required: true
       content:
@@ -180,6 +168,8 @@ def delete_project_route():
                 message:
                   type: string
                   example: "Проект уже существует"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -205,93 +195,88 @@ def delete_project_route():
 @project_bp.route("/project/info", methods=["GET"])
 def get_project_info_route():
     """
-        Получить информацию о проекте
-        ---
-        tags:
-          - features/project
-        parameters:
-        - name: Authorization
-          in: header
-          required: true
-          schema:
-            type: string
-          example: "Bearer pbkdf2:sha256:260000$xyz..."
-        - name: project_id
-          in: query  # ← В query параметр
-          required: true
-          schema:
-            type: integer
-          example: 7
-        responses:
-          200:
-            description: Успешное получение
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    user_is_owner:
-                      type: boolean
-                      description: Является ли пользователь владельцем проекта
-                      example: true
-                    project_name:
-                      type: string
-                      description: Название проекта
-                      example: "Project"
-                    project_id:
-                      type: integer
-                      description: Уникальный идентификатор проекта
-                      example: 9
-                    language_name:
-                      type: string
-                      description: Название языка программирования
-                      example: "JAVA"
-                    users:
-                      type: array
-                      description: Список пользователей в проекте
-                      items:
-                        type: object
-                        properties:
-                          id:
-                            type: integer
-                            description: ID пользователя
-                            example: 9
-                          name:
-                            type: string
-                            description: Имя пользователя
-                            example: "UserName"
-          401:
-            description: Неверный access токен, доступ запрещен
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Неверный access токен, доступ запрещен"
-          403:
-            description: Неверные учетные данные, доступ запрещен
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Неверные учетные данные"
-          409:
-            description: Ошибка удаления проекта
-            content:
-              application/json:
-                schema:
-                  type: object
-                  properties:
-                    message:
-                      type: string
-                      example: "Проект уже существует"
+    Получить информацию о проекте
+    ---
+    tags:
+      - features/project
+    parameters:
+      - name: project_id
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 7
+    responses:
+      200:
+        description: Успешное получение
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_is_owner:
+                  type: boolean
+                  description: Является ли пользователь владельцем проекта
+                  example: true
+                project_name:
+                  type: string
+                  description: Название проекта
+                  example: "Project"
+                project_id:
+                  type: integer
+                  description: Уникальный идентификатор проекта
+                  example: 9
+                language_name:
+                  type: string
+                  description: Название языка программирования
+                  example: "JAVA"
+                users:
+                  type: array
+                  description: Список пользователей в проекте
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: ID пользователя
+                        example: 9
+                      name:
+                        type: string
+                        description: Имя пользователя
+                        example: "UserName"
+      401:
+        description: Неверный access токен, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
+      409:
+        description: Ошибка удаления проекта
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
+    security:
+      - BearerAuth: []
     """
-    print("ALL HEADERS:", dict(request.headers))
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 

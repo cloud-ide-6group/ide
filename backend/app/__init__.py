@@ -48,6 +48,18 @@ def create_app(config_class=DebugConfig):
         migrate.init_app(app, db)
 
     if app.config["SWAGGER_URL_PREFIX"]:
+        swagger_template = {
+            "components": {
+                "securitySchemes": {
+                    "BearerAuth": {
+                        "type": "http",
+                        "scheme": "bearer",
+                        "bearerFormat": "JWT"
+                    }
+                }
+            }
+        }
+        
         swagger_config = {
             "headers": [],
             "specs": [
@@ -62,10 +74,10 @@ def create_app(config_class=DebugConfig):
             "swagger_ui": True,
             "specs_route": app.config["SWAGGER_URL_PREFIX"],
             "openapi": "3.0.2",
-            "title": "Cloud IDE API",  # <- сюда
+            "title": "Cloud IDE API",
             "version": "1.0.0",
         }
-        swagger = Swagger(app, config=swagger_config)
+        swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
         @app.before_request
         def protect():
