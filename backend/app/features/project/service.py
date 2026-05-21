@@ -54,7 +54,7 @@ def create_project(user_id, project_name, language_id):
     if project_name == "" or project_name == None:
         return None, ResultsCodes.INCORRECT_NAME
 
-    if project_repo.get_project(project_name) != None:
+    if project_repo.get_by_name(project_name) != None:
         return None, ResultsCodes.PROJECT_EXISTS_ALREADY
 
     project = project_repo.create_project(project_name, language_id, user_id)
@@ -121,7 +121,7 @@ def is_user_invited(project_id, user_id):
     Returns:
         bool: True, если пользователь уже в проекте, иначе False
     """
-    return project_repo.is_user_invited(project_id, user_id)
+    return project_repo.is_user_in_project(project_id, user_id)
 
 
 def get_project_by_id(project_id):

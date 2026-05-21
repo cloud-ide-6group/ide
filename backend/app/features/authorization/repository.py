@@ -1,38 +1,9 @@
-from app.shared.extensions import db
+from app.shared.base_repositories import BaseUserRepository
 from app.shared.dbmodels import User
+from app.shared.extensions import db
 
 
-class UserRepository:
-    """
-    Репозиторий для работы с пользователями.
-
-    Attributes:
-        session: Сессия SQLAlchemy для работы с БД
-        model: Модель User
-
-    Example:
-        >>> repo = UserRepository()
-        >>> user = repo.get_by_id(1)
-        >>> print(user.name)
-        'username1'
-    """
-
-    def get_by_email(self, email):
-        """
-        Получить пользователя по email.
-
-        Args:
-            email (str): Email пользователя.
-
-        Returns:
-            User: Пользователь
-
-        Example:
-            >>> repo = UserRepository()
-            >>> user = repo.get_by_email("email@mail.ru")
-        """
-        return db.session.query(User).filter(User.email == email).first()
-
+class UserRepository(BaseUserRepository):
     def insert_user(self, email, password_hash, name):
         """
         Создать пользователя.
@@ -63,23 +34,6 @@ class UserRepository:
         except Exception as e:
             db.session.rollback()
             raise e
-
-    def delete_user_by_id(self, id):
-        """
-        Удалить пользователя.
-
-        Args:
-            id (int): Id пользователя.
-
-        Example:
-            >>> repo = UserRepository()
-            >>> repo.delete_user(7)
-        """
-        user = db.session.query(User).filter(User.id == id).first()
-
-        if user:
-            db.session.delete(user)
-            db.session.commit()
 
 
 user_repo = UserRepository()

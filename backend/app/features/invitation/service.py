@@ -1,6 +1,9 @@
+from sqlalchemy.exc import IntegrityError
+
 from .repository import user_repo, project_repo, notification_repo
 from app.shared.consts import ResultsCodes
 from app.shared.features.notifications.service import send_notifications_to_client
+import datetime
 
 
 def add_user_in_project(project_name, invited_user_email, owner_id):
@@ -26,9 +29,20 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
         if added_user and user_repo.user_exists(owner_id):
             if project_repo.is_user_in_project(project.id, added_user.id):
                 return ResultsCodes.USER_IS_IN_ALREADY
-            project_repo.add_user_in_project(project.id, added_user.id)
-            notification_repo.add_notification(project.id, owner_id, added_user.id)
-            send_notifications_to_client(added_user.id)
+            try:
+                project_repo.add_user_in_project(project.id, added_user.id)
+                notification_repo.add_notification(
+                    project.id, owner_id, added_user.id, datetime.datetime.now()
+                )
+                send_notifications_to_client(added_user.id)
+            except IntegrityError as e:
+                print(e)
+                print("1")
+                print("Тип ошибки:", type(e))
+                return ResultsCodes.USER_IS_IN_ALREADY
+            except Exception as e:
+                print(e)
+                return ResultsCodes.UNEXPECTED_ERROR
             return ResultsCodes.OK
         else:
             return ResultsCodes.USER_NOT_FOUND
