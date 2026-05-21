@@ -50,7 +50,7 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
         return ResultsCodes.PROJECT_NOT_FOUND
 
 
-def delete_user_from_project(project_name, invited_user_email, owner_id):
+def delete_user_from_project(project_id, invited_user_email, owner_id):
     """
     Удаляет пользователя из проекта
 
@@ -62,14 +62,14 @@ def delete_user_from_project(project_name, invited_user_email, owner_id):
     Returns:
         ResultCodes: Результат выполнения
     """
-    project = project_repo.get_by_name(project_name)
+    project = project_repo.get_by_id(project_id)
 
     if project and project.owner_id == owner_id:
         deleted_user = user_repo.get_by_email(invited_user_email)
         if deleted_user and user_repo.user_exists(owner_id):
             project_repo.delete_user_from_project(project.id, deleted_user.id)
-            return ResultsCodes.OK
+            return deleted_user, ResultsCodes.OK
         else:
-            return ResultsCodes.USER_NOT_FOUND
+            return None, ResultsCodes.USER_NOT_FOUND
     else:
-        return ResultsCodes.PROJECT_NOT_FOUND
+        return None, ResultsCodes.PROJECT_NOT_FOUND

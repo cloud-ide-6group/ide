@@ -18,7 +18,8 @@ def get_notifications(user_id):
                     "send_time": datetime,
                     "notification_id": int,
                     "project_id": int,
-                    "project_name": str
+                    "project_name": str,
+                    "was_invited": bool
                 }
             ]
     """

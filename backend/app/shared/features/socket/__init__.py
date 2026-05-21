@@ -18,6 +18,7 @@ def connect(auth):
         - run_code -- запустить программу
         - send_input -- отправить ввод в программу
         - stop_code -- остановить выполнение программы
+        - leave_project_room -- покинуть проект
 
     Возможные события ОТ СЕРВЕРА КЛИЕНТУ, ПОДПИСЫВАЕМСЯ НА НИХ:
         - send_file_content -- посылает всем клиентам обновленное содержимое файла
@@ -29,7 +30,8 @@ def connect(auth):
             >>>         "send_time": "2026-05-21T15:30:45.123456",
             >>>         "notification_id": 80,
             >>>         "project_id": 79,
-            >>>         "project_name": "TestProject"
+            >>>         "project_name": "TestProject",
+            >>>         "was_invited": True
             >>>     }
             >>> ]}
         - files_trees_list -- массив деревьев файлов проекта
@@ -64,6 +66,9 @@ def connect(auth):
             >>>             "send_time": "2026-05-21 15:30:45"
             >>>         ]
             >>> }
+
+        - removed_from_project -- был удален из проекта. После этого сразу отправляем leave_project_room
+            >>> {"project_id": 81}
 
     Args:
         auth (str): Токен в json БЕЗ BEARER
