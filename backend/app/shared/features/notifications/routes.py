@@ -21,44 +21,52 @@ def delete_notification_rout():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            notification_id:
-              type: int
-              example: 7
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              notification_id:
+                type: integer
+                example: 7
     responses:
       200:
         description: Успешное удаление
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка удаления
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не существует"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не существует"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

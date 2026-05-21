@@ -20,31 +20,35 @@ def invite():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            project_name:
-              type: string
-              example: "TestProject"
-            invited_user_email:
-              type: string
-              example: "test@mail.ru"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_name:
+                type: string
+                example: "TestProject"
+              invited_user_email:
+                type: string
+                example: "test@mail.ru"
     responses:
       200:
         description: Успешное приглашение
       409:
         description: Ошибка приглашения
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -81,31 +85,35 @@ def delete_invited():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            project_id:
-              type: int
-              example: 81
-            invited_user_email:
-              type: string
-              example: "test@mail.ru"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_id:
+                type: integer
+                example: 81
+              invited_user_email:
+                type: string
+                example: "test@mail.ru"
     responses:
       200:
         description: Успешное удаление
       409:
         description: Ошибка удаления
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

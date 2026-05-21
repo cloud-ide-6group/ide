@@ -18,39 +18,44 @@ def login():
     ---
     tags:
       - features/auth
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            email:
-              type: email
-              example: "example@examp.le"
-            password:
-              type: string
-              example: "password"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "example@examp.le"
+              password:
+                type: string
+                example: "password"
     responses:
       200:
         description: Успешная аутентификация
-        schema:
-          type: object
-          properties:
-            access_token:
-              type: string
-              example: "pbkdf2:sha256:260000$xyz..."
-            refresh_token:
-              type: string
-              example: "pbkdf2:sha256:260000$xyz..."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "pbkdf2:sha256:260000$xyz..."
+                refresh_token:
+                  type: string
+                  example: "pbkdf2:sha256:260000$xyz..."
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
     """
     data = request.json
 
@@ -81,42 +86,47 @@ def sign():
     ---
     tags:
       - features/auth
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            email:
-              type: email
-              example: "example@examp.le"
-            name:
-              type: string
-              example: "username"
-            password:
-              type: string
-              example: "password"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "example@examp.le"
+              name:
+                type: string
+                example: "username"
+              password:
+                type: string
+                example: "password"
     responses:
       201:
         description: Пользователь создан
-        schema:
-          type: object
-          properties:
-            access_token:
-              type: string
-              example: "pbkdf2:sha256:260000$xyz..."
-            refresh_token:
-              type: string
-              example: "pbkdf2:sha256:260000$xyz..."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "pbkdf2:sha256:260000$xyz..."
+                refresh_token:
+                  type: string
+                  example: "pbkdf2:sha256:260000$xyz..."
       400:
         description: Ошибка с отправленными данными
-        schema:
-          type: object
-          properties:
-            message:
-              type: string
-              example: "Неверный пароль"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный пароль"
     """
     data = request.json
 

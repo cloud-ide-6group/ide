@@ -30,53 +30,61 @@ def create_file_route():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            name:
-              type: str
-              example: "main.txt"
-            project_id:
-              type: int
-              example: 81
-            parent_id:
-              type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "main.txt"
+              project_id:
+                type: integer
+                example: 81
+              parent_id:
+                type: integer
+                example: 13
+              is_folder:
+                type: boolean
+                example: false
     responses:
       201:
         description: Успешное создание
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -113,44 +121,52 @@ def delete_file_route():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            file_id:
-              type: int
-              example: 23
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              file_id:
+                type: integer
+                example: 23
     responses:
       200:
         description: Успешное удаление
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка удаления файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -186,47 +202,55 @@ def rename_file_route():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            file_id:
-              type: int
-              example: 23
-            new_name:
-              type: str
-              example: "NewFileName"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              file_id:
+                type: integer
+                example: 23
+              new_name:
+                type: string
+                example: "NewFileName"
     responses:
       200:
         description: Успешное переименование
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка переименования файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

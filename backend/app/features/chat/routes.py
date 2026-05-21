@@ -30,44 +30,52 @@ def create_chat_route():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            project_id:
-              type: int
-              example: 80
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_id:
+                type: integer
+                example: 80
     responses:
       201:
         description: Успешное создание
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания чата
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -110,49 +118,57 @@ def delete_chat_route():
     tags:
       - features/chat
     description: |
-      Создает чат
+      Удаляет чат
     parameters:
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            chat_id:
-              type: int
-              example: 80
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chat_id:
+                type: integer
+                example: 80
     responses:
       200:
         description: Успешное удаление
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка удаления чата
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
@@ -200,47 +216,55 @@ def create_message_route():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            chat_id:
-              type: int
-              example: 80
-            message_text:
-              type: str
-              example: "new message"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              chat_id:
+                type: integer
+                example: 80
+              message_text:
+                type: string
+                example: "new message"
     responses:
       201:
         description: Успешное создание
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания сообщения
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)

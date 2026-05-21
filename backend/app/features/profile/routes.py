@@ -30,55 +30,62 @@ def profile():
       - name: Authorization
         in: header
         required: true
-        type: string
+        schema:
+          type: string
         example: "Bearer pbkdf2:sha256:260000$xyz..."
     responses:
       200:
         description: Получение данных
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "username"
-            photo:
-              type: string
-              format: byte
-              description: "Фото в формате base64"
-              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-            email:
-              type: string
-              example: "user@mail.ru"
-            projects:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    description: "ID проекта"
-                    example: 1
-                  name:
-                    type: string
-                    description: "Название проекта"
-                    example: "Project34"
-              example: [{"id": 1, "name": "Project1"}, {"id": 15, "name": "Project2"}]
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "username"
+                photo:
+                  type: string
+                  format: byte
+                  description: "Фото в формате base64"
+                  example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+                email:
+                  type: string
+                  example: "user@mail.ru"
+                projects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "ID проекта"
+                        example: 1
+                      name:
+                        type: string
+                        description: "Название проекта"
+                        example: "Project34"
+                  example: [{"id": 1, "name": "Project1"}, {"id": 15, "name": "Project2"}]
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       404:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -137,39 +144,46 @@ def update_profile():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            email:
-              type: email
-              example: "example@examp.le"
-            name:
-              type: string
-              example: "newName"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "example@examp.le"
+              name:
+                type: string
+                example: "newName"
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       404:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -208,39 +222,45 @@ def update_password():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            old_password:
-              type: string
-              example: "password"
-            new_password:
-              type: string
-              example: "password123"
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              old_password:
+                type: string
+                example: "password"
+              new_password:
+                type: string
+                example: "password123"
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       409:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Новый пароль не введен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Новый пароль не введен"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -285,38 +305,44 @@ def update_photo():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            photo:
-              type: string
-              format: byte
-              description: "Фото в формате base64"
-              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              photo:
+                type: string
+                format: byte
+                description: "Фото в формате base64"
+                example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       409:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

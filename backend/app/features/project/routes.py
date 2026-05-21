@@ -18,7 +18,6 @@ from app.shared.extensions import socketio
 
 
 # TODO: удаление проекта
-# TODO: вынести сокеты в отдельный файл
 @project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
@@ -30,53 +29,63 @@ def create_new_project():
       - name: Authorization
         in: header
         required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
         schema:
-          type: object
-          properties:
-            project_name:
-              type: string
-              example: "TestProject"
-            language_id:
-              type: int
-              example: 7
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_name:
+                type: string
+                example: "TestProject"
+              language_id:
+                type: integer
+                example: 7
     responses:
       201:
         description: Успешное создание
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: integer
+                  example: 25
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания проекта
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Проект уже существует"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
     """
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):

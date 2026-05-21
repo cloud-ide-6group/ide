@@ -61,6 +61,9 @@ def create_app(config_class=DebugConfig):
             "static_url_path": "/flasgger_static",
             "swagger_ui": True,
             "specs_route": app.config["SWAGGER_URL_PREFIX"],
+            "openapi": "3.0.2",
+            "title": "Cloud IDE API",  # <- сюда
+            "version": "1.0.0",
         }
         swagger = Swagger(app, config=swagger_config)
 
