@@ -1,8 +1,8 @@
 from . import project_bp
-from ...shared.features.jwt_token.routes import get_id
+from ...shared.features.jwt_token.routes import get_id, get_jwt_from_header, create_unauthorized_response
 from app.shared.features.languages.service import lang_exists
 from app.shared.consts import ResultsCodes
-from flask import request, make_response
+from flask import request
 from .service import (
     create_project_dir,
     create_project,
@@ -88,16 +88,16 @@ def create_new_project():
                   example: "Проект уже существует"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": "Токен не предоставлен"}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
-    access_token = auth_header.split(" ")[1]
-    id, id_result = get_id(access_token)
+    id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     project_name = data["project_name"]
     language_id = data["language_id"]

@@ -1,6 +1,10 @@
 from . import invitation_bp
 from flask import request, make_response, session
-from app.shared.features.jwt_token.service import get_id
+from app.shared.features.jwt_token.service import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from app.shared.consts import ResultsCodes
 from .service import add_user_in_project, delete_user_from_project
 from app.shared.extensions import socketio
@@ -71,16 +75,16 @@ def invite():
                   example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": "Токен не предоставлен"}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
-    access_token = auth_header.split(" ")[1]
-    id, id_result = get_id(access_token)
+    id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     project_name = data["project_name"]
     invited_user_email = data["invited_user_email"]
@@ -156,16 +160,16 @@ def delete_invited():
                   example: "Пользователь не найден"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": "Токен не предоставлен"}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
-    access_token = auth_header.split(" ")[1]
-    id, id_result = get_id(access_token)
+    id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     project_id = data["project_id"]
     invited_user_email = data["invited_user_email"]

@@ -10,7 +10,11 @@ from .service import (
     save_photo,
     get_projects_includes,
 )
-from ...shared.features.jwt_token.service import get_id
+from ...shared.features.jwt_token.service import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from app.shared.features.password_hash.service import get_password_hash
 from app.shared.consts import ResultsCodes
 
@@ -88,18 +92,16 @@ def profile():
                   example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
-    if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     user, result = get_user_data(id)
     if user == None:
@@ -186,20 +188,16 @@ def update_profile():
                   example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
-    if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     user, result = update_user_data(id, data["email"], data["name"], None, None)
 
@@ -263,20 +261,16 @@ def update_password():
                   example: "Новый пароль не введен"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
-    if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     if data["new_password"] != "" and data["new_password"] != None:
         old_password = data["old_password"]
@@ -345,20 +339,17 @@ def update_photo():
                   example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
-    if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
+
     photo = data["photo"]
 
     filename, result = save_photo(photo, id)

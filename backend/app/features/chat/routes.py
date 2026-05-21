@@ -1,5 +1,5 @@
 from . import chat_bp
-from flask import request, session
+from flask import request
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,

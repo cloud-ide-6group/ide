@@ -2,7 +2,11 @@ from . import notifications_bp
 from flask import request, make_response
 from app.shared.consts import ResultsCodes
 from .service import delete_notification
-from app.shared.features.jwt_token.service import get_id
+from app.shared.features.jwt_token.service import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from flask import request
 
 
@@ -67,19 +71,19 @@ def delete_notification_rout():
                   example: "Пользователь не существует"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": "Токен не предоставлен"}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result == ResultsCodes.NO_TOKEN:
+        response = create_unauthorized_response()
         return response
 
     data = request.json
-    access_token = auth_header.split(" ")[1]
-    user_id, id_result = get_id(access_token)
+    id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 401
 
     notification_id = data["notification_id"]
-    result = delete_notification(user_id, notification_id)
+    result = delete_notification(id, notification_id)
 
     if result == ResultsCodes.OK:
         return {}, 200
