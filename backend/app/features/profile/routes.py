@@ -94,11 +94,10 @@ def profile():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
-    data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 401
@@ -190,8 +189,8 @@ def update_profile():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -263,8 +262,8 @@ def update_password():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -341,8 +340,8 @@ def update_photo():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json

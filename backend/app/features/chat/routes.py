@@ -80,8 +80,8 @@ def create_chat_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -173,8 +173,8 @@ def delete_chat_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -269,8 +269,8 @@ def create_message_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json

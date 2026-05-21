@@ -1,5 +1,9 @@
 from . import project_bp
-from ...shared.features.jwt_token.routes import get_id, get_jwt_from_header, create_unauthorized_response
+from ...shared.features.jwt_token.routes import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from app.shared.features.languages.service import lang_exists
 from app.shared.consts import ResultsCodes
 from flask import request
@@ -90,8 +94,8 @@ def create_new_project():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json

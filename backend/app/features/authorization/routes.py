@@ -5,10 +5,6 @@ from app.shared.features.jwt_token.service import create_token
 from . import auth_bp
 from .service import *
 from flask import request
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -68,10 +64,8 @@ def login():
     if user is None:
         return {"message": ResultsCodes.USER_NOT_FOUND}, 403
 
-    ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
-    REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
-    access_token = create_token(user.id, ACCESS_SECRET, timedelta(minutes=15), True)
-    refresh_token = create_token(user.id, REFRESH_SECRET, timedelta(days=7), False)
+    access_token = create_token(user.id, timedelta(minutes=15), True)
+    refresh_token = create_token(user.id, timedelta(days=7), False)
 
     return {
         "access_token": access_token,
@@ -136,10 +130,8 @@ def sign():
     if user is None:
         return {"message": ResultsCodes.USER_NOT_FOUND}, 400
 
-    ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
-    REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
-    access_token = create_token(user.id, ACCESS_SECRET, timedelta(minutes=15), True)
-    refresh_token = create_token(user.id, REFRESH_SECRET, timedelta(days=7), False)
+    access_token = create_token(user.id, timedelta(minutes=15), True)
+    refresh_token = create_token(user.id, timedelta(days=7), False)
 
     return {
         "access_token": access_token,

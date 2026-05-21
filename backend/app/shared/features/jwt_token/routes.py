@@ -60,11 +60,8 @@ def refresh():
     if not refresh_token:
         return {"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
 
-    ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
-    REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
-
     try:
-        result = get_access_refresh_tokens(refresh_token, REFRESH_SECRET, ACCESS_SECRET)
+        result = get_access_refresh_tokens(refresh_token)
         if result["result"] == ResultsCodes.OK:
             return {
                 "access_token": result["access"],

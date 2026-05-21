@@ -16,7 +16,6 @@ from .service import (
 from app.shared.extensions import socketio
 
 
-# TODO: валидировать токен
 @files_bp.route("/files/create", methods=["POST"])
 def create_file_route():
     """
@@ -89,8 +88,8 @@ def create_file_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -171,8 +170,8 @@ def delete_file_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
@@ -255,8 +254,8 @@ def rename_file_route():
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
