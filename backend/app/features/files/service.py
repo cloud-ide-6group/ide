@@ -57,7 +57,7 @@ def create_file(name, project_id, parent_id, is_folder, user_id):
         if parent_id != "" and parent_id != None and not parent:
             return ResultsCodes.PARENT_NOT_EXIST
 
-        if parent.project_id != project_id or parent.is_folder == False:
+        if parent and (parent.project_id != project_id or parent.is_folder == False):
             return ResultsCodes.PARENT_NOT_EXIST
 
         if file_repo.is_file_exists(name, project.id, parent):
