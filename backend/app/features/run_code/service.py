@@ -22,30 +22,22 @@ def run_code(project_id, user_id, app):
         app (): Объект приложения
     """
     with app.app_context():
-        user_in_project, result = project_repo.is_user_in_project(user_id, project_id)
-        if result != ResultsCodes.OK or not user_in_project:
-            socketio.emit("console_output", {"data": result}, room=str(user_id))
+        result = project_repo.is_user_in_project(user_id, project_id)
+        if result == False:
+            print(ResultsCodes.USER_IS_NOT_IN_PROJECT)
             return
 
         projects_dir = os.getenv("PROJECTS_PATH")
         project = project_repo.get_by_id(project_id)
         if project is None:
-            socketio.emit(
-                "console_output",
-                {"data": ResultsCodes.PROJECT_NOT_FOUND},
-                room=str(user_id),
-            )
+            print(ResultsCodes.PROJECT_NOT_FOUND)
             return
 
         project_dir = os.path.join(projects_dir, project.name)
         language = language_repo.get_by_id(project.language_id)
 
         if not language:
-            socketio.emit(
-                "console_output",
-                {"data": ResultsCodes.INCORRECT_LANG},
-                room=str(user_id),
-            )
+            print(ResultsCodes.INCORRECT_LANG)
             return
 
         image_command = (
