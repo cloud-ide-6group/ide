@@ -15,13 +15,13 @@ from .service import (
     get_project_files_trees,
     get_messages,
     get_chats,
+    delete_project
 )
 from flask_socketio import join_room, leave_room
 from flask import session
 from app.shared.extensions import socketio
 
 
-# TODO: удаление проекта
 @project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
@@ -120,6 +120,93 @@ def create_new_project():
         return {"message": result}, 409
 
     return {"project_id": project.id}, 201
+
+
+@project_bp.route("/project/delete", methods=["DELETE"])
+def delete_project():
+    """
+    Удаление проекта
+    ---
+    tags:
+      - features/project
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_id:
+                type: integer
+                example: 7
+    responses:
+      200:
+        description: Успешное удаление
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: integer
+                  example: 25
+      401:
+        description: Неверный access токен, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
+      409:
+        description: Ошибка удаления проекта
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
+    """
+    auth_header = request.headers.get("Authorization")
+    token, result = get_jwt_from_header(auth_header)
+
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
+        return response
+
+    data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
+
+    project_id = data["project_id"]
+
+    result = delete_project(project_id)
+    if result != ResultsCodes.OK:
+        return {"message": result}, 409
+
+    return {}, 200
 
 
 @socketio.on("join_project_room")

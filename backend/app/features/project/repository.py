@@ -32,7 +32,33 @@ class ProjectRepository(BaseProjectRepository):
             db.session.rollback()
             raise e
 
+    def delete_project(self, _project_id):
+        """
+        Удалить проект из базы
+
+        Args:
+            _project_id (int): Id проекта
+
+        Returns:
+            bool: Удален ли
+        """
+        project = db.session.query(Project).filter(Project.id == _project_id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
+            return True
+        return False
+
     def get_chats(self, project_id):
+        """
+        Получить все чаты проекта
+
+        Args:
+            _project_id (int): Id проекта
+
+        Returns:
+            list[Chat]: Список чатов
+        """
         try:
             return db.session.query(Chat).filter(Chat.project_id == project_id).all()
         except Exception as e:

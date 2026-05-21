@@ -203,3 +203,20 @@ def get_chats(project_id):
     except Exception as e:
         print(e)
         return [], ResultsCodes.CHAT_NOT_FOUND
+
+
+def delete_project(project_id):
+    """
+    Удаляет проект
+
+    Args:
+        project_id (int): Id проекта
+
+    Returns:
+        ResultCodes: Удален ли проект
+    """
+    result = project_repo.delete_project(project_id)
+    if result == True:
+        return ResultsCodes.OK
+
+    return ResultsCodes.DELETE_ERROR
