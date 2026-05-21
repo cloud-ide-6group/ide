@@ -137,7 +137,7 @@ def delete_invited():
 @socketio.on("leave_project_room")
 def leave_project_room_socket(data):
     """
-    Клиент покидает комнату проекта
+    Сокет leave_project_room. Клиент покидает комнату проекта
 
     Args:
         data (dict): Словарь с данными проекта.

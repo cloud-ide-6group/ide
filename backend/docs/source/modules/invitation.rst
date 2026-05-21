@@ -14,3 +14,11 @@
    :members:
    :undoc-members:
    :show-inheritance:
+
+Сокеты
+-------
+.. automodule:: app.features.invitation.routes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :exclude-members: delete_invited, invite

@@ -254,7 +254,7 @@ def rename_file_route():
 @socketio.on("update_file_content")
 def update_file_content(data):
     """
-    Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
+    Сокет update_file_content. Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
 
     Args:
         data (dict): Словарь с данными файла.
@@ -281,7 +281,7 @@ def update_file_content(data):
 @socketio.on("get_file_content")
 def get_file_content_socket(data):
     """
-    Клиент посылает id файла и получает содержимое файла.
+    Сокет get_file_content. Клиент посылает id файла и получает содержимое файла.
 
     Args:
         data (dict): {

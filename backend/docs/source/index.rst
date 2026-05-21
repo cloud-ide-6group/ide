@@ -13,18 +13,34 @@ documentation for details.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Содержание:
+
+.. toctree::
+   :caption: Фичи
+   :maxdepth: 1
 
    modules/authorization
    modules/profile
-   modules/dbmodels
-   modules/jwt_token
-   modules/consts
    modules/project
+   modules/notifications
+   modules/files
+   modules/run_code
+
+.. toctree::
+   :caption: Общие фичи
+   :maxdepth: 1
+
+   modules/jwt_token
    modules/languages
    modules/password_hash
-   modules/notifications
    modules/invitation
-   modules/files
    modules/socket
-   modules/run_code
+
+.. toctree::
+   :caption: Общие данные
+   :maxdepth: 1
+
+   modules/base_repositories/base_repositories
+   modules/consts
+   modules/dbmodels
+
