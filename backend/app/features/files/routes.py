@@ -183,7 +183,7 @@ def delete_file_route():
     result = delete_file(file_id, id)
 
     if result == ResultsCodes.OK:
-        return {}, 201
+        return {}, 200
     else:
         return {"message": result}, 409
 

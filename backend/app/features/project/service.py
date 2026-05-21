@@ -7,7 +7,6 @@ from app.shared.extensions import socketio
 load_dotenv()
 
 
-# TODO: дублирование get_messages
 def create_project_dir(project_name):
     """
     Выделяет пространство на диске на проект

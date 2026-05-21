@@ -103,6 +103,9 @@ def create_file_on_disk(name, parent, project_name, is_folder):
     Returns:
         ResultCodes: Результат выполнения операции.
     """
+    if name is None or name == "":
+        return ResultsCodes.INCORRECT_NAME
+
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
     file_path = get_file_path(parent, "")
@@ -213,6 +216,9 @@ def rename_file(file_id, new_name, user_id):
     Returns:
         ResultCodes: Результат выполнения операции.
     """
+    if new_name is None or new_name == "":
+        return ResultsCodes.INCORRECT_NAME
+
     file = file_repo.get_by_id(file_id)
     if not file:
         return ResultsCodes.FILE_NOT_EXIST
