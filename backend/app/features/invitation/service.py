@@ -31,18 +31,17 @@ def add_user_in_project(project_name, invited_user_email, owner_id):
                 return ResultsCodes.USER_IS_IN_ALREADY
             try:
                 project_repo.add_user_in_project(project.id, added_user.id)
-                notification_repo.add_notification(
-                    project.id, owner_id, added_user.id, datetime.datetime.now()
-                )
-                send_notifications_to_client(added_user.id)
             except IntegrityError as e:
                 print(e)
-                print("1")
-                print("Тип ошибки:", type(e))
                 return ResultsCodes.USER_IS_IN_ALREADY
             except Exception as e:
                 print(e)
                 return ResultsCodes.UNEXPECTED_ERROR
+            
+            notification_repo.add_notification(
+                project.id, owner_id, added_user.id, datetime.datetime.now()
+            )
+            send_notifications_to_client(added_user.id)
             return ResultsCodes.OK
         else:
             return ResultsCodes.USER_NOT_FOUND

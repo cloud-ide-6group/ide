@@ -13,7 +13,7 @@ class BaseNotificationRepository:
 
     def add_notification(self, _project_id, _sender_id, _receiver_id, send_time):
         """
-        Добавляет уведомление в БД.
+        Добавляет уведомление в БД, удаляя старое
 
         Args:
             _project_id (int): Id проекта.
@@ -26,6 +26,19 @@ class BaseNotificationRepository:
             receiver_id=_receiver_id,
             send_time=send_time,
         )
+
+        old_notification = (
+            db.session.query(Notification)
+            .filter(
+                (Notification.project_id == _project_id)
+                & (Notification.receiver_id == _receiver_id)
+            )
+            .all()
+        )
+        for old in old_notification:
+            db.session.delete(old)
+        db.session.commit()
+
         db.session.add(notification)
         db.session.commit()
 
