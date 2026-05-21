@@ -115,7 +115,15 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
 
             if line.strip():
                 line = re.sub(r"[\r\n\t\x0b\x0c]", "", line)
-                socketio.emit("console_output", {"data": line}, room=str(user_id))
+                socketio.emit(
+                    "console_output",
+                    {"data": line, "is_ended": False},
+                    room=str(user_id),
+                )
+
+    socketio.emit(
+        "console_output", {"data": "Программа завершена.", "is_ended": True}, room=str(user_id)
+    )
 
     container_id = redis_client.get(session_key)
     if container_id:

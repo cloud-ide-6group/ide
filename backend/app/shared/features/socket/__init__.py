@@ -46,7 +46,7 @@ def connect(auth):
             >>>     ]
             >>> }
         - console_output -- вывод в консоль
-            >>> {"data": "output"}
+            >>> {"data": "output", "is_ended": True}
         - get_messages -- получить сообщения чата
             >>> {"chat_id": 80,
             >>>     "messages":
