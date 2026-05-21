@@ -1,14 +1,12 @@
 from . import notifications_bp
 from flask import request, make_response
 from app.shared.consts import ResultsCodes
-from .service import get_notifications, delete_notification
+from .service import delete_notification
 from app.shared.features.jwt_token.service import get_id
-from app.shared.extensions import socketio
-from flask_socketio import emit, join_room
 from flask import request
 
 
-@notifications_bp.route("/delete/notification", methods=["DELETE"])
+@notifications_bp.route("/notification/delete", methods=["DELETE"])
 def delete_notification_rout():
     """
     Удаление уведомления после прочтения пользователем
