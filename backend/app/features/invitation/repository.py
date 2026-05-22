@@ -64,7 +64,7 @@ class NotificationRepository(BaseNotificationRepository):
             .all()
         )
         for n in nots:
-            db.session.remove(n)
+            db.session.delete(n)
         db.session.commit()
 
 
