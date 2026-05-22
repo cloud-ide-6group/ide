@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 
 from app.shared.extensions import db
-from app.shared.dbmodels import User
+from app.shared.dbmodels import User, Notification
 from app.shared.base_repositories import (
     BaseProjectRepository,
     BaseUserRepository,
@@ -54,7 +54,18 @@ class UserRepository(BaseUserRepository):
 
 
 class NotificationRepository(BaseNotificationRepository):
-    pass
+    def delete_by_reciever_project_id(self, receiver_id, project_id):
+        nots = (
+            db.session.query(Notification)
+            .filter(
+                (Notification.receiver_id == receiver_id)
+                & (Notification.project_id == project_id)
+            )
+            .all()
+        )
+        for n in nots:
+            db.session.remove(n)
+        db.session.commit()
 
 
 project_repo = ProjectRepository()

@@ -1,5 +1,5 @@
 from . import invitation_bp
-from flask import request, make_response, session
+from flask import request, session
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,
@@ -9,6 +9,7 @@ from app.shared.consts import ResultsCodes
 from .service import add_user_in_project, delete_user_from_project
 from app.shared.extensions import socketio
 from flask_socketio import leave_room
+from .repository import notification_repo
 
 
 @invitation_bp.route("/invite", methods=["POST"])
@@ -166,11 +167,13 @@ def delete_invited():
 
     user, result = delete_user_from_project(project_id, invited_user_email, id)
     if result == ResultsCodes.OK:
+        user_id = user.id
         socketio.emit(
             "removed_from_project",
             {"project_id": project_id},
             room=f"{user.id}",
         )
+        notification_repo.delete_by_reciever_project_id(user_id, project_id)
         return {}, 200
     else:
         return {"message": result}, 409
