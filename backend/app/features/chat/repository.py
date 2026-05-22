@@ -23,9 +23,13 @@ class ChatRepository(BaseChatRepository):
             return None
         return db.session.query(Chat).filter(Chat.id == int(id)).first()
 
-    def add_chat(self, _project_id, _author_id):
+    def add_chat(self, _project_id, _author_id, _identificator):
         try:
-            chat = Chat(author_id=_author_id, project_id=_project_id)
+            chat = Chat(
+                author_id=_author_id,
+                project_id=_project_id,
+                identificator=_identificator,
+            )
             db.session.add(chat)
             db.session.commit()
             return chat

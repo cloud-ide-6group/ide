@@ -24,7 +24,7 @@ def create_chat(project_id, author_id, identificator):
         return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
 
     try:
-        chat = chat_repo.add_chat(project_id, author_id)
+        chat = chat_repo.add_chat(project_id, author_id, identificator)
         return chat, ResultsCodes.OK
     except Exception as e:
         print(e)
