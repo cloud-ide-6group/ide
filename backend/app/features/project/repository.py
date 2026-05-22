@@ -48,6 +48,7 @@ class ProjectRepository(BaseProjectRepository):
             db.session.delete(project)
             db.session.commit()
             return True
+
         return False
 
     def get_chats(self, project_id):

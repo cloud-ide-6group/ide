@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
 from .repository import project_repo, file_repo, message_repo, user_repo, language_repo
 from app.shared.extensions import socketio
+import shutil
+from pathlib import Path
 
 load_dotenv()
 
@@ -222,6 +224,7 @@ def delete_project(project_id, user_id):
 
     result = project_repo.delete_project(project_id)
     if result == True:
+        delete_from_disc(project.name)
         return ResultsCodes.OK
 
     return ResultsCodes.DELETE_ERROR
@@ -265,3 +268,17 @@ def get_project_info(project_id, user_id):
         }, ResultsCodes.OK
 
     return None, ResultsCodes.PROJECT_NOT_FOUND
+
+
+def delete_from_disc(project_name):
+    """
+    Удаляет проект с диска и его файлы
+
+    Args:
+        project_name (str): Имя проекта
+    """
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
+
+    path = Path(project_dir)
+    if path.exists():
+        shutil.rmtree(path)

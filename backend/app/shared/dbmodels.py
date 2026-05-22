@@ -71,7 +71,7 @@ class File(db.Model):
     )
     """ID родительской папки (null если в корне) (внешний ключ к File.id)"""
 
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
     """ID проекта-владельца"""
 
     is_folder = db.Column(db.Boolean, nullable=False)
@@ -257,10 +257,10 @@ class UserInProject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     """Уникальный идентификатор"""
 
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"))
     """ID проекта"""
 
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
     """ID пользователя"""
 
 
@@ -285,10 +285,10 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     """Уникальный идентификатор"""
 
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
     """ID проекта"""
 
-    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     """ID пользователя, которому отправлено уведомление (внешний ключ к User.id)"""
 
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
