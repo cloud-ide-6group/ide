@@ -350,11 +350,6 @@ def join_project_room(data):
                 messages, result_getting_messages = get_messages(c.id)
                 if result_getting_messages == ResultsCodes.OK:
                     chats_list.append({"id": c.id, "messages": messages})
-            socketio.emit(
-                "get_chats",
-                {"chats_list": chats_list},
-                room=f"{id}",
-            )
             return True
 
     return False

@@ -13,3 +13,12 @@ class BaseChatRepository:
 
     def get_by_project_id(self, project_id):
         return db.session.query(Chat).filter(Chat.project_id == project_id).all()
+
+    def get_by_identificator(self, identificator, project_id):
+        return (
+            db.session.query(Chat)
+            .filter(
+                (Chat.identificator == identificator) & (Chat.project_id == project_id)
+            )
+            .first()
+        )

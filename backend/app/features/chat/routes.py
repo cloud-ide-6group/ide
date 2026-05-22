@@ -85,8 +85,9 @@ def create_chat_route():
         return {"message": id_result}, 401
 
     project_id = data["project_id"]
+    identificator = data["identificator"]
 
-    chat, result = create_chat(project_id, id)
+    chat, result = create_chat(project_id, id, identificator)
 
     if result == ResultsCodes.OK:
         chats, result_code = get_chats(project_id)
@@ -95,11 +96,6 @@ def create_chat_route():
             messages, result_getting_messages = get_messages(c.id)
             if result_getting_messages == ResultsCodes.OK:
                 chats_list.append({"id": c.id, "messages": messages})
-        socketio.emit(
-            "get_chats",
-            {"chats_list": chats_list},
-            room=f"project_{project_id}",
-        )
         return {}, 201
     else:
         return {"message": result}, 409
@@ -183,11 +179,6 @@ def delete_chat_route():
             messages, result_getting_messages = get_messages(c.id)
             if result_getting_messages == ResultsCodes.OK:
                 chats_list.append({"id": c.id, "messages": messages})
-        socketio.emit(
-            "get_chats",
-            {"chats_list": chats_list},
-            room=f"project_{project_id}",
-        )
         return {"deleted_chat_id": chat_id}, 200
     else:
         return {"message": result}, 409
