@@ -71,7 +71,9 @@ class File(db.Model):
     )
     """ID родительской папки (null если в корне) (внешний ключ к File.id)"""
 
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
     """ID проекта-владельца"""
 
     is_folder = db.Column(db.Boolean, nullable=False)
@@ -131,6 +133,7 @@ class Chat(db.Model):
         >>> chat = Chat(
         ...     author_id=1,
         ...     project_id=10,
+        ...     identificator="abc10",
         ... )
     """
 
@@ -146,6 +149,9 @@ class Chat(db.Model):
         db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
     )
     """ID проекта-владельца"""
+
+    identificator = db.Column(db.Text, nullable=False)
+    """Уникальный идентификатор в контексте чатов. ЗАДАВАТЬ при создании."""
 
     messages = db.relationship(
         "Message",
@@ -285,10 +291,14 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     """Уникальный идентификатор"""
 
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False)
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
     """ID проекта"""
 
-    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    receiver_id = db.Column(
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
     """ID пользователя, которому отправлено уведомление (внешний ключ к User.id)"""
 
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
