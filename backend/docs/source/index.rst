@@ -25,6 +25,7 @@ documentation for details.
    modules/notifications
    modules/files
    modules/run_code
+   modules/chat
 
 .. toctree::
    :caption: Общие фичи

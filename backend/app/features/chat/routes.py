@@ -305,7 +305,7 @@ def join_chat_room_socket(data):
         return False
 
     project_id = data.get("project_id")
-    chat_identificator = data.get("chat_identificator")
+    chat_identificator = data.get("identificator")
     if not project_repo.is_user_in_project(id, project_id):
         return False
 
@@ -349,7 +349,7 @@ def leave_chat_room_socket(data):
         return False
 
     project_id = data.get("project_id")
-    chat_identificator = data.get("chat_identificator")
+    chat_identificator = data.get("identificator")
 
     project = project_repo.get_by_id(project_id)
     if project:
