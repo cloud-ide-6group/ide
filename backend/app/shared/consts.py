@@ -50,3 +50,4 @@ class ResultsCodes:
     INVALID_TOKEN = "Токен некорректен"
     USER_NOT_OWNER = "Пользователь не имеет права удалить проект"
     CHAT_ALREADY_EXISTS="Чат с таким идентификатором уже существует"
+    INCORRECT_SETUP="Некорректный файл conf.ctgson"

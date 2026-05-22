@@ -40,9 +40,12 @@ def run_code(project_id, user_id, app):
             print(ResultsCodes.INCORRECT_LANG)
             return
 
-        image_command = (
-            language.command + " " + MOUNT_DIR + read_start_file_from_conf(project_dir)
-        )
+        start_file = read_start_file_from_conf(project_dir)
+        if start_file is None:
+            print(ResultsCodes.INCORRECT_SETUP)
+            return
+
+        image_command = prepare_command(language.command, MOUNT_DIR, start_file)
 
         run_docker(project_dir, language.image_name, image_command, user_id, project_id)
 
@@ -88,7 +91,6 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
             "LC_ALL": "C.UTF-8",
             "PYTHONIOENCODING": "utf-8",
             "PYTHONUTF8": "1",
-            "NODE_OPTIONS": "--input-encoding=utf-8",
             "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8",
         },
     )
@@ -122,7 +124,9 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
                 )
 
     socketio.emit(
-        "console_output", {"data": "Программа завершена.", "is_ended": True}, room=str(user_id)
+        "console_output",
+        {"data": "Программа завершена.", "is_ended": True},
+        room=str(user_id),
     )
 
     container_id = redis_client.get(session_key)
@@ -173,3 +177,22 @@ def get_container(container_id):
             return container
         except Exception as e:
             return None
+
+
+def prepare_command(command, mount_dir, file_name):
+    """
+    Заменяет специальные символы актуальными в команде.
+
+    Args:
+        command (str): Исходная команда
+        mount_dir (str): Директория в которую монтировать в контейнере
+        file_name (str): Имя стартового файла
+
+    Returns:
+        str: Улучшенная команда
+    """
+    return (
+        command.replace("{file}", mount_dir + file_name)
+        .replace("{class}", file_name.split(".")[0])
+        .replace("?mount?", mount_dir[:-1])
+    )
