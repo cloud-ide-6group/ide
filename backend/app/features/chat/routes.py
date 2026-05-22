@@ -1,5 +1,5 @@
 from . import chat_bp
-from flask import request
+from flask import request, session
 from app.shared.features.jwt_token.service import (
     get_id,
     get_jwt_from_header,
@@ -15,6 +15,8 @@ from .service import (
     get_chats,
 )
 from app.shared.extensions import socketio
+from .repository import chat_repo, project_repo
+from flask_socketio import join_room, leave_room
 
 
 @chat_bp.route("/chat/create", methods=["POST"])
@@ -275,3 +277,82 @@ def create_message_route():
         return {}, 200
     else:
         return {"message": result}, 409
+
+
+@socketio.on("join_chat_room")
+def join_chat_room_socket(data):
+    """
+    Сокет join_project_room. Клиент открывает проект и попадает в его комнату. Необходимо вызывать при открытии проекта.
+
+    Args:
+        data (dict): Словарь с данными проекта.
+            {
+                project_id (int): Уникальный идентификатор проекта
+            }
+
+    Returns:
+        bool: True при успешном подключении, False при ошибке
+
+    Emits:
+        files_list (dict): {
+            "files_trees": [
+                {
+                    "id": int,
+                    "name": str,
+                    "is_folder": bool,
+                    "children": list  # рекурсивно та же структура
+                }
+            ]
+        }
+
+    Example:
+        >>> data = {"project_id": 42}
+    """
+    id = session.get("user_id")
+    if not id:
+        return False
+
+    project_id = data.get("project_id")
+    chat_identificator = data.get("chat_identificator")
+    if not project_repo.is_user_in_project(id, project_id):
+        return False
+
+    project = project_repo.get_by_id(project_id)
+    if project:
+        chat = chat_repo.get_by_identificator(chat_identificator, project_id)
+        if chat:
+            new_room = f"chat_{chat.id}"
+            join_room(new_room)
+
+    return False
+
+
+@socketio.on("leave_chat_room")
+def leave_chat_room_socket(data):
+    """
+    Сокет leave_project_room. Клиент покидает комнату проекта
+
+    Args:
+        data (dict): Словарь с данными проекта.
+          {
+            project_id (int): Уникальный идентификатор проекта
+          }
+
+    Example:
+        >>> data = {"project_id": 3}
+    """
+    id = session.get("user_id")
+    if not id:
+        return False
+
+    project_id = data.get("project_id")
+    chat_identificator = data.get("chat_identificator")
+
+    project = project_repo.get_by_id(project_id)
+    if project:
+        chat = chat_repo.get_by_identificator(chat_identificator, project_id)
+        if chat:
+            old_room = f"chat_{chat.id}"
+            leave_room(old_room)
+
+    return True
