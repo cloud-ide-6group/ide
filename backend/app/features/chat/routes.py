@@ -38,6 +38,9 @@ def create_chat_route():
               project_id:
                 type: integer
                 example: 80
+              identificator:
+                type: string
+                example: "abc5"
     responses:
       201:
         description: Успешное создание
@@ -270,7 +273,7 @@ def create_message_route():
                 socketio.emit(
                     "get_messages",
                     {"chat_id": chat_id, "messages": messages},
-                    room=f"project_{project_id}",
+                    room=f"chat_{chat_id}",
                 )
         except Exception as e:
             print(f"Error: {e}, ResultCodes: {get_project_id_result}")
@@ -282,31 +285,20 @@ def create_message_route():
 @socketio.on("join_chat_room")
 def join_chat_room_socket(data):
     """
-    Сокет join_project_room. Клиент открывает проект и попадает в его комнату. Необходимо вызывать при открытии проекта.
+    Сокет join_chat_room. Клиент открывает чат и попадает в его комнату. Необходимо вызывать при открытии чата.
 
     Args:
         data (dict): Словарь с данными проекта.
             {
-                project_id (int): Уникальный идентификатор проекта
+                project_id (int): Id проекта
+                identificator (str): Уникальный идентификатор чата, не id
             }
 
     Returns:
         bool: True при успешном подключении, False при ошибке
 
-    Emits:
-        files_list (dict): {
-            "files_trees": [
-                {
-                    "id": int,
-                    "name": str,
-                    "is_folder": bool,
-                    "children": list  # рекурсивно та же структура
-                }
-            ]
-        }
-
     Example:
-        >>> data = {"project_id": 42}
+        >>> data = {"project_id": 3, "identificator": "abc6"}
     """
     id = session.get("user_id")
     if not id:
@@ -323,6 +315,16 @@ def join_chat_room_socket(data):
         if chat:
             new_room = f"chat_{chat.id}"
             join_room(new_room)
+            try:
+                messages, code = get_messages(chat.id)
+                if code == ResultsCodes.OK:
+                    socketio.emit(
+                        "get_messages",
+                        {"chat_id": chat.id, "messages": messages},
+                        room=f"chat_{chat.id}",
+                    )
+            except Exception as e:
+                print(f"Error: {e}")
 
     return False
 
@@ -330,16 +332,17 @@ def join_chat_room_socket(data):
 @socketio.on("leave_chat_room")
 def leave_chat_room_socket(data):
     """
-    Сокет leave_project_room. Клиент покидает комнату проекта
+    Сокет leave_chat_room. Клиент покидает комнату чата
 
     Args:
         data (dict): Словарь с данными проекта.
           {
-            project_id (int): Уникальный идентификатор проекта
+            project_id (int): Id проекта
+            identificator (str): Уникальный идентификатор чата, не id
           }
 
     Example:
-        >>> data = {"project_id": 3}
+        >>> data = {"project_id": 3, "identificator": "abc6"}
     """
     id = session.get("user_id")
     if not id:
