@@ -52,5 +52,30 @@ object HttpRoutes {
     /**
      * Эндпоинт удаления уведомления.
      */
-    const val DELETE_NOTIFICATION = "/delete/notification"
+    const val DELETE_NOTIFICATION = "/notification/delete"
+
+    /**
+     * Эндпоинт создания файла.
+     */
+    const val CREATE_FILE = "/files/create"
+
+    /**
+     * Эндпоинт удаления файла.
+     */
+    const val DELETE_FILE = "/files/delete"
+
+    /**
+     * Эндпоинт переименования файла.
+     */
+    const val RENAME_FILE = "/files/rename"
+
+    /**
+     * Эндпоинт создания чата.
+     */
+    const val CREATE_CHAT = "/chat/create"
+
+    /**
+     * Эндпоинт создания сообщения.
+     */
+    const val CREATE_MESSAGE = "/message/create"
 }
