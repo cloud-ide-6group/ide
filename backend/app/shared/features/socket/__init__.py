@@ -57,18 +57,6 @@ def connect(auth):
             >>>         "author": "username",
             >>>         "send_time": "2026-05-21 15:30:45"
             >>> }
-        - get_chats -- получить чаты с сообщениями
-            >>> {"chats_list": 
-            >>>     "id": 80,
-            >>>     "messages":
-            >>>         [
-            >>>             "id": 80,
-            >>>             "text": "message",
-            >>>             "author": "username",
-            >>>             "send_time": "2026-05-21 15:30:45"
-            >>>         ]
-            >>> }
-
         - removed_from_project -- был удален из проекта. После этого сразу отправляем leave_project_room
             >>> {"project_id": 81}
 
