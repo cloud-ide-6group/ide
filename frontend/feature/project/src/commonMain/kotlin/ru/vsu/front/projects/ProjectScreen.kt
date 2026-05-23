@@ -203,7 +203,7 @@ fun WindowScope.ProjectScreen(
                                     modifier = Modifier
                                         .weight(1f),
                                     text = uiState.selectedFileContent ?: "",
-                                    language = currentLanguage, // 3. ПЕРЕДАЕМ ВЫЧИСЛЕННЫЙ ЯЗЫК
+                                    language = currentLanguage,
                                     onContentChanged = { content ->
                                         viewModel.processCommand(
                                             ProjectCommand.UpdateFileContent(

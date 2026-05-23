@@ -12,6 +12,7 @@ import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.projects.ProjectCommand.*
 import ru.vsu.front.projects.ProjectEffect.ShowMessage
+import kotlin.collections.flatMap
 
 /**
  * Вьюмодель экрана кода проекта.
@@ -99,12 +100,11 @@ class ProjectViewModel(
                     _uiState.update {
                         it.copy(
                             files = files,
-                            recentlyFiles = it.recentlyFiles.filter { file -> file in files }.toSet(),
+                            recentlyFiles = it.recentlyFiles.filter { file -> file in files }.toSet()
                         )
                     }
                 }
                 .launchIn(viewModelScope)
-
             observeConsoleOutputUseCase(projectId)
                 .flowOn(dispatcherProvider.io)
                 .onEach { consoleOutput ->
@@ -199,6 +199,8 @@ class ProjectViewModel(
             }
 
             is ClickDeleteFile -> {
+                val deletedIds = findNodeAndDescendantsIds(_uiState.value.files, command.fileId)
+
                 viewModelScope.launch(dispatcherProvider.io) {
                     when (val result = deleteFileUseCase(fileId = command.fileId)) {
                         is Response.Error<*> -> {
@@ -208,7 +210,6 @@ class ProjectViewModel(
                                 is RequestError.NetworkException,
                                 is RequestError.UnknownError -> {
                                     _events.emit(ShowMessage(requestError.message))
-                                    processCommand(ClickDeleteFileFromRecentlyFiles(command.fileId))
                                 }
 
                                 else -> {
@@ -218,7 +219,7 @@ class ProjectViewModel(
 
                         is Response.Success<*> -> {
                             _events.emit(ShowMessage(message = "Файл удалён"))
-                            processCommand(ClickDeleteFileFromRecentlyFiles(command.fileId))
+                            removeDeletedFilesFromUI(deletedIds)
                         }
                     }
                 }
@@ -342,29 +343,7 @@ class ProjectViewModel(
             }
 
             is ClickDeleteFileFromRecentlyFiles -> {
-                val currentState = _uiState.value
-                val isClosingSelectedFile = command.fileId == currentState.selectedFileId
-                val newRecentlyFiles = currentState.recentlyFiles.filter { it.id != command.fileId }.toSet()
-
-                _uiState.update {
-                    it.copy(recentlyFiles = newRecentlyFiles)
-                }
-
-                if (isClosingSelectedFile) {
-                    val fileToSelectNext = newRecentlyFiles.firstOrNull()
-
-                    if (fileToSelectNext != null) {
-                        processCommand(ClickFile(fileToSelectNext.id))
-                    } else {
-                        observeFileContentJob?.cancel()
-                        _uiState.update {
-                            it.copy(
-                                selectedFileId = null,
-                                selectedFileContent = null
-                            )
-                        }
-                    }
-                }
+                removeDeletedFilesFromUI(setOf(command.fileId))
             }
 
             is ClickChat -> {
@@ -457,14 +436,14 @@ class ProjectViewModel(
         }
 
         observeFileContentJob?.cancel()
-
         _uiState.update { previousState ->
+            val flatFiles = previousState.files.flattenAll()
+
             previousState.copy(
                 selectedFileId = fileId,
-                recentlyFiles = previousState.recentlyFiles + previousState.files.first { it.id == fileId },
+                recentlyFiles = (previousState.recentlyFiles + flatFiles.first { it.id == fileId }).toSet(),
             )
         }
-
         observeFileContentJob = observeFileContentUseCase(fileId = fileId)
             .flowOn(dispatcherProvider.io)
             .onEach { content ->
@@ -493,6 +472,84 @@ class ProjectViewModel(
                 }
             }
             .launchIn(viewModelScope)
+    }
+
+    /**
+     * Преобразует лист деревьев в прямой лист.
+     */
+    private fun List<FileNode>.flattenAll(): List<FileNode> {
+        return flatMap { node ->
+            listOf(node.copy(children = emptyList())) +
+                    node.children.flattenAll()
+        }
+    }
+
+    /**
+     * Собирает идентификаторы узла и всех его потомков.
+     */
+    private fun findNodeAndDescendantsIds(nodes: List<FileNode>, targetId: Int): Set<Int> {
+        val result = mutableSetOf<Int>()
+
+        fun findNode(list: List<FileNode>): FileNode? {
+            for (node in list) {
+                if (node.id == targetId) return node
+                val found = findNode(node.children)
+                if (found != null) return found
+            }
+            return null
+        }
+
+        val targetNode = findNode(nodes) ?: return emptySet()
+
+        fun collectIds(node: FileNode) {
+            result.add(node.id)
+            node.children.forEach { collectIds(it) }
+        }
+
+        collectIds(targetNode)
+        return result
+    }
+
+    /**
+     * Удаляет переданный список файлов из панели недавних, если активный файл оказался среди удаленных.
+     */
+    private fun removeDeletedFilesFromUI(deletedIds: Set<Int>) {
+        if (deletedIds.isEmpty()) return
+
+        val currentState = _uiState.value
+        val isClosingSelectedFile = currentState.selectedFileId in deletedIds
+        val newRecentlyFiles = currentState.recentlyFiles.filter { it.id !in deletedIds }.toSet()
+
+        _uiState.update {
+            it.copy(recentlyFiles = newRecentlyFiles)
+        }
+
+        if (isClosingSelectedFile) {
+            val fileToSelectNext = newRecentlyFiles.firstOrNull()
+
+            if (fileToSelectNext != null) {
+                processCommand(ClickFile(fileToSelectNext.id))
+            } else {
+                observeFileContentJob?.cancel()
+
+                val activeLink = currentState.activeChatLink
+                if (activeLink != null) {
+                    viewModelScope.launch(dispatcherProvider.io) {
+                        leaveChatUseCase(activeLink, projectId)
+                    }
+                }
+
+                _uiState.update {
+                    it.copy(
+                        selectedFileId = null,
+                        selectedFileContent = null,
+                        activeChatId = null,
+                        activeChatLink = null,
+                        messages = emptyList()
+                    )
+                }
+            }
+        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -560,7 +617,7 @@ data class ProjectState(
     val activeChatLink: String? = null,
     val activeChatId: Int? = null,
     val messages: List<Message> = emptyList(),
-    val chatInputValue: String = "",
+    val chatInputValue: String = ""
 )
 
 /**
