@@ -1,18 +1,15 @@
 package ru.vsu.front.projects.component
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
@@ -112,7 +109,7 @@ fun TerminalPanel(
         val unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f)
         val hoverColor = CodeTogetherTheme.colors.primary
         VerticalScrollbar(
-            modifier = modifier,
+            modifier = Modifier,
             adapter = rememberScrollbarAdapter(terminalLinesState),
             style = LocalScrollbarStyle.current.copy(
                 unhoverColor = unhoverColor,

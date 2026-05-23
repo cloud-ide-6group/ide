@@ -1,10 +1,14 @@
 package ru.vsu.front.projects.component
 
+import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -17,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
@@ -64,7 +69,9 @@ fun Messages(
                 width = (width - it).coerceIn(MIN_WIDTH_MESSAGES, MAX_WIDTH_MESSAGES)
             },
         )
-        Column {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -112,6 +119,18 @@ fun Messages(
                 onEnterPressed = onSendClick
             )
         }
+
+        Spacer(modifier = Modifier.width(8.dp))
+        val unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f)
+        val hoverColor = CodeTogetherTheme.colors.primary
+        VerticalScrollbar(
+            modifier = Modifier,
+            adapter = rememberScrollbarAdapter(scrollState = state),
+            style = LocalScrollbarStyle.current.copy(
+                unhoverColor = unhoverColor,
+                hoverColor = hoverColor
+            )
+        )
     }
 }
 
