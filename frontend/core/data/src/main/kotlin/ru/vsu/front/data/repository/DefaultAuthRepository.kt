@@ -21,7 +21,7 @@ import ru.vsu.front.network.HttpRoutes.SIGN
 /**
  * Реализация интерфейса [AuthRepository] для работы с сетевым API.
  *
- * @param withoutJWTTokensHttpClient Клиент Ktor для выполнения запросов аутентификации.
+ * @property withoutJWTTokensHttpClient Клиент Ktor для выполнения запросов аутентификации.
  */
 class DefaultAuthRepository(
     private val withoutJWTTokensHttpClient: HttpClient
@@ -128,7 +128,6 @@ class DefaultAuthRepository(
      * @param refreshToken Токен обновления.
      *
      * @return [Response.Success] при успешном обновлении.
-     * @return [RequestError.Unauthorized] при недействительном токене обновления (401).
      * @return [RequestError.UnknownError] при непредвиденной ошибке.
      * @return [RequestError.NetworkException] при ошибке сети.
      */
@@ -149,11 +148,6 @@ class DefaultAuthRepository(
                 HttpStatusCode.OK -> {
                     val tokens = response.body<AuthTokensDto>()
                     Response.Success(tokens.toEntity())
-                }
-
-                HttpStatusCode.Unauthorized -> {
-                    val message = response.body<ErrorResponseDto>().message
-                    Response.Error(RequestError.Unauthorized(message))
                 }
 
                 else -> {
