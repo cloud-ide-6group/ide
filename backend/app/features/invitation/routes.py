@@ -28,15 +28,29 @@ def invite():
           schema:
             type: object
             properties:
-              project_name:
-                type: string
-                example: "TestProject"
+              project_id:
+                type: integer
+                example: 89
               invited_user_email:
                 type: string
                 example: "test@mail.ru"
     responses:
-      200:
+      200: "id": user.id, "email": user.email, "name": user.name
         description: Успешное приглашение
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 24
+                email:
+                  type: string
+                  example: "test@mail.ru"
+                name:
+                  type: string
+                  example: "username"
       401:
         description: Проблема с токеном
         content:
@@ -82,12 +96,12 @@ def invite():
     if id_result != ResultsCodes.OK:
         return {"message": id_result}, 401
 
-    project_name = data["project_name"]
+    project_id = data["project_id"]
     invited_user_email = data["invited_user_email"]
 
-    result = add_user_in_project(project_name, invited_user_email, id)
+    user, result = add_user_in_project(project_id, invited_user_email, id)
     if result == ResultsCodes.OK:
-        return {}, 200
+        return {"id": user.id, "email": user.email, "name": user.name}, 200
     else:
         return {"message": result}, 409
 
