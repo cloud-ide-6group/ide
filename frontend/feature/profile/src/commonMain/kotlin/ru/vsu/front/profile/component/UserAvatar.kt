@@ -20,8 +20,8 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import front.feature.profile.generated.resources.Res
-import front.feature.profile.generated.resources.edit_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import kotlin.io.encoding.Base64
 
@@ -72,7 +72,7 @@ internal fun UserAvatar(
         if (isHovered) {
             Icon(
                 modifier = Modifier.matchParentSize().scale(0.5f),
-                painter = painterResource(Res.drawable.edit_24dp),
+                painter = painterResource(AppIcons.Edit),
                 contentDescription = "Edit",
                 tint = CodeTogetherTheme.colors.primary.copy(alpha = 0.75f),
             )

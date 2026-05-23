@@ -37,7 +37,7 @@ internal fun ProjectsSection(
     modifier: Modifier = Modifier,
     onChangeVisibleClick: () -> Unit,
     onCreateProjectClick: () -> Unit,
-    onProjectClick: (Int) -> Unit
+    onProjectClick: (Int, String) -> Unit
 ) {
     Row(
         modifier = modifier
@@ -101,7 +101,7 @@ internal fun ProjectsSectionPreview() {
             onCreateProjectClick = {
 
             },
-            onProjectClick = {
+            onProjectClick = { _, _ ->
 
             }
         )
