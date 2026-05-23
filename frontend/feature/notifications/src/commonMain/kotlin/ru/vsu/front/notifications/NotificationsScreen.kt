@@ -2,10 +2,12 @@ package ru.vsu.front.notifications
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Tab
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,11 +18,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.WindowScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.ErrorScreen
 import ru.vsu.front.designsystem.component.LoadingScreen
+import ru.vsu.front.designsystem.component.TopBarButton
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.notifications.component.Notifications
 
@@ -31,8 +36,14 @@ import ru.vsu.front.notifications.component.Notifications
  * @param modifier Модификатор для настройки.
  */
 @Composable
-fun NotificationsScreen(
+fun WindowScope.NotificationsScreen(
     viewModel: NotificationsViewModel,
+    onMinimizeClick: () -> Unit,
+    onMaximizeClick: () -> Unit,
+    onCloseClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +61,24 @@ fun NotificationsScreen(
     CodeTogetherScaffold(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
-        backgroundColor = CodeTogetherTheme.colors.primaryBackground
+        backgroundColor = CodeTogetherTheme.colors.primaryBackground,
+        onMinimizeClick = onMinimizeClick,
+        onMaximizeClick = onMaximizeClick,
+        onCloseClick = onCloseClick,
+        topBarContent = {
+            TopBarButton(
+                onClick = onSettingsClick,
+                icon = AppIcons.Settings,
+            )
+            TopBarButton(
+                onClick = onLogoutClick,
+                icon = AppIcons.Logout,
+            )
+            TopBarButton(
+                onClick = onBackClick,
+                icon = AppIcons.Back,
+            )
+        },
     ) {
         when(val currentState = uiState) {
             is UiStateNotifications.Loaded -> {
