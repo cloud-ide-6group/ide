@@ -244,7 +244,7 @@ def get_project_info(project_id, user_id):
             - "project_name": "Project",
             - "project_id": 9,
             - "language_name": "JAVA",
-            - "users": [ {"id": 9, "name": "UserName"} ]
+            - "users": [ {"id": 9, "name": "UserName", "email" "user_name@mail.ru"} ]
         ResultsCodes: Результат выполнения операции
     """
     project = project_repo.get_by_id(project_id)
@@ -257,7 +257,7 @@ def get_project_info(project_id, user_id):
         users_raw = user_repo.get_by_project_id(project_id, project.owner_id)
         users = []
         for u in users_raw:
-            users.append({"id": u.id, "name": u.name})
+            users.append({"id": u.id, "name": u.name, "email": u.email})
 
         return {
             "user_is_owner": project.owner_id == user_id,

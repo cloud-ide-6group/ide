@@ -244,6 +244,10 @@ def get_project_info_route():
                         type: string
                         description: Имя пользователя
                         example: "UserName"
+                      email:
+                        type: string
+                        description: Почтв пользователя
+                        example: "user_name@mail.ru"
       401:
         description: Неверный access токен, доступ запрещен
         content:
