@@ -15,6 +15,7 @@ import front.core.designsystem.generated.resources.close_24dp
 import front.core.designsystem.generated.resources.code_horizontal_24dp
 import front.core.designsystem.generated.resources.code_vertical_24dp
 import front.core.designsystem.generated.resources.confirm_24dp
+import front.core.designsystem.generated.resources.delete_24dp
 import front.core.designsystem.generated.resources.edit_24dp
 import front.core.designsystem.generated.resources.file_24dp
 import front.core.designsystem.generated.resources.folder_24dp
@@ -126,4 +127,7 @@ object AppIcons {
 
     val Info
         get() = Res.drawable.info_24dp
+
+    val Delete
+        get() = Res.drawable.delete_24dp
 }
