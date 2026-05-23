@@ -2,6 +2,7 @@ package ru.vsu.front.data.repository
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -18,6 +19,7 @@ import ru.vsu.front.data.entity.dto.ProjectInfoDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.request.GetProjectInfoRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
+import ru.vsu.front.data.entity.response.ProjectInfoResponse
 import ru.vsu.front.data.mapper.toEntity
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
@@ -116,18 +118,13 @@ class DefaultProjectRepository(
     override suspend fun getProjectInfo(projectId: Int): Response<ProjectInfo> {
        return try {
            val response = mainHttpClientManager.getClient().get(GET_PROJECT_INFO) {
-               contentType(ContentType.Application.Json)
-               setBody(
-                   GetProjectInfoRequest(
-                       projectId = projectId
-                   )
-               )
+               parameter("project_id", projectId)
            }
 
            when (response.status) {
                HttpStatusCode.OK -> {
-                   val projectInfo = response.body<ProjectInfoDto>()
-                   Response.Success(projectInfo.toEntity())
+                   val projectInfoDto = response.body<ProjectInfoResponse>().projectInfoDto
+                   Response.Success(projectInfoDto.toEntity())
                }
 
                HttpStatusCode.Forbidden,
