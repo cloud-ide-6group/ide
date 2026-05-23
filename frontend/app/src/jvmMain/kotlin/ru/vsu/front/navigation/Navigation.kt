@@ -72,8 +72,8 @@ fun WindowScope.Navigation(
             val viewModel = koinViewModel<ProfileViewModel>()
             ProfileScreen(
                 viewModel = viewModel,
-                onProjectInfoClick = { projectId, projectName ->
-                    navController.navigate(Route.Project(projectId, projectName))
+                onProjectInfoClick = { projectId ->
+                    navController.navigate(Route.Project(projectId))
                 },
                 onMinimizeClick = onMinimizeClick,
                 onMaximizeClick = onMaximizeClick,

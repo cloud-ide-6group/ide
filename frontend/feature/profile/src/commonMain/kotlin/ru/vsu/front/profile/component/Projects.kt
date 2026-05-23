@@ -27,7 +27,7 @@ internal fun Projects(
     projects: List<Project>,
     state: LazyListState,
     modifier: Modifier = Modifier,
-    onProjectClick: (Int, String) -> Unit
+    onProjectClick: (Int) -> Unit
 ) {
     LazyColumn(
         state = state,
@@ -38,7 +38,7 @@ internal fun Projects(
             ProjectItem(
                 project = it,
                 onProjectClick = {
-                    onProjectClick(it.id, it.name)
+                    onProjectClick(it.id)
                 }
             )
         }
@@ -59,7 +59,7 @@ internal fun ProjectsPreview() {
                 }
             },
             state = rememberLazyListState(),
-            onProjectClick = { _, _ ->
+            onProjectClick = { _ ->
 
             }
         )
