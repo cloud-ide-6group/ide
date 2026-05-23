@@ -15,4 +15,5 @@ object SocketRoutes {
     const val LEAVE_PROJECT_ROOM = "leave_project_room"
     const val REMOVED_FROM_PROJECT = "removed_from_project"
     const val GET_MESSAGES = "get_messages"
+    const val NOTIFICATIONS_LIST = "notifications_list"
 }
