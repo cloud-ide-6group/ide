@@ -18,6 +18,7 @@ import front.core.designsystem.generated.resources.confirm_24dp
 import front.core.designsystem.generated.resources.edit_24dp
 import front.core.designsystem.generated.resources.file_24dp
 import front.core.designsystem.generated.resources.folder_24dp
+import front.core.designsystem.generated.resources.info_24dp
 import front.core.designsystem.generated.resources.java
 import front.core.designsystem.generated.resources.javascript
 import front.core.designsystem.generated.resources.logout_24dp
@@ -122,4 +123,7 @@ object AppIcons {
 
     val ArrowRightDown
         get() = Res.drawable.arrow_right_down_24dp
+
+    val Info
+        get() = Res.drawable.info_24dp
 }
