@@ -101,6 +101,7 @@ fun TerminalPanel(
             CodeTogetherTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = consoleInput,
+                hint = "Input...",
                 onValueChange = onInputChange,
                 onEnterPressed = onEnterPressed
             )
