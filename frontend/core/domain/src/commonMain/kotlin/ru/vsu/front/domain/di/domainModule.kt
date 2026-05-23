@@ -39,6 +39,7 @@ import ru.vsu.front.domain.usecase.*
  * - [GetProjectInfoUseCase] Получение информации о проекте.
  * - [DeleteProjectUseCase] Получение информации о проекте.
  * - [KickUserUseCase] Исключение участника из проекта.
+ * - [InviteUserUseCase] Приглашение пользователя в проект.
  */
 val domainModule = module {
     single {
@@ -167,5 +168,9 @@ val domainModule = module {
 
     single {
         KickUserUseCase(get())
+    }
+
+    single {
+        InviteUserUseCase(get())
     }
 }

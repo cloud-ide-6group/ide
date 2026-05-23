@@ -90,7 +90,12 @@ object HttpRoutes {
     const val DELETE_PROJECT = "/project/delete"
 
     /**
-     * Эндпоинт исключения участника.
+     * Эндпоинт исключения участника из проекта.
      */
     const val KICK_USER = "/delete/invited"
+
+    /**
+     * Эндпоинт приглашения пользователя в проект.
+     */
+    const val INVITE_USER = "/invite"
 }
