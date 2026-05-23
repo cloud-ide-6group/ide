@@ -21,13 +21,15 @@ import ru.vsu.front.model.entity.Project
  * @param state Состояние прокрутки списка [LazyListState], используется также для привязки скроллбара.
  * @param modifier Модификатор для настройки.
  * @param onProjectClick Коллбек, возвращающий ID проекта при клике на его карточку.
+ * @param onProjectInfoClick Коллбек, срабатывающий при клике на иконку информации о проекте.
  */
 @Composable
 internal fun Projects(
     projects: List<Project>,
     state: LazyListState,
     modifier: Modifier = Modifier,
-    onProjectClick: (Int) -> Unit
+    onProjectClick: (Int) -> Unit,
+    onProjectInfoClick: (Int) -> Unit,
 ) {
     LazyColumn(
         state = state,
@@ -39,7 +41,8 @@ internal fun Projects(
                 project = it,
                 onProjectClick = {
                     onProjectClick(it.id)
-                }
+                },
+                onProjectInfoClick = onProjectInfoClick
             )
         }
     }
@@ -60,6 +63,9 @@ internal fun ProjectsPreview() {
             },
             state = rememberLazyListState(),
             onProjectClick = { _ ->
+
+            },
+            onProjectInfoClick = {
 
             }
         )

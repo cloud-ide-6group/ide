@@ -43,6 +43,7 @@ fun WindowScope.ProfileScreen(
     onNotificationsClick: () -> Unit,
     onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onProjectClick: (Int) -> Unit,
     onProjectInfoClick: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -171,9 +172,8 @@ fun WindowScope.ProfileScreen(
                         onCreateProjectClick = {
                             viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
                         },
-                        onProjectClick = { projectId ->
-                            onProjectInfoClick(projectId)
-                        }
+                        onProjectClick = onProjectClick,
+                        onProjectInfoClick = onProjectInfoClick
                     )
                 }
                 CustomDialog(

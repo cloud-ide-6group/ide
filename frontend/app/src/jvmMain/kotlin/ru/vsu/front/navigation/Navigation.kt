@@ -72,9 +72,6 @@ fun WindowScope.Navigation(
             val viewModel = koinViewModel<ProfileViewModel>()
             ProfileScreen(
                 viewModel = viewModel,
-                onProjectInfoClick = { projectId ->
-                    navController.navigate(Route.Project(projectId))
-                },
                 onMinimizeClick = onMinimizeClick,
                 onMaximizeClick = onMaximizeClick,
                 onCloseClick = onCloseClick,
@@ -82,7 +79,13 @@ fun WindowScope.Navigation(
                 onNotificationsClick = {
                     navController.navigate(Route.Notifications)
                 },
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                onProjectClick = { projectId ->
+                    navController.navigate(Route.Project(projectId))
+                },
+                onProjectInfoClick = { projectId ->
+                    navController.navigate(Route.ProjectInfo(projectId))
+                }
             )
         }
 
@@ -101,9 +104,11 @@ fun WindowScope.Navigation(
             )
         }
 
-        composable<Route.ProjectInfo> {
+        composable<Route.ProjectInfo> { navBackStackEntry ->
+            val projectId = navBackStackEntry.toRoute<Route.ProjectInfo>().projectId
+
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CodeTogetherText(text = "Project Info Screen")
+                CodeTogetherText(text = "Project Info Screen $projectId")
             }
         }
 
