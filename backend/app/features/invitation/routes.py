@@ -92,7 +92,7 @@ def invite():
         return {"message": result}, 409
 
 
-@invitation_bp.route("/delete/invited", methods=["DELETE"])
+@invitation_bp.route("/invited/delete", methods=["DELETE"])
 def delete_invited():
     """
     Удалить пользователя из проекта
