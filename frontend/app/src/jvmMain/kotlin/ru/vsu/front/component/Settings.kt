@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import front.app.generated.resources.Res
-import front.app.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ru.vsu.front.ThemeSettings
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
@@ -32,8 +32,8 @@ import ru.vsu.front.designsystem.theme.DEFAULT_PRIMARY_COLOR
  *
  * @param visible Видимость настроек.
  * @param modifier Modifier для настройки.
- * @param themeSettings Объект класса настройки темы.
- * @param onDismissRequest Колобэк, вызываемый при клике вне области контента (попытка закрыть диалог).
+ * @param themeSettings Объект класса настроек темы.
+ * @param onDismissRequest Коллбэк, вызываемый при клике вне области контента.
  * @param onColorClick Коллбэк, вызываемый при клике на колесо по цвету.
  * @param content Слот для контента.
  */
@@ -97,7 +97,7 @@ internal fun Settings(
                                 },
                                 content = {
                                     Icon(
-                                        painter = painterResource(Res.drawable.close_24dp),
+                                        painter = painterResource(AppIcons.Close),
                                         contentDescription = "Set default primary color",
                                         tint = CodeTogetherTheme.colors.primary
                                     )
