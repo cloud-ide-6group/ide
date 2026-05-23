@@ -26,6 +26,8 @@ import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen
 import ru.vsu.front.profile.ProfileViewModel
+import ru.vsu.front.projectinfo.ProjectInfoScreen
+import ru.vsu.front.projectinfo.ProjectInfoViewModel
 import ru.vsu.front.projects.ProjectScreen
 import ru.vsu.front.projects.ProjectViewModel
 
@@ -107,9 +109,26 @@ fun WindowScope.Navigation(
         composable<Route.ProjectInfo> { navBackStackEntry ->
             val projectId = navBackStackEntry.toRoute<Route.ProjectInfo>().projectId
 
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CodeTogetherText(text = "Project Info Screen $projectId")
-            }
+            val viewModel = koinViewModel<ProjectInfoViewModel>(
+                parameters = {
+                    parametersOf(projectId)
+                }
+            )
+
+            ProjectInfoScreen(
+                viewModel = viewModel,
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick,
+                onLogoutClick = onLogoutClick,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onRemovedFromProject = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable<Route.Project> { navBackStackEntry ->
