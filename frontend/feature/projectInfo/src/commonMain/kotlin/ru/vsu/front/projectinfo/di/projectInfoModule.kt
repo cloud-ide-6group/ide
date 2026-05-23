@@ -17,6 +17,7 @@ val projectInfoModule = module {
             get(),
             get(),
             get(),
+            get(),
         )
     }
 }

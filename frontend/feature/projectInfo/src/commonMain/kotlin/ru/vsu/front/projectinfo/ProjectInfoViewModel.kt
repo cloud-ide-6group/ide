@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.ConnectToTheProjectRoomUseCase
+import ru.vsu.front.domain.usecase.GetProjectInfoUseCase
 import ru.vsu.front.domain.usecase.ObserveFilesUseCase
 import ru.vsu.front.model.entity.FileNode
 
@@ -18,10 +19,12 @@ class ProjectInfoViewModel(
     private val projectId: Int,
     private val observeFilesUseCase: ObserveFilesUseCase,
     private val connectToTheProjectRoomUseCase: ConnectToTheProjectRoomUseCase,
+    private val getProjectInfoUseCase: GetProjectInfoUseCase,
     private val dispatcherProvider: DispatcherProvider,
 ): ViewModel() {
 
     init {
+        println("projectId: $projectId")
         viewModelScope.launch(dispatcherProvider.io) {
             connectToTheProjectRoomUseCase(projectId)
             observeFilesUseCase(projectId)
@@ -33,6 +36,7 @@ class ProjectInfoViewModel(
                     }
                 }
                 .launchIn(viewModelScope)
+            getProjectInfoUseCase(projectId).also { println(it) }
         }
     }
     private val _uiState = MutableStateFlow(ProjectInfoState())
