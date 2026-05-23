@@ -213,7 +213,6 @@ fun WindowScope.ProjectScreen(
                                         )
                                     },
                                     onLinkClick = { identificator ->
-                                        println(identificator)
                                         viewModel.processCommand(ProjectCommand.ClickChat(identificator))
                                     }
                                 )

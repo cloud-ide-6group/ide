@@ -62,8 +62,6 @@ fun Message(
                         color = CodeTogetherTheme.colors.secondaryText,
                         style = TextStyle(color = CodeTogetherTheme.colors.secondaryText, fontSize = 13.sp),
                     )
-
-                    println(message.sendTime)
                 }
                 CodeTogetherText(
                     text = message.text,
