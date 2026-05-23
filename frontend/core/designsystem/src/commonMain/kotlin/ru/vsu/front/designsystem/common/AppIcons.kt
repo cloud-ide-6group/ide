@@ -28,6 +28,7 @@ import front.core.designsystem.generated.resources.maximize_24dp
 import front.core.designsystem.generated.resources.minimize_24dp
 import front.core.designsystem.generated.resources.notifications_24dp
 import front.core.designsystem.generated.resources.python
+import front.core.designsystem.generated.resources.remove_24dp
 import front.core.designsystem.generated.resources.run_24dp
 import front.core.designsystem.generated.resources.settings_24dp
 import front.core.designsystem.generated.resources.stop_24dp
@@ -130,4 +131,7 @@ object AppIcons {
 
     val Delete
         get() = Res.drawable.delete_24dp
+
+    val Remove
+        get() = Res.drawable.remove_24dp
 }
