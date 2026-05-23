@@ -13,6 +13,7 @@ import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
+import ru.vsu.front.projectinfo.ProjectInfoEffect.*
 
 class ProjectInfoViewModel(
     private val projectId: Int,
@@ -73,7 +74,7 @@ class ProjectInfoViewModel(
                                 is RequestError.NetworkException,
                                 is RequestError.UnknownError -> {
                                     val errorMessage = requestError.message
-                                    _events.emit(ProjectInfoEffect.ShowMessage(message = errorMessage))
+                                    _events.emit(ShowMessage(message = errorMessage))
                                 }
 
                                 else -> {
@@ -86,6 +87,10 @@ class ProjectInfoViewModel(
                         }
                     }
                 }
+            }
+
+            ProjectInfoCommand.ClickRepeatLoadingProjectInfo -> {
+                loadProjectInfo()
             }
         }
     }
@@ -180,6 +185,7 @@ sealed interface UiStatusProjectInfo {
  */
 sealed interface ProjectInfoCommand {
     data object ClickDeleteProject : ProjectInfoCommand
+    data object ClickRepeatLoadingProjectInfo : ProjectInfoCommand
 }
 
 

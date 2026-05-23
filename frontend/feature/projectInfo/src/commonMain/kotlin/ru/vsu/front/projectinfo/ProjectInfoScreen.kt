@@ -1,13 +1,6 @@
 package ru.vsu.front.projectinfo
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +15,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.*
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
+import ru.vsu.front.projectinfo.component.Members
+import ru.vsu.front.projectinfo.component.MembersHeader
 import ru.vsu.front.projectinfo.component.ReadOnlyFiles
 
 @Composable
@@ -110,11 +105,34 @@ fun WindowScope.ProjectInfoScreen(
                             nodes = loadedState.projectFiles
                         )
                         if (loadedState.projectInfoErrorLoading) {
-                            ErrorScreen() {
-
-                            }
+                            ErrorScreen(
+                                onClick = {
+                                    viewModel.processCommand(ProjectInfoCommand.ClickRepeatLoadingProjectInfo)
+                                }
+                            )
                         } else {
-                            CodeTogetherText(text = loadedState.projectInfo.users.toString())
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                MembersHeader(
+                                    membersAreVisible = true,
+                                    onInviteClick = {
+
+                                    },
+                                    onToggleVisibilityClick = {
+
+                                    }
+                                )
+                                Members(
+                                    members = loadedState.projectInfo.users,
+                                    isOwner = loadedState.projectInfo.isUserOwner,
+                                    onKickClick = {
+                                        // TODO
+                                    }
+                                )
+                            }
                         }
                     }
                 }
