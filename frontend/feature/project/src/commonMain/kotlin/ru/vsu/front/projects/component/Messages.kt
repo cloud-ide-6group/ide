@@ -1,6 +1,7 @@
 package ru.vsu.front.projects.component
 
 import androidx.compose.foundation.LocalScrollbarStyle
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.*
@@ -8,12 +9,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,11 +54,11 @@ fun Messages(
     onInputChange: (String) -> Unit,
     onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
-    state: LazyListState = rememberLazyListState(),
+    state: ScrollState = rememberScrollState(),
     onCloseClick: () -> Unit
 ) {
     LaunchedEffect(messages) {
-        state.animateScrollToItem(messages.size)
+        state.animateScrollTo(100000)
     }
 
     var width by remember { mutableStateOf(240.dp) }
@@ -97,15 +101,17 @@ fun Messages(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f),
-                state = state,
+                    .weight(1f)
+                    .verticalScroll(state),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(items = messages, key = { it.id }) { message ->
-                    Message(message = message)
+                messages.forEach { message ->
+                    key(message.id) {
+                        Message(message = message)
+                    }
                 }
             }
 
