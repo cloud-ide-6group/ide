@@ -15,8 +15,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProjectInfoDto(
     @SerialName("language_name") val languageName: String,
-    @SerialName("send_time") val projectId: Int,
-    @SerialName("sender_name") val projectName: String,
-    @SerialName("project_id") val isUserOwner: Boolean,
-    @SerialName("project_name") val users: List<UserDto>
+    @SerialName("project_id") val projectId: Int,
+    @SerialName("project_name") val projectName: String,
+    @SerialName("user_is_owner") val isUserOwner: Boolean,
+    @SerialName("users") val users: List<UserDto>
 )
