@@ -1,7 +1,7 @@
 package ru.vsu.front.model.entity
 
 /**
- * DTO информации о проекте.
+ * Информация о проекте.
  *
  * @property languageName Язык программирования в проекте.
  * @property projectId Идентификатор проекта.

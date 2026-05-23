@@ -1,7 +1,7 @@
 package ru.vsu.front.model.entity
 
 /**
- * DTO пользователя в проекте.
+ * Пользователь.
  *
  * @property userId Идентификатор пользователя.
  * @property name Название проекта.
