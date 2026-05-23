@@ -14,15 +14,20 @@ import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
+import ru.vsu.front.data.entity.dto.ProjectInfoDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
+import ru.vsu.front.data.entity.request.GetProjectInfoRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
+import ru.vsu.front.data.mapper.toEntity
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
+import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.network.HttpRoutes.CREATE_PROJECT
+import ru.vsu.front.network.HttpRoutes.GET_PROJECT_INFO
 import ru.vsu.front.network.MainHttpClientManager
 import ru.vsu.front.network.SocketRoutes.CONSOLE_OUTPUT
 import ru.vsu.front.network.SocketRoutes.FILES_TREES_LIST
@@ -96,6 +101,48 @@ class DefaultProjectRepository(
         } catch (_: Exception) {
             Response.Error(RequestError.NetworkException())
         }
+    }
+
+    /**
+     * Выполняет GET-запрос на эндпоинт получения информации о проекте ([GET_PROJECT_INFO]).
+     *
+     * @return [Response.Success] с доступными языками программирования при успешном запросе.
+     * @return [RequestError.Unauthorized] при недействительном токене обновления (401).
+     * @return [RequestError.Forbidden] при неверных учетных данных (403).
+     * @return [RequestError.Conflict] при ошибке создания проекта (409).
+     * @return [RequestError.UnknownError] при непредвиденной ошибке.
+     * @return [RequestError.NetworkException] при ошибке сети.
+     */
+    override suspend fun getProjectInfo(projectId: Int): Response<ProjectInfo> {
+       return try {
+           val response = mainHttpClientManager.getClient().get(GET_PROJECT_INFO) {
+               contentType(ContentType.Application.Json)
+               setBody(
+                   GetProjectInfoRequest(
+                       projectId = projectId
+                   )
+               )
+           }
+
+           when (response.status) {
+               HttpStatusCode.OK -> {
+                   val projectInfo = response.body<ProjectInfoDto>()
+                   Response.Success(projectInfo.toEntity())
+               }
+
+               HttpStatusCode.Forbidden,
+               HttpStatusCode.Conflict -> {
+                   val message = response.body<ErrorResponseDto>().message
+                   Response.Error(RequestError.Conflict(message))
+               }
+
+               else -> {
+                   Response.Error(RequestError.UnknownError())
+               }
+           }
+       } catch (_: Exception) {
+           Response.Error(RequestError.NetworkException())
+       }
     }
 
     override fun observeFiles(projectId: Int): Flow<List<FileNode>> = callbackFlow {

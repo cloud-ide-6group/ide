@@ -3,6 +3,7 @@ package ru.vsu.front.domain.repository
 import kotlinx.coroutines.flow.Flow
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
+import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.Response
 
 interface ProjectRepository {
@@ -19,6 +20,17 @@ interface ProjectRepository {
         programingLanguageId: Int,
         projectName: String
     ): Response<Int>
+
+    /**
+     * Выполняет получение информации о проекте и статусе пользователя.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response] с информацией о проекте, либо с ошибкой.
+     */
+    suspend fun getProjectInfo(
+        projectId: Int
+    ): Response<ProjectInfo>
 
     /**
      * Отправляет обновленное содержимое файла на сервер
