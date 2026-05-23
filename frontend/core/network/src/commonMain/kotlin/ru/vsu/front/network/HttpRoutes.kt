@@ -80,7 +80,12 @@ object HttpRoutes {
     const val CREATE_MESSAGE = "/message/create"
 
     /**
-     * Эндпоинт получения информации о проекте
+     * Эндпоинт получения информации о проекте.
      */
     const val GET_PROJECT_INFO = "/project/info"
+
+    /**
+     * Эндпоинт удаления проекта.
+     */
+    const val DELETE_PROJECT = "/project/delete"
 }

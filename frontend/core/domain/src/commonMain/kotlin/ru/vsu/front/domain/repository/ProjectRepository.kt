@@ -33,6 +33,17 @@ interface ProjectRepository {
     ): Response<ProjectInfo>
 
     /**
+     * Выполняет удаление проекта.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response] с не важно чем (важен только код ответа), либо с ошибкой.
+     */
+    suspend fun deleteProject(
+        projectId: Int
+    ): Response<*>
+
+    /**
      * Отправляет обновленное содержимое файла на сервер
      *
      * @param fileId Идентификатор файла.
