@@ -11,6 +11,7 @@ import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.CodeTogetherScaffold
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.component.TopBarButton
+import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 @Composable
 fun WindowScope.ProjectInfoScreen(
@@ -30,6 +31,7 @@ fun WindowScope.ProjectInfoScreen(
         onMinimizeClick = onMinimizeClick,
         onMaximizeClick = onMaximizeClick,
         onCloseClick = onCloseClick,
+        backgroundColor = CodeTogetherTheme.colors.primaryBackground,
         topBarContent = {
             TopBarButton(
                 icon = AppIcons.Settings,

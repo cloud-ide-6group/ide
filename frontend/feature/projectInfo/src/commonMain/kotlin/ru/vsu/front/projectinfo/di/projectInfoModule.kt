@@ -13,7 +13,10 @@ import ru.vsu.front.projectinfo.ProjectInfoViewModel
 val projectInfoModule = module {
     viewModel { (projectId: Int) ->
         ProjectInfoViewModel(
-            projectId = projectId
+            projectId = projectId,
+            get(),
+            get(),
+            get(),
         )
     }
 }

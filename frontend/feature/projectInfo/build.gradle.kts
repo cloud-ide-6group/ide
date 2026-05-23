@@ -19,6 +19,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.compose.uiToolingPreview)
             implementation(projects.core.domain)
+            implementation(projects.core.common)
             implementation(projects.core.model)
             implementation(projects.core.designsystem)
         }
