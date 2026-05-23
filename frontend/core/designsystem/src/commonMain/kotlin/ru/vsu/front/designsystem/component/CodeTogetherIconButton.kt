@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import front.core.designsystem.generated.resources.Res
 import front.core.designsystem.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import kotlin.math.cos
 
@@ -57,7 +58,7 @@ fun CodeTogetherIconButton(
 
 @Composable
 @Preview
-fun CodeTogetherIconButtonPreview() {
+private fun CodeTogetherIconButtonPreview() {
     BackgroundPreview {
         CodeTogetherIconButton(
             onClick = {
@@ -66,7 +67,7 @@ fun CodeTogetherIconButtonPreview() {
             shape = RoundedCornerShape(8.dp),
         ) {
             Icon(
-                painter = painterResource(Res.drawable.close_24dp),
+                painter = painterResource(AppIcons.Close),
                 contentDescription = null,
                 tint = CodeTogetherTheme.colors.primary
             )
@@ -80,7 +81,7 @@ fun CodeTogetherIconButtonPreview() {
             unhoverColor = Color.White.copy(alpha = 0.05f),
         ) {
             Icon(
-                painter = painterResource(Res.drawable.close_24dp),
+                painter = painterResource(AppIcons.Close),
                 contentDescription = null,
                 tint = CodeTogetherTheme.colors.primary
             )

@@ -7,6 +7,7 @@ import front.core.designsystem.generated.resources.Res
 import front.core.designsystem.generated.resources.visibility_off_24dp
 import front.core.designsystem.generated.resources.visibility_on_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
@@ -23,7 +24,7 @@ fun VisibilityButton(
     onClick: () -> Unit
 ) {
     val iconRes =
-        if (isVisible) Res.drawable.visibility_off_24dp else Res.drawable.visibility_on_24dp
+        if (isVisible) AppIcons.VisibilityOff else AppIcons.VisibilityOn
     CodeTogetherIconButton(
         modifier = modifier,
         onClick = onClick

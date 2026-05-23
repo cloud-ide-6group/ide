@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import front.core.designsystem.generated.resources.Res
 import front.core.designsystem.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
@@ -70,7 +71,7 @@ private fun CodeTogetherButtonPreview() {
             },
         ) {
             Icon(
-                painter = painterResource(Res.drawable.close_24dp),
+                painter = painterResource(AppIcons.Close),
                 contentDescription = "",
                 tint = CodeTogetherTheme.colors.primary
             )
@@ -82,7 +83,7 @@ private fun CodeTogetherButtonPreview() {
             unhoverColor = CodeTogetherTheme.colors.primary.copy(alpha = 0.1f),
         ) {
             Icon(
-                painter = painterResource(Res.drawable.close_24dp),
+                painter = painterResource(AppIcons.Close),
                 contentDescription = "",
                 tint = CodeTogetherTheme.colors.error
             )
