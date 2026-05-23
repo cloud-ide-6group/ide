@@ -28,6 +28,7 @@ kotlin {
             implementation(projects.core.domain)
             implementation(projects.core.datastore)
             implementation(projects.core.auth)
+            implementation(projects.core.auth)
         }
 
         jvmTest.dependencies {

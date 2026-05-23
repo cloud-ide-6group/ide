@@ -2,7 +2,6 @@ package ru.vsu.front.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -32,6 +31,7 @@ class ProfileViewModel(
     private val updateProfilePasswordUseCase: UpdateProfilePasswordUseCase,
     private val updateProfilePhotoUseCase: UpdateProfilePhotoUseCase,
     private val observeNotificationsUseCase: ObserveNotificationsUseCase,
+    private val observeRemovedFromProjectUseCase: ObserveRemovedFromProjectUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
@@ -45,6 +45,15 @@ class ProfileViewModel(
     init {
         loadProfile()
         observeNotifications()
+        observeRemovedFromProjectUseCase()
+            .flowOn(dispatcherProvider.io)
+            .onEach { projectId ->
+                updateLoadedState {
+                    it.copy(projects = it.projects.filter { it.id != projectId })
+                }
+
+            }
+            .launchIn(viewModelScope)
     }
 
     /**
@@ -136,9 +145,9 @@ class ProfileViewModel(
 
                             is Response.Error<*> -> {
                                 when (val requestError = result.requestError) {
-                                    is RequestError.Conflict -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    is RequestError.Forbidden -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                    is RequestError.UnknownError -> _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    is RequestError.Conflict,
+                                    is RequestError.Forbidden,
+                                    is RequestError.UnknownError,
                                     is RequestError.NetworkException -> _events.emit(
                                         ProfileEffect.ShowMessage(
                                             requestError.message
@@ -146,7 +155,6 @@ class ProfileViewModel(
                                     )
 
                                     else -> {
-                                        // Nothing
                                     }
                                 }
                                 latestState
@@ -183,18 +191,9 @@ class ProfileViewModel(
                     when (val result = updateProfileDataUseCase(email = email, name = name)) {
                         is Response.Error<*> -> {
                             when (val requestError = result.requestError) {
-                                is RequestError.Unauthorized -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
-                                is RequestError.NotFound -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
-                                is RequestError.NetworkException -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
+                                is RequestError.Unauthorized,
+                                is RequestError.NotFound,
+                                is RequestError.NetworkException,
                                 is RequestError.UnknownError -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
@@ -233,18 +232,9 @@ class ProfileViewModel(
                     )) {
                         is Response.Error<*> -> {
                             when (val requestError = result.requestError) {
-                                is RequestError.Conflict -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
-                                is RequestError.Unauthorized -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
-                                is RequestError.UnknownError -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
-                                }
-
+                                is RequestError.Conflict,
+                                is RequestError.Unauthorized,
+                                is RequestError.UnknownError,
                                 is RequestError.NetworkException -> {
                                     _events.emit(ProfileEffect.ShowMessage(requestError.message))
                                 }
@@ -275,11 +265,13 @@ class ProfileViewModel(
                     )) {
                         is Response.Error<*> -> {
                             when (result.requestError) {
-                                is RequestError.Conflict -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                is RequestError.UnknownError -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
-                                is RequestError.NetworkException -> _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                is RequestError.Conflict,
+                                is RequestError.UnknownError,
+                                is RequestError.NetworkException -> {
+                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                }
+
                                 else -> {
-                                    // Nothing
                                 }
                             }
                         }
@@ -350,6 +342,9 @@ class ProfileViewModel(
         }
     }
 
+    /**
+     * Подписка на уведомления.
+     */
     private fun observeNotifications() {
         observeNotificationsUseCase()
             .flowOn(dispatcherProvider.io)

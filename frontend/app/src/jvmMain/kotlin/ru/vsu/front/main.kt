@@ -7,14 +7,16 @@ import androidx.compose.ui.window.*
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import front.app.generated.resources.Res
-import front.app.generated.resources.app_icon
+import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.Const
 import ru.vsu.front.component.Settings
-import ru.vsu.front.component.TopBarButtons
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.di.initKoin
+import ru.vsu.front.domain.repository.ProjectRepository
 import ru.vsu.front.navigation.Navigation
 import ru.vsu.front.navigation.Route
 import ru.vsu.front.network.MainHttpClientManager
@@ -38,19 +40,19 @@ fun main() {
             height = MIN_WINDOW_HEIGHT.dp
         )
 
-        val authManager: AuthManager = koinInject()
-        val mainHttpClientManager: MainHttpClientManager = koinInject()
         val settings: Settings = koinInject()
+        val mainHttpClientManager: MainHttpClientManager = koinInject()
+        val authManager: AuthManager = koinInject()
 
         Window(
             onCloseRequest = {
                 exitApplication()
             },
             title = Const.APP_NAME,
-            icon = painterResource(Res.drawable.app_icon),
+            icon = painterResource(AppIcons.AppIcon),
             state = windowState,
             undecorated = true,
-            transparent = true
+            transparent = false
         ) {
             var previousSize by remember {
                 mutableStateOf(DpSize.Unspecified)
@@ -62,49 +64,10 @@ fun main() {
             setupWindow()
 
             val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
 
             var isSettingsVisible by remember { mutableStateOf(false) }
 
-            App(
-                onMinimizeClick = {
-                    windowState.onMinimizeClick()
-                },
-                onMaximizeClick = {
-                    windowState.onMaximizeClick(
-                        previousPosition = previousPosition,
-                        previousSize = previousSize,
-                        onPreviousPositionChange = {
-                            previousPosition = it
-                        },
-                        onPreviousSizeChange = {
-                            previousSize = it
-                        }
-                    )
-                },
-                onCloseClick = {
-                    exitApplication()
-                },
-                topBarContent = {
-                    TopBarButtons(
-                        navDestination = currentDestination,
-                        onLogoutClick = {
-                            authManager.logout()
-                            mainHttpClientManager.invalidateClient()
-                        },
-                        onNotificationsClick = {
-                            navController.navigate(Route.Notifications)
-                        },
-                        onBackClick = {
-                            navController.popBackStack()
-                        },
-                        onSettingsClick = {
-                            isSettingsVisible = true
-                        }
-                    )
-                }
-            ) {
+            App {
                 Settings(
                     visible = isSettingsVisible,
                     onDismissRequest = {
@@ -114,7 +77,35 @@ fun main() {
                         settings.savePrimaryColor(color)
                     },
                     content = {
-                        Navigation(navController = navController)
+                        Navigation(
+                            navController = navController,
+                            onMinimizeClick = {
+                                windowState.onMinimizeClick()
+                            },
+                            onMaximizeClick = {
+                                windowState.onMaximizeClick(
+                                    previousPosition = previousPosition,
+                                    previousSize = previousSize,
+                                    onPreviousPositionChange = {
+                                        previousPosition = it
+                                    },
+                                    onPreviousSizeChange = {
+                                        previousSize = it
+                                    }
+                                )
+                            },
+                            onCloseClick = {
+                                exitApplication()
+                            },
+                            onSettingsClick = {
+                                isSettingsVisible = true
+                            },
+                            onLogoutClick = {
+                                authManager.logout()
+                                mainHttpClientManager.invalidateClient()
+
+                            }
+                        )
                     }
                 )
             }

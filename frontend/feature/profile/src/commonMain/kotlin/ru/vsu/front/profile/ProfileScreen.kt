@@ -1,6 +1,7 @@
 package ru.vsu.front.profile
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,15 +10,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.ismoy.imagepickerkmp.domain.config.GalleryConfig
 import io.github.ismoy.imagepickerkmp.domain.extensions.loadBase64
 import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
 import io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
 import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
+import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.*
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import ru.vsu.front.profile.component.*
+import ru.vsu.front.profile.component.CreatingProject
+import ru.vsu.front.profile.component.ProfileSections
+import ru.vsu.front.profile.component.ProjectsSection
+import ru.vsu.front.profile.component.UserAvatar
 
 /**
  * Экран профиля.
@@ -27,10 +34,16 @@ import ru.vsu.front.profile.component.*
  * @param onProjectInfoClick Коллбек, вызываемый при клике на проект.
  */
 @Composable
-fun ProfileScreen(
+fun WindowScope.ProfileScreen(
     viewModel: ProfileViewModel,
+    onMinimizeClick: () -> Unit,
+    onMaximizeClick: () -> Unit,
+    onCloseClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onNotificationsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onProjectInfoClick: (Int) -> Unit,
+    onProjectInfoClick: (Int, String) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -68,7 +81,24 @@ fun ProfileScreen(
     CodeTogetherScaffold(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
-        backgroundColor = CodeTogetherTheme.colors.primaryBackground
+        backgroundColor = CodeTogetherTheme.colors.primaryBackground,
+        onMinimizeClick = onMinimizeClick,
+        onMaximizeClick = onMaximizeClick,
+        onCloseClick = onCloseClick,
+        topBarContent = {
+            TopBarButton(
+                onClick = onSettingsClick,
+                icon = AppIcons.Settings,
+            )
+            TopBarButton(
+                onClick = onLogoutClick,
+                icon = AppIcons.Logout,
+            )
+            TopBarButton(
+                onClick = onNotificationsClick,
+                icon = AppIcons.Notifications,
+            )
+        }
     ) {
         when (val currentState = uiState) {
             is UiStatusProfile.Loaded -> {
@@ -141,12 +171,11 @@ fun ProfileScreen(
                         onCreateProjectClick = {
                             viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
                         },
-                        onProjectClick = { projectId ->
-                            onProjectInfoClick(projectId)
+                        onProjectClick = { projectId, projectName ->
+                            onProjectInfoClick(projectId, projectName)
                         }
                     )
                 }
-
                 CustomDialog(
                     show = loadedState.isCreateProjectDialogShown,
                     onDismissRequest = {

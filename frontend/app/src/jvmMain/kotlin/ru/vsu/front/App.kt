@@ -1,7 +1,10 @@
 package ru.vsu.front
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,19 +21,12 @@ import ru.vsu.front.settings.Settings
  * Оборачивает контент в глобальную тему [CodeTogetherTheme] и добавляет
  * верхнюю панель управления окном ([WindowTopBar]).
  *
- * @param onMinimizeClick Коллбек, вызываемый при клике на кнопку "Свернуть".
- * @param onMaximizeClick Коллбек, вызываемый при клике на кнопку "Свернуть в окно".
- * @param onCloseClick Коллбек, вызываемый при клике на кнопку "Закрыть".
- * @param topBarContent Слот для содержимого верхней панели.
+ * @param settings Объект настроек приложения, предоставляющий доступ к текущей цветовой теме.
  * @param content Слот для основного содержимого.
  */
 @Composable
-fun WindowScope.App(
-    onMinimizeClick: () -> Unit,
-    onMaximizeClick: () -> Unit,
-    onCloseClick: () -> Unit,
+fun App(
     settings: Settings = koinInject(),
-    topBarContent: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
     val primaryColor by settings.primaryColor.collectAsStateWithLifecycle()
@@ -39,22 +35,12 @@ fun WindowScope.App(
         themeVariant = CodeTogetherThemeVariant.Omni,
         primaryColor = primaryColor
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            WindowTopBar(
-                onMinimizeClick = onMinimizeClick,
-                onMaximizeClick = onMaximizeClick,
-                onCloseClick = onCloseClick,
-                content = topBarContent
-            )
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(CodeTogetherTheme.colors.primaryBackground)
-            ) {
-                content()
-            }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(CodeTogetherTheme.colors.primaryBackground)
+        ) {
+            content()
         }
     }
 }
