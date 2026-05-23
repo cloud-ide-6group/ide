@@ -13,7 +13,8 @@ import ru.vsu.front.model.entity.User
 fun UserDto.toEntity(): User {
     return User(
         userId = userId,
-        name = name
+        name = name,
+        email = email
     )
 }
 

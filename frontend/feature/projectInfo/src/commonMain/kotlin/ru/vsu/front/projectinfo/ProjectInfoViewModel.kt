@@ -8,10 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
-import ru.vsu.front.model.entity.FileNode
-import ru.vsu.front.model.entity.ProjectInfo
-import ru.vsu.front.model.entity.RequestError
-import ru.vsu.front.model.entity.Response
+import ru.vsu.front.model.entity.*
 import ru.vsu.front.projectinfo.ProjectInfoEffect.ProjectDeleted
 import ru.vsu.front.projectinfo.ProjectInfoEffect.ShowMessage
 
@@ -56,7 +53,7 @@ class ProjectInfoViewModel(
             observeRemovedFromProjectUseCase()
                 .flowOn(dispatcherProvider.io)
                 .onEach { projectIdRemovedFrom ->
-                    if(projectIdRemovedFrom == projectId) {
+                    if (projectIdRemovedFrom == projectId) {
                         leaveFromProjectRoomUseCase(projectId)
                         _events.emit(ProjectInfoEffect.RemovedFromCurrentProject)
                     }
@@ -135,12 +132,70 @@ class ProjectInfoViewModel(
                 }
             }
 
-            ProjectInfoCommand.ClickKickMember -> {
-                val uiState = _uiState.value
-                if (uiState !is UiStatusProjectInfo.Loaded) return
-
+            is ProjectInfoCommand.ClickKickMember -> {
+                _uiState.update { previousState ->
+                    if (previousState !is UiStatusProjectInfo.Loaded) return
+                    val newState = previousState.copy(
+                        uiStatusProjectInfo = previousState.uiStatusProjectInfo.copy(
+                            isInviteUserDialogVisible = false
+                        )
+                    )
+                    newState
+                }
                 viewModelScope.launch(dispatcherProvider.io) {
                     when (val result = kickUserUseCase(
+                        userEmail = command.email,
+                        projectId = projectId
+                    )) {
+                        is Response.Error<*> -> {
+                            when (val requestError = result.requestError) {
+                                is RequestError.Conflict,
+                                is RequestError.Forbidden,
+                                is RequestError.NetworkException,
+                                is RequestError.UnknownError -> {
+                                    val errorMessage = requestError.message
+                                    _events.emit(ShowMessage(message = errorMessage))
+                                }
+
+                                else -> {
+                                }
+                            }
+                        }
+
+                        is Response.Success<*> -> {
+                            _uiState.update { previousState ->
+                                if (previousState !is UiStatusProjectInfo.Loaded) return@launch
+                                val newUsersList =
+                                    previousState.uiStatusProjectInfo.projectInfo.users.filter {
+                                        it.email != command.email
+                                    }
+                                val newState = previousState.copy(
+                                    uiStatusProjectInfo = previousState.uiStatusProjectInfo.copy(
+                                        projectInfo = previousState.uiStatusProjectInfo.projectInfo.copy(users = newUsersList),
+                                        inputtedUserEmail = ""
+                                    )
+                                )
+                                _events.emit(ShowMessage(message = "Пользователь успешно исключён"))
+                                newState
+                            }
+                        }
+                    }
+                }
+            }
+
+            ProjectInfoCommand.ClickInviteMember -> {
+                val uiState = _uiState.value
+                if (uiState !is UiStatusProjectInfo.Loaded) return
+                _uiState.update {
+                    val newState = uiState.copy(
+                        uiStatusProjectInfo = uiState.uiStatusProjectInfo.copy(
+                            isInviteUserDialogVisible = false
+                        )
+                    )
+                    newState
+                }
+                viewModelScope.launch(dispatcherProvider.io) {
+                    when (val result = inviteUserUseCase(
                         userEmail = uiState.uiStatusProjectInfo.inputtedUserEmail,
                         projectId = projectId
                     )) {
@@ -159,49 +214,18 @@ class ProjectInfoViewModel(
                             }
                         }
 
-                        /**
-                         * TODO Не приходит почта в эндпоинте получения профиля, ожидание
-                         */
-                        is Response.Success<*> -> {
+                        is Response.Success<User> -> {
+                            _events.emit(ShowMessage(message = "Пользователь успешно приглашён"))
                             _uiState.update { previousState ->
                                 if (previousState !is UiStatusProjectInfo.Loaded) return@launch
-                                val newUsersList = previousState.uiStatusProjectInfo.projectInfo.users
-                                previousState.copy()
-                            }
-                        }
-                    }
-                }
-            }
-
-            ProjectInfoCommand.ClickInviteMember -> {
-                val uiState = _uiState.value
-                if (uiState !is UiStatusProjectInfo.Loaded) return
-
-                viewModelScope.launch(dispatcherProvider.io) {
-                    when (val result = inviteUserUseCase(
-                        userEmail = uiState.uiStatusProjectInfo.inputtedUserEmail,
-                        projectName = uiState.uiStatusProjectInfo.projectInfo.projectName
-                    )) {
-                        is Response.Error<*> -> {
-                            when (val requestError = result.requestError) {
-                                is RequestError.Conflict,
-                                is RequestError.Forbidden,
-                                is RequestError.NetworkException,
-                                is RequestError.UnknownError -> {
-                                    val errorMessage = requestError.message
-                                    _events.emit(ShowMessage(message = errorMessage))
-                                }
-
-                                else -> {
-                                }
-                            }
-                        }
-
-                        is Response.Success<*> -> {
-                            _uiState.update { previousState ->
-                                if (previousState !is UiStatusProjectInfo.Loaded) return@launch
-                                val newUsersList = previousState.uiStatusProjectInfo.projectInfo.users
-                                previousState.copy()
+                                val newUsersList = previousState.uiStatusProjectInfo.projectInfo.users + result.data
+                                val newState = previousState.copy(
+                                    uiStatusProjectInfo = previousState.uiStatusProjectInfo.copy(
+                                        projectInfo = previousState.uiStatusProjectInfo.projectInfo.copy(users = newUsersList),
+                                        inputtedUserEmail = ""
+                                    )
+                                )
+                                newState
                             }
                         }
                     }
@@ -219,6 +243,7 @@ class ProjectInfoViewModel(
                     )
                 }
             }
+
             ProjectInfoCommand.ClickCloseKickUserDialogVisible -> {
                 val uiState = _uiState.value
                 if (uiState !is UiStatusProjectInfo.Loaded) return
@@ -230,6 +255,7 @@ class ProjectInfoViewModel(
                     )
                 }
             }
+
             ProjectInfoCommand.ClickToggleInviteUserDialogVisible -> {
                 val uiState = _uiState.value
                 if (uiState !is UiStatusProjectInfo.Loaded) return
@@ -242,6 +268,7 @@ class ProjectInfoViewModel(
                     )
                 }
             }
+
             ProjectInfoCommand.ClickToggleKickUserDialogVisible -> {
                 val uiState = _uiState.value
                 if (uiState !is UiStatusProjectInfo.Loaded) return
@@ -361,7 +388,7 @@ sealed interface ProjectInfoCommand {
     data object ClickDeleteProject : ProjectInfoCommand
     data object ClickRepeatLoadingProjectInfo : ProjectInfoCommand
     data object ClickToggleMembersVisibility : ProjectInfoCommand
-    data object ClickKickMember : ProjectInfoCommand
+    data class ClickKickMember(val email: String) : ProjectInfoCommand
     data object ClickInviteMember : ProjectInfoCommand
     data object ClickToggleInviteUserDialogVisible : ProjectInfoCommand
     data object ClickCloseInviteUserDialogVisible : ProjectInfoCommand

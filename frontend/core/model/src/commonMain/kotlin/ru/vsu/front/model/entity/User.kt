@@ -8,5 +8,6 @@ package ru.vsu.front.model.entity
  */
 data class User(
     val userId: Int,
-    val name: String
+    val name: String,
+    val email: String
 )

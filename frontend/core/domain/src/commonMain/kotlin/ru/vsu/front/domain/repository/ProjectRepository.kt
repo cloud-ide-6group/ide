@@ -5,6 +5,7 @@ import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.Response
+import ru.vsu.front.model.entity.User
 
 interface ProjectRepository {
 
@@ -60,14 +61,14 @@ interface ProjectRepository {
      * Выполняет приглашение пользователя в проект.
      *
      * @param userEmail Почта пользователя.
-     * @param projectName Название проекта.
+     * @param projectId Идентификатор проекта.
      *
      * @return [Response] с не важно чем (важен только код ответа), либо с ошибкой.
      */
     suspend fun inviteUser(
         userEmail: String,
-        projectName: String
-    ): Response<*>
+        projectId: Int
+    ): Response<User>
 
     /**
      * Отправляет обновленное содержимое файла на сервер

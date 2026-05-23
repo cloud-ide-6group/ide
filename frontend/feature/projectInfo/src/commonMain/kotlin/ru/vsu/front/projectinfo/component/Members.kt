@@ -21,7 +21,7 @@ fun Members(
     members: List<User>,
     isOwner: Boolean,
     modifier: Modifier = Modifier,
-    onKickClick: (Int) -> Unit
+    onKickClick: (String) -> Unit
 ) {
     LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(items = members, key = { it.userId }) { member ->

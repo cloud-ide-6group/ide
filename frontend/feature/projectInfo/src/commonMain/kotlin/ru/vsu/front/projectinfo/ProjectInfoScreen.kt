@@ -156,7 +156,8 @@ fun WindowScope.ProjectInfoScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 MembersHeader(
-                                    membersAreVisible = true,
+                                    isOwner = loadedState.projectInfo.isUserOwner,
+                                    membersAreVisible = loadedState.areMembersVisible,
                                     onInviteClick = {
                                         viewModel.processCommand(ProjectInfoCommand.ClickToggleInviteUserDialogVisible)
                                     },
@@ -172,8 +173,8 @@ fun WindowScope.ProjectInfoScreen(
                                     Members(
                                         members = loadedState.projectInfo.users,
                                         isOwner = loadedState.projectInfo.isUserOwner,
-                                        onKickClick = {
-                                            // TODO
+                                        onKickClick = { email ->
+                                            viewModel.processCommand(ProjectInfoCommand.ClickKickMember(email))
                                         }
                                     )
                                 }
@@ -193,7 +194,7 @@ fun WindowScope.ProjectInfoScreen(
                             viewModel.processCommand(ProjectInfoCommand.ChangeInputtedUserEmail(it))
                         },
                         onClickInviteUser = {
-                            // TODO
+                            viewModel.processCommand(ProjectInfoCommand.ClickInviteMember)
                         }
                     )
                 }

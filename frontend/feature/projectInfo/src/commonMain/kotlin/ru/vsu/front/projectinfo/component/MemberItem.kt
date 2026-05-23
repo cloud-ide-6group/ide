@@ -31,7 +31,7 @@ fun MemberItem(
     member: User,
     isOwner: Boolean,
     modifier: Modifier = Modifier,
-    onKickClick: (Int) -> Unit,
+    onKickClick: (String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -45,7 +45,7 @@ fun MemberItem(
         if (isOwner) {
             CodeTogetherIconButton(
                 onClick = {
-                    onKickClick(member.userId)
+                    onKickClick(member.email)
                 }
             ) {
                 Icon(

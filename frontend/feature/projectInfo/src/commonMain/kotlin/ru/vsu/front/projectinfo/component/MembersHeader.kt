@@ -32,6 +32,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 @Composable
 fun MembersHeader(
     membersAreVisible: Boolean,
+    isOwner: Boolean,
     modifier: Modifier = Modifier,
     onInviteClick: () -> Unit,
     onToggleVisibilityClick: () -> Unit,
@@ -51,17 +52,19 @@ fun MembersHeader(
             )
         )
         Spacer(modifier = Modifier.weight(1f))
-        CodeTogetherIconButton(
-            onClick = {
-                onInviteClick()
-            },
-            hoverColor = Color.White.copy(alpha = 0.1f),
-        ) {
-            Icon(
-                painter = painterResource(AppIcons.Add2),
-                contentDescription = "Invite user",
-                tint = CodeTogetherTheme.colors.primary
-            )
+        if (isOwner) {
+            CodeTogetherIconButton(
+                onClick = {
+                    onInviteClick()
+                },
+                hoverColor = Color.White.copy(alpha = 0.1f),
+            ) {
+                Icon(
+                    painter = painterResource(AppIcons.Add2),
+                    contentDescription = "Invite user",
+                    tint = CodeTogetherTheme.colors.primary
+                )
+            }
         }
         CodeTogetherIconButton(
             onClick = {

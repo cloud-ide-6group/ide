@@ -23,6 +23,7 @@ import ru.vsu.front.data.entity.request.InviteUserRequest
 import ru.vsu.front.data.entity.request.KickUserRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
 import ru.vsu.front.data.entity.response.ProjectInfoResponse
+import ru.vsu.front.data.entity.response.UserResponse
 import ru.vsu.front.data.mapper.toEntity
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
@@ -31,6 +32,7 @@ import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
+import ru.vsu.front.model.entity.User
 import ru.vsu.front.network.HttpRoutes.CREATE_PROJECT
 import ru.vsu.front.network.HttpRoutes.DELETE_PROJECT
 import ru.vsu.front.network.HttpRoutes.GET_PROJECT_INFO
@@ -194,6 +196,7 @@ class DefaultProjectRepository(
                 )
             }
 
+            println(response.bodyAsText())
             when (response.status) {
                 HttpStatusCode.OK -> {
                     Response.Success(Unit)
@@ -216,22 +219,29 @@ class DefaultProjectRepository(
 
     override suspend fun inviteUser(
         userEmail: String,
-        projectName: String
-    ): Response<*> {
+        projectId: Int
+    ): Response<User> {
         return try {
-            val response = mainHttpClientManager.getClient().delete(INVITE_USER) {
+            val response = mainHttpClientManager.getClient().post(INVITE_USER) {
                 contentType(ContentType.Application.Json)
                 setBody(
                     InviteUserRequest(
                         userEmail = userEmail,
-                        projectName = projectName
+                        projectId = projectId
                     )
                 )
             }
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    Response.Success(Unit)
+                    val response = response.body<UserResponse>()
+                    Response.Success(
+                        User(
+                            userId = response.userId,
+                            name = response.name,
+                            email = response.email
+                        )
+                    )
                 }
 
                 HttpStatusCode.Forbidden,
@@ -245,7 +255,7 @@ class DefaultProjectRepository(
                 }
             }
         } catch (_: Exception) {
-            Response.Error<RequestError>(RequestError.NetworkException())
+            Response.Error(RequestError.NetworkException())
         }
     }
 
