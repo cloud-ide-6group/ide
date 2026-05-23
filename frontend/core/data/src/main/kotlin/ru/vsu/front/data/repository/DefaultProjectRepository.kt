@@ -19,6 +19,7 @@ import ru.vsu.front.data.entity.dto.ProjectInfoDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.request.DeleteProjectRequest
 import ru.vsu.front.data.entity.request.GetProjectInfoRequest
+import ru.vsu.front.data.entity.request.KickUserRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
 import ru.vsu.front.data.entity.response.ProjectInfoResponse
 import ru.vsu.front.data.mapper.toEntity
@@ -32,6 +33,7 @@ import ru.vsu.front.model.entity.Response
 import ru.vsu.front.network.HttpRoutes.CREATE_PROJECT
 import ru.vsu.front.network.HttpRoutes.DELETE_PROJECT
 import ru.vsu.front.network.HttpRoutes.GET_PROJECT_INFO
+import ru.vsu.front.network.HttpRoutes.KICK_USER
 import ru.vsu.front.network.MainHttpClientManager
 import ru.vsu.front.network.SocketRoutes.CONSOLE_OUTPUT
 import ru.vsu.front.network.SocketRoutes.FILES_TREES_LIST
@@ -150,6 +152,41 @@ class DefaultProjectRepository(
                 contentType(ContentType.Application.Json)
                 setBody(
                     DeleteProjectRequest(
+                        projectId = projectId
+                    )
+                )
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    Response.Success(Unit)
+                }
+
+                HttpStatusCode.Forbidden,
+                HttpStatusCode.Conflict -> {
+                    val message = response.body<ErrorResponseDto>().message
+                    Response.Error(RequestError.Conflict(message))
+                }
+
+                else -> {
+                    Response.Error(RequestError.UnknownError())
+                }
+            }
+        } catch (_: Exception) {
+            Response.Error<RequestError>(RequestError.NetworkException())
+        }
+    }
+
+    override suspend fun kickUser(
+        userEmail: String,
+        projectId: Int
+    ): Response<*> {
+        return try {
+            val response = mainHttpClientManager.getClient().delete(KICK_USER) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    KickUserRequest(
+                        userEmail = userEmail,
                         projectId = projectId
                     )
                 )

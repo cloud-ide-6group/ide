@@ -44,6 +44,18 @@ interface ProjectRepository {
     ): Response<*>
 
     /**
+     * Выполняет исключение участника из проекта.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response] с не важно чем (важен только код ответа), либо с ошибкой.
+     */
+    suspend fun kickUser(
+        userEmail: String,
+        projectId: Int
+    ): Response<*>
+
+    /**
      * Отправляет обновленное содержимое файла на сервер
      *
      * @param fileId Идентификатор файла.
