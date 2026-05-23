@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,6 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.WindowScope
+import ru.vsu.front.designsystem.component.WindowTopBar
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
 /**
@@ -37,11 +41,15 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param content Слот для контента.
  */
 @Composable
-fun CodeTogetherScaffold(
+fun WindowScope.CodeTogetherScaffold(
     modifier: Modifier = Modifier,
     backgroundColor: Color = CodeTogetherTheme.colors.secondaryBackground,
+    onMinimizeClick: () -> Unit,
+    onMaximizeClick: () -> Unit,
+    onCloseClick: () -> Unit,
+    topBarContent: @Composable  RowScope.() -> Unit = {},
     snackbarHostState: SnackbarHostState? = null,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Scaffold(
         modifier = modifier
@@ -84,8 +92,16 @@ fun CodeTogetherScaffold(
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            content()
+        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            WindowTopBar(
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                content = topBarContent
+            )
+            Box(modifier = Modifier.weight(1f)) {
+                content()
+            }
         }
     }
 }

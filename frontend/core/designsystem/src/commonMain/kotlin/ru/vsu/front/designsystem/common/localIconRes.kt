@@ -1,6 +1,5 @@
 package ru.vsu.front.designsystem.common
 
-import front.core.designsystem.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import ru.vsu.front.model.entity.ProgramingLanguage
 
@@ -10,10 +9,10 @@ import ru.vsu.front.model.entity.ProgramingLanguage
 val ProgramingLanguage.localIconRes: DrawableResource?
     get() {
         return when {
-            name.contains("python", ignoreCase = true) -> Res.drawable.python
-            name.contains("javascript", ignoreCase = true) -> Res.drawable.javascript
-            name.contains("java", ignoreCase = true) -> Res.drawable.java
-            name.contains("lua", ignoreCase = true) -> Res.drawable.lua
+            name.contains("python", ignoreCase = true) -> AppIcons.Python
+            name.contains("javascript", ignoreCase = true) -> AppIcons.Javascript
+            name.contains("java", ignoreCase = true) -> AppIcons.Java
+            name.contains("lua", ignoreCase = true) -> AppIcons.Lua
             else -> null
         }
     }

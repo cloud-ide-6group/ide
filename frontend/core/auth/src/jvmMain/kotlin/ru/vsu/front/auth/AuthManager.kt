@@ -2,24 +2,35 @@ package ru.vsu.front.auth
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.domain.repository.ProjectRepository
 
 /**
  * Менеджер аутентификации.
  *
  * @property tokenStorage хранилище токенов.
  */
-class AuthManager(private val tokenStorage: TokenStorage) {
+class AuthManager(
+    private val tokenStorage: TokenStorage
+) : KoinComponent {
+
     /**
-     * Текущее состояние авторизации.
+     * Интерфейс репозитория проекта, чтобы закрыть подключение к проекту при выходе из аккаунта.
+     */
+    private val projectRepository: ProjectRepository by inject()
+
+    /**
+     * Авторизован ли пользователь.
      */
     private val _isAuthorized = MutableStateFlow<AuthState>(checkAuthorized())
     val isAuthorized = _isAuthorized.asStateFlow()
 
     /**
-     * Проверяет текущее состояние авторизации.
+     * Проверяет, авторизован ли пользователь.
      *
-     * @return [AuthState.Authorized], если токен валиден, иначе [AuthState.NotAuthorized].
+     * @return [AuthState.Authorized], если авторизован, [AuthState.NotAuthorized] если не авторизован.
      */
     private fun checkAuthorized(): AuthState {
         val userId = tokenStorage.getUserIdFromToken()
@@ -27,17 +38,23 @@ class AuthManager(private val tokenStorage: TokenStorage) {
     }
 
     /**
-     * Обрабатывает успешный вход пользователя в систему.
+     * Выполняется при успешном входе в аккаунт.
+     *
+     * @param userId Идентификатор пользователя.
      */
     fun onLoginSuccess(userId: Int) {
         _isAuthorized.value = AuthState.Authorized(userId)
     }
 
+
     /**
-     * Выполняет выход пользователя из аккаунта.
+     * Выполняется при выходе из аккаунта.
+     *
+     * Очищает токены, закрывает подключение к проекту, меняете состояние на "Не авторизован".
      */
     fun logout() {
         tokenStorage.clearTokens()
+        projectRepository.closeSocket()
         _isAuthorized.value = AuthState.NotAuthorized
     }
 }
@@ -49,6 +66,7 @@ sealed interface AuthState {
 
     /**
      * Пользователь авторизован.
+     *
      * @property userId Идентификатор текущего пользователя.
      */
     data class Authorized(val userId: Int) : AuthState

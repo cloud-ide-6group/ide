@@ -59,7 +59,7 @@ internal fun ProjectsPreview() {
                 }
             },
             state = rememberLazyListState(),
-            onProjectClick = {
+            onProjectClick = { _ ->
 
             }
         )

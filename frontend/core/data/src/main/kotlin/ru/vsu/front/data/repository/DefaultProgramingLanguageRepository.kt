@@ -15,7 +15,7 @@ import ru.vsu.front.network.MainHttpClientManager
 /**
  * Реализация интерфейса [ProgramingLanguageRepository] для работы с сетевым API.
  *
- * @param mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
+ * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
  */
 class DefaultProgramingLanguageRepository(
     private val mainHttpClientManager: MainHttpClientManager

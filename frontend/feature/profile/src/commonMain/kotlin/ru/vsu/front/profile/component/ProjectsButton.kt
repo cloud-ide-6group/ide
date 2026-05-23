@@ -16,16 +16,12 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import front.feature.profile.generated.resources.Res
-import front.feature.profile.generated.resources.add_2_24dp
-import front.feature.profile.generated.resources.code_horizontal_24dp
-import front.feature.profile.generated.resources.code_vertical_24dp
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherIconButton
 import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import ru.vsu.front.model.entity.Project
 
 /**
  * Контейнер с кнопками добавления проекта и изменения видимости проектов.
@@ -69,7 +65,7 @@ internal fun ProjectsButton(
                 hoverColor = Color.White.copy(alpha = 0.0025f)
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.add_2_24dp),
+                    painter = painterResource(AppIcons.Add2),
                     contentDescription = null,
                     tint = CodeTogetherTheme.colors.primary,
                 )
@@ -81,7 +77,7 @@ internal fun ProjectsButton(
             ) {
                 Icon(
                     painter = painterResource(
-                        if (projectsAreVisible) Res.drawable.code_vertical_24dp else Res.drawable.code_horizontal_24dp
+                        if (projectsAreVisible) AppIcons.CodeVertical else AppIcons.CodeHorizontal
                     ),
                     contentDescription = null,
                     tint = CodeTogetherTheme.colors.primary,

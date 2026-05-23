@@ -24,8 +24,8 @@ import ru.vsu.front.network.MainHttpClientManager
 /**
  * Реализация интерфейса [ProfileRepository] для работы с сетевым API.
  *
- * @param mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
- * @param tokenStorage Хранилище токенов.
+ * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
+ * @property tokenStorage Хранилище токенов.
  */
 class DefaultProfileRepository(
     private val mainHttpClientManager: MainHttpClientManager,
@@ -55,11 +55,6 @@ class DefaultProfileRepository(
                         ?: return Response.Error(RequestError.UnknownError("Invalid token payload"))
 
                     Response.Success(dto.toEntity(id))
-                }
-
-                HttpStatusCode.Unauthorized -> {
-                    val message = response.body<ErrorResponseDto>().message
-                    Response.Error(RequestError.Unauthorized(message))
                 }
 
                 HttpStatusCode.NotFound -> {

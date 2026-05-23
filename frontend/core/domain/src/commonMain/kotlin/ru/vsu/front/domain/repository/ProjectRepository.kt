@@ -1,16 +1,126 @@
 package ru.vsu.front.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+import ru.vsu.front.model.entity.FileNode
+import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.Response
 
 interface ProjectRepository {
 
     /**
      * Выполняет создание проекта.
-
+     *
+     * @param programingLanguageId Идентификатор языка программирования.
+     * @param projectName Название проекта.
+     *
      * @return [Response] с идентификатором проекта, либо с ошибкой.
      */
     suspend fun createProject(
         programingLanguageId: Int,
         projectName: String
     ): Response<Int>
+
+    /**
+     * Отправляет обновленное содержимое файла на сервер
+     *
+     * @param fileId Идентификатор файла.
+     * @param content Новое содержимое файла.
+     */
+    suspend fun updateFileContent(fileId: Int, content: String)
+
+    /**
+     * Выполняет подписку на получение файлов проекта.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Flow] со списком текущих файлов.
+     */
+    fun observeFiles(projectId: Int): Flow<List<FileNode>>
+
+    /**
+     * Выполняет получение содержимого файла (не папки).
+     *
+     * @param fileId Идентификатор файла.
+     *
+     * @return [Flow] с текущим содержимым файла.
+     */
+    fun observeFileContent(fileId: Int): Flow<String>
+
+    /**
+     * Подписка на поток вывода консоли для запущенного проекта.
+     *
+     * @param projectId Идентификатор отслеживаемого проекта.
+     *
+     * @return [Flow] со строками вывода консоли приложения.
+     */
+    fun observeConsoleOutput(projectId: Int): Flow<String>
+
+    /**
+     * Подписка на сообщения текущего открытого чата.
+     *
+     * @return [Flow] с идентификатором чата и списком его сообщений.
+     */
+    fun observeMessages(): Flow<Pair<Int, List<Message>>>
+
+    /**
+     * Подписка на исключение текущего пользователя из проекта.
+     *
+     * @return [Flow] с идентификатором проекта, из которого был удален пользователь.
+     */
+    fun observeRemovedFromProject(): Flow<Int>
+
+    /**
+     * Запускает код текущего проекта.
+     *
+     * @param projectId Идентификатор запускаемого проекта.
+     */
+    suspend fun runCode(projectId: Int)
+
+    /**
+     * Останавливает выполнение кода текущего проекта.
+     *
+     * @param projectId Идентификатор останавливаемого проекта.
+     */
+    suspend fun stopCode(projectId: Int)
+
+    /**
+     * Выполняет подключение к комнате проекта
+     *
+     * @param projectId Идентификатор проекта.
+     */
+    suspend fun connectToTheProjectRoom(projectId: Int)
+
+    /**
+     * Закрывает соединение с комнатой проекта, отписывается от всех событий и отключает сокет.
+     */
+    suspend fun leaveFromProjectRoom(projectId: Int)
+
+    /**
+     * Подключает пользователя к чату.
+     *
+     * @param identificator Строковый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
+    suspend fun joinChatRoom(identificator: String, projectId: Int)
+
+    /**
+     * Отключает пользователя от чата.
+     *
+     * @param identificator Строковый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
+    suspend fun leaveChatRoom(identificator: String, projectId: Int)
+
+    /**
+     * Отправляет ввод в терминал выполняемой программы.
+     *
+     * @param input Ввод строка.
+     * @param projectId Идентификатор проекта.
+     */
+    suspend fun sendInput(input: String, projectId: Int)
+
+    /**
+     * Принудительно закрывает текущее соединение.
+     */
+    fun closeSocket()
 }

@@ -1,13 +1,8 @@
 package ru.vsu.front.data.repository
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.delete
-import io.ktor.client.request.get
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.engineio.client.transports.Polling
@@ -16,24 +11,23 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
-import ru.vsu.front.data.entity.dto.UserProfileDto
 import ru.vsu.front.data.entity.request.DeleteNotificationRequest
-import ru.vsu.front.data.mapper.toEntity
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.repository.NotificationsRepository
-import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.model.entity.Notification
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.network.HttpRoutes.DELETE_NOTIFICATION
-import ru.vsu.front.network.HttpRoutes.PROFILE
 import ru.vsu.front.network.MainHttpClientManager
+import ru.vsu.front.network.SocketRoutes.FILES_TREES_LIST
+import ru.vsu.front.network.SocketRoutes.NOTIFICATIONS_LIST
 
 /**
  * Реализация интерфейса [NotificationsRepository] для работы с сетевым API.
  *
- * @param baseUrl Базовый url для запросов.
- * @param tokenStorage Хранилище токенов.
+ * @property tokenStorage Хранилище токенов.
+ * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
+ * @property baseUrl Базовый url для запросов.
  */
 class DefaultNotificationsRepository(
     private val tokenStorage: TokenStorage,
@@ -52,13 +46,15 @@ class DefaultNotificationsRepository(
         }
 
         val options = IO.Options().apply {
-            extraHeaders = mapOf("Authorization" to listOf("Bearer ${tokens.accessToken}"))
+            auth = mapOf(
+                "token" to tokens.accessToken
+            )
             transports = arrayOf(Polling.NAME)
         }
 
         val socket = IO.socket(baseUrl, options)
 
-        socket.on("notifications_list") { args ->
+        socket.on(NOTIFICATIONS_LIST) { args ->
             try {
                 val data = args.firstOrNull { it is JSONObject } as? JSONObject
                 if (data == null) return@on
@@ -102,11 +98,17 @@ class DefaultNotificationsRepository(
         socket.connect()
 
         awaitClose {
-            socket.disconnect()
-            socket.off()
+            socket.off(FILES_TREES_LIST)
         }
     }
 
+    /**
+     * Отправляет HTTP DELETE-запрос для удаления конкретного уведомления у пользователя.
+     *
+     * @param notificationId Уникальный идентификатор уведомления, которое необходимо удалить.
+     *
+     * @return [Response] с результатом выполнения запроса.
+     */
     override suspend fun deleteNotification(notificationId: Int): Response<*> {
         return try {
             val response = mainHttpClientManager.getClient().delete(DELETE_NOTIFICATION) {
@@ -123,16 +125,7 @@ class DefaultNotificationsRepository(
                     Response.Success(Unit)
                 }
 
-                HttpStatusCode.Unauthorized -> {
-                    val message = response.body<ErrorResponseDto>().message
-                    Response.Error(RequestError.Unauthorized(message))
-                }
-
-                HttpStatusCode.Forbidden -> {
-                    val message = response.body<ErrorResponseDto>().message
-                    Response.Error(RequestError.Unauthorized(message))
-                }
-
+                HttpStatusCode.Forbidden,
                 HttpStatusCode.Conflict -> {
                     val message = response.body<ErrorResponseDto>().message
                     Response.Error(RequestError.NotFound(message))

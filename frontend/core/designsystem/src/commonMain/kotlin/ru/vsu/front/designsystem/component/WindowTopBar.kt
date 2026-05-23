@@ -16,6 +16,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.window.WindowScope
 import front.core.designsystem.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.common.NecessaryAppButtons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 
@@ -57,7 +58,7 @@ fun WindowScope.WindowTopBar(
                 Icon(
                     modifier = Modifier
                         .size(NecessaryAppButtons.NECESSARY_BUTTON_SIZE_IN_DP.dp),
-                    painter = painterResource(Res.drawable.app_icon_without_background),
+                    painter = painterResource(AppIcons.AppIconWithoutBackground),
                     contentDescription = "Code Together",
                     tint = Color.Unspecified
                 )
@@ -69,15 +70,15 @@ fun WindowScope.WindowTopBar(
                 NecessaryAppButtons.entries.fastForEach { entry ->
                     val (onClick, iconRes) = when (entry) {
                         NecessaryAppButtons.Minimize -> {
-                            onMinimizeClick to Res.drawable.minimize_24dp
+                            onMinimizeClick to AppIcons.Minimize
                         }
 
                         NecessaryAppButtons.Maximize -> {
-                            onMaximizeClick to Res.drawable.maximize_24dp
+                            onMaximizeClick to AppIcons.Maximize
                         }
 
                         NecessaryAppButtons.Close -> {
-                            onCloseClick to Res.drawable.close_24dp
+                            onCloseClick to AppIcons.Close
                         }
                     }
 

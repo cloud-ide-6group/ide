@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.WindowScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -25,6 +26,8 @@ import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen
 import ru.vsu.front.profile.ProfileViewModel
+import ru.vsu.front.projects.ProjectScreen
+import ru.vsu.front.projects.ProjectViewModel
 
 /**
  * Главный граф навигации приложения.
@@ -33,9 +36,14 @@ import ru.vsu.front.profile.ProfileViewModel
  * @param AuthManager Менеджер аутентификации, предоставляющий состояние текущей сессии пользователя.
  */
 @Composable
-fun Navigation(
+fun WindowScope.Navigation(
     navController: NavHostController,
-    authManager: AuthManager = koinInject()
+    onMinimizeClick: () -> Unit,
+    onMaximizeClick: () -> Unit,
+    onCloseClick: () -> Unit,
+    onSettingsClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    authManager: AuthManager = koinInject(),
 ) {
     val session by authManager.isAuthorized.collectAsStateWithLifecycle()
 
@@ -52,7 +60,11 @@ fun Navigation(
         composable<Route.Auth> {
             val viewModel = koinViewModel<AuthViewModel>()
             AuthScreen(
-                authViewModel = viewModel
+                authViewModel = viewModel,
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick
             )
         }
 
@@ -61,15 +73,31 @@ fun Navigation(
             ProfileScreen(
                 viewModel = viewModel,
                 onProjectInfoClick = { projectId ->
-                    navController.navigate(Route.ProjectInfo(projectId))
-                }
+                    navController.navigate(Route.Project(projectId))
+                },
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick,
+                onNotificationsClick = {
+                    navController.navigate(Route.Notifications)
+                },
+                onLogoutClick = onLogoutClick
             )
         }
 
         composable<Route.Notifications> {
             val viewModel = koinViewModel<NotificationsViewModel>()
             NotificationsScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick,
+                onLogoutClick = onLogoutClick,
+                onBackClick = {
+                    navController.popBackStack()
+                }
             )
         }
 
@@ -77,6 +105,31 @@ fun Navigation(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CodeTogetherText(text = "Project Info Screen")
             }
+        }
+
+        composable<Route.Project> { navBackStackEntry ->
+            val projectId = navBackStackEntry.toRoute<Route.Project>().projectId
+
+            val viewModel = koinViewModel<ProjectViewModel>(
+                parameters = {
+                    parametersOf(projectId)
+                }
+            )
+
+            ProjectScreen(
+                viewModel = viewModel,
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick,
+                onLogoutClick = onLogoutClick,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onRemovedFromProject = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

@@ -11,6 +11,7 @@ import ru.vsu.front.domain.di.domainModule
 import ru.vsu.front.network.di.networkModule
 import ru.vsu.front.notifications.di.notificationsModule
 import ru.vsu.front.profile.di.profileModule
+import ru.vsu.front.projects.di.projectModule
 
 /**
  * Инициализирует граф зависимостей Koin для всего приложения.
@@ -33,6 +34,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             profileModule,
             notificationsModule,
             settingsModule,
+            projectModule
         )
     }
 }

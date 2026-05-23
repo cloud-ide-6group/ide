@@ -4,11 +4,15 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.vsu.front.data.repository.DefaultAuthRepository
+import ru.vsu.front.data.repository.DefaultChatRepository
+import ru.vsu.front.data.repository.DefaultFileRepository
 import ru.vsu.front.data.repository.DefaultNotificationsRepository
 import ru.vsu.front.data.repository.DefaultProfileRepository
 import ru.vsu.front.data.repository.DefaultProgramingLanguageRepository
 import ru.vsu.front.data.repository.DefaultProjectRepository
 import ru.vsu.front.domain.repository.AuthRepository
+import ru.vsu.front.domain.repository.ChatRepository
+import ru.vsu.front.domain.repository.FileRepository
 import ru.vsu.front.domain.repository.NotificationsRepository
 import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.domain.repository.ProgramingLanguageRepository
@@ -23,6 +27,8 @@ import ru.vsu.front.domain.repository.ProjectRepository
  * - [ProgramingLanguageRepository] - реализация репозитория через [DefaultProgramingLanguageRepository].
  * - [DefaultProjectRepository] - реализация репозитория через [ProjectRepository].
  * - [DefaultNotificationsRepository] - реализация репозитория через [NotificationsRepository].
+ * - [DefaultFileRepository] - реализация репозитория через [FileRepository].
+ * - [DefaultChatRepository] - реализация репозитория через [ChatRepository].
  */
 val dataModule = module {
     single {
@@ -38,10 +44,18 @@ val dataModule = module {
     }.bind<ProgramingLanguageRepository>()
 
     single {
-        DefaultProjectRepository(get())
+        DefaultProjectRepository(get(), get(), get(named("baseUrl")))
     }.bind<ProjectRepository>()
 
     single {
         DefaultNotificationsRepository(get(), get(), get(named("baseUrl")))
     }.bind<NotificationsRepository>()
+
+    single {
+        DefaultFileRepository(get())
+    }.bind<FileRepository>()
+
+    single {
+        DefaultChatRepository(get())
+    }.bind<ChatRepository>()
 }

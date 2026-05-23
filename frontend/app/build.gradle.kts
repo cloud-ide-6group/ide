@@ -33,6 +33,7 @@ kotlin {
             implementation(projects.feature.authorization)
             implementation(projects.feature.profile)
             implementation(projects.feature.notifications)
+            implementation(projects.feature.project)
             implementation(projects.core.designsystem)
             implementation(projects.core.network)
             implementation(projects.core.data)

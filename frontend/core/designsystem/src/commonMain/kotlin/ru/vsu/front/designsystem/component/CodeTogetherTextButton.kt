@@ -28,7 +28,6 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme
  * @param enabled Доступность клика.
  * @param style Стиль текста.
  * @param textColor Цвет текста.
- * @param contentColor Цвет контента.
  * @param hoverColor Цвет контейнера когда курсор находится на кнопке.
  * @param unHoverColor Цвет контейнера когда курсор не находится на кнопке.
  * @param onClick Коллбек, вызываемый при клике на кнопку.

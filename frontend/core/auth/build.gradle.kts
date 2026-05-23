@@ -10,6 +10,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.coroutines)
             implementation(projects.core.datastore)
+            implementation(projects.core.domain)
         }
 
         jvmTest.dependencies {

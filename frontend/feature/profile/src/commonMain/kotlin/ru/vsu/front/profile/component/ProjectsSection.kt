@@ -101,7 +101,7 @@ internal fun ProjectsSectionPreview() {
             onCreateProjectClick = {
 
             },
-            onProjectClick = {
+            onProjectClick = { _ ->
 
             }
         )
