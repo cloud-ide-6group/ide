@@ -38,7 +38,7 @@ def add_user_in_project(project_id, invited_user_email, owner_id):
             except Exception as e:
                 print(e)
                 return None, ResultsCodes.UNEXPECTED_ERROR
-            
+
             notification_repo.add_notification(
                 project.id, owner_id, added_user.id, datetime.datetime.now()
             )
@@ -67,6 +67,9 @@ def delete_user_from_project(project_id, invited_user_email, owner_id):
     if project and project.owner_id == owner_id:
         deleted_user = user_repo.get_by_email(invited_user_email)
         if deleted_user and user_repo.user_exists(owner_id):
+            if deleted_user.id == owner_id:
+                return None, ResultsCodes.CANT_DELETE
+
             project_repo.delete_user_from_project(project.id, deleted_user.id)
             return deleted_user, ResultsCodes.OK
         else:

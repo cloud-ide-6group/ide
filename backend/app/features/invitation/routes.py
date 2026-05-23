@@ -35,7 +35,7 @@ def invite():
                 type: string
                 example: "test@mail.ru"
     responses:
-      200: "id":
+      200:
         description: Успешное приглашение
         content:
           application/json:
