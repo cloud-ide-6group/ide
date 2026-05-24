@@ -4,10 +4,12 @@ import app.cash.turbine.test
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
+import ru.vsu.front.domain.usecase.ObserveRemovedFromProjectUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.Response
@@ -27,6 +29,7 @@ class ProfileViewModelTest {
     private lateinit var updateProfilePasswordUseCase: UpdateProfilePasswordUseCase
     private lateinit var updateProfilePhotoUseCase: UpdateProfilePhotoUseCase
     private lateinit var observeNotificationsUseCase: ObserveNotificationsUseCase
+    private lateinit var observeRemovedFromProjectUseCase: ObserveRemovedFromProjectUseCase
     private lateinit var dispatcherProvider: DispatcherProvider
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -51,6 +54,8 @@ class ProfileViewModelTest {
         updateProfilePasswordUseCase = mockk()
         updateProfilePhotoUseCase = mockk()
         observeNotificationsUseCase = mockk()
+        observeRemovedFromProjectUseCase = mockk()
+
 
         dispatcherProvider = mockk {
             every { main } returns testDispatcher
@@ -82,6 +87,7 @@ class ProfileViewModelTest {
             updateProfilePasswordUseCase = updateProfilePasswordUseCase,
             updateProfilePhotoUseCase = updateProfilePhotoUseCase,
             observeNotificationsUseCase = observeNotificationsUseCase,
+            observeRemovedFromProjectUseCase = observeRemovedFromProjectUseCase,
             dispatcherProvider = dispatcherProvider
         )
     }
@@ -92,6 +98,7 @@ class ProfileViewModelTest {
     private fun setupSuccessInitialization() {
         coEvery { getProfileUseCase() } returns Response.Success(dummyProfile)
         coEvery { getProgramingLanguagesUseCase() } returns Response.Success(dummyLanguages)
+        coEvery { observeRemovedFromProjectUseCase() } returns flowOf(1)
     }
 
     @Test
@@ -113,6 +120,7 @@ class ProfileViewModelTest {
     fun `init sets Error state when profile loading fails`() = runTest {
         coEvery { getProfileUseCase() } returns Response.Error(mockk(relaxed = true))
         coEvery { getProgramingLanguagesUseCase() } returns Response.Success(dummyLanguages)
+        coEvery { observeRemovedFromProjectUseCase() } returns flowOf(1)
 
         val viewModel = createViewModel()
 
