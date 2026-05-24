@@ -72,11 +72,8 @@ class DefaultProjectRepository(
      * Выполняет POST-запрос на эндпоинт создания проекта ([CREATE_PROJECT]).
      *
      * @return [Response.Success] с доступными языками программирования при успешном запросе.
-     * @return [RequestError.Unauthorized] при недействительном токене обновления (401).
-     * @return [RequestError.Forbidden] при неверных учетных данных (403).
-     * @return [RequestError.Conflict] при ошибке создания проекта (409).
-     * @return [RequestError.UnknownError] при непредвиденной ошибке.
-     * @return [RequestError.NetworkException] при ошибке сети.
+     *
+     * @return [Response.Error] с [RequestError] в ошибки.
      */
     override suspend fun createProject(
         programingLanguageId: Int,
@@ -117,11 +114,8 @@ class DefaultProjectRepository(
      * Выполняет GET-запрос на эндпоинт получения информации о проекте ([GET_PROJECT_INFO]).
      *
      * @return [Response.Success] с доступными языками программирования при успешном запросе.
-     * @return [RequestError.Unauthorized] при недействительном токене обновления (401).
-     * @return [RequestError.Forbidden] при неверных учетных данных (403).
-     * @return [RequestError.Conflict] при ошибке создания проекта (409).
-     * @return [RequestError.UnknownError] при непредвиденной ошибке.
-     * @return [RequestError.NetworkException] при ошибке сети.
+     *
+     * @return [Response.Error] с [RequestError] в ошибки.
      */
     override suspend fun getProjectInfo(projectId: Int): Response<ProjectInfo> {
        return try {
@@ -150,6 +144,14 @@ class DefaultProjectRepository(
        }
     }
 
+    /**
+     * Выполняет DELETE-запрос для удаления проекта.
+     *
+     * @param projectId Идентификатор удаляемого проекта.
+     *
+     * @return [Response.Success] в случае успешного удаления.
+     * @return [Response.Error] с [RequestError] в ошибки.
+     */
     override suspend fun deleteProject(projectId: Int): Response<*> {
         return try {
             val response = mainHttpClientManager.getClient().delete(DELETE_PROJECT) {
@@ -181,6 +183,15 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Выполняет DELETE-запрос для исключения пользователя из проекта.
+     *
+     * @param userEmail Почта исключаемого пользователя.
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response.Success] при успешном исключении пользователя.
+     * @return [Response.Error] с [RequestError] при ошибке.
+     */
     override suspend fun kickUser(
         userEmail: String,
         projectId: Int
@@ -217,6 +228,15 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Выполняет POST-запрос для приглашения пользователя в проект.
+     *
+     * @param userEmail Почта приглашаемого пользователя.
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response.Success] с [User].
+     * @return [Response.Error] с [RequestError] при ошибке.
+     */
     override suspend fun inviteUser(
         userEmail: String,
         projectId: Int
@@ -259,6 +279,13 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Устанавливает подписку на получение дерева файлов проекта.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Flow] со списком файлов [FileNode].
+     */
     override fun observeFiles(projectId: Int): Flow<List<FileNode>> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -287,6 +314,11 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Метод для получения текущего соединения.
+     *
+     * @return [Socket] или null, если токен отсутствует.
+     */
     private suspend fun getConnectedSocket(): Socket? {
         val tokens = tokenStorage.getTokens()
 
@@ -315,6 +347,13 @@ class DefaultProjectRepository(
         return socket
     }
 
+    /**
+     * Преобразует [JSONArray] в список объектов [FileNode].
+     *
+     * @param fileNodes Массив файлов.
+     *
+     * @return Список файлов.
+     */
     private fun parseJSONArrayOfFileNodes(fileNodes: JSONArray): List<FileNode> {
         val filesList = mutableListOf<FileNode>()
 
@@ -336,6 +375,11 @@ class DefaultProjectRepository(
         return filesList
     }
 
+    /**
+     * Отправляет событие для подключения текущего пользователя к комнате проекта.
+     *
+     * @param projectId Идентификатор проекта, к которому осуществляется подключение.
+     */
     override suspend fun connectToTheProjectRoom(projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -346,6 +390,13 @@ class DefaultProjectRepository(
         currentSocket.emit(JOIN_PROJECT_ROOM, payload)
     }
 
+    /**
+     * Отправляет запрос на получение контента файла.
+     *
+     * @param fileId Идентификатор файла.
+     *
+     * @return [Flow], отправляющий текст файла.
+     */
     override fun observeFileContent(fileId: Int): Flow<String> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -472,13 +523,22 @@ class DefaultProjectRepository(
         currentSocket.emit(LEAVE_PROJECT_ROOM, payload)
         closeSocket()
     }
-
+    /**
+     * Отключает текущий сокет.
+     */
     override fun closeSocket() {
         socket?.disconnect()
         socket?.off()
         socket = null
     }
 
+    /**
+     * Отправляет ввод пользователя в выполняемую программу.
+     *
+     * @param input Текст ввода.
+     *
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun sendInput(input: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -490,6 +550,12 @@ class DefaultProjectRepository(
         currentSocket.emit(SEND_INPUT, payload)
     }
 
+    /**
+     * Отправляет событие присоединения пользователя к комнате чата.
+     *
+     * @param identificator Текстовый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun joinChatRoom(identificator: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -501,6 +567,12 @@ class DefaultProjectRepository(
         currentSocket.emit(JOIN_CHAT_ROOM, payload)
     }
 
+    /**
+     * Отправляет на сервер событие выхода пользователя из комнаты чата.
+     *
+     * @param identificator Текстовый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun leaveChatRoom(identificator: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -512,6 +584,11 @@ class DefaultProjectRepository(
         currentSocket.emit(LEAVE_CHAT_ROOM, payload)
     }
 
+    /**
+     * Устанавливает подписку на получение новых сообщений текущего открытого чата.
+     *
+     * @return [Flow], содержащий идентификатор чата и сообщения в нем.
+     */
     override fun observeMessages(): Flow<Pair<Int, List<Message>>> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -563,6 +640,11 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Устанавливает подписку, уведомляющую об удалении текущего пользователя из проекта
+     *
+     * @return [Flow] с идентификатором проекта, из которого был исключен пользователь.
+     */
     override fun observeRemovedFromProject(): Flow<Int> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
