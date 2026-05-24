@@ -18,7 +18,6 @@ import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.dto.ProjectInfoDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.request.DeleteProjectRequest
-import ru.vsu.front.data.entity.request.GetProjectInfoRequest
 import ru.vsu.front.data.entity.request.InviteUserRequest
 import ru.vsu.front.data.entity.request.KickUserRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse

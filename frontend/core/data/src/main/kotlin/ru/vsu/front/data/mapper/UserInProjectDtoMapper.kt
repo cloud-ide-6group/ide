@@ -1,6 +1,8 @@
 package ru.vsu.front.data.mapper
 
+import ru.vsu.front.data.entity.dto.ProjectDto
 import ru.vsu.front.data.entity.dto.UserDto
+import ru.vsu.front.model.entity.Project
 import ru.vsu.front.model.entity.User
 
 /**
@@ -18,6 +20,14 @@ fun UserDto.toEntity(): User {
     )
 }
 
+
+/**
+ * Преобразует список DTO-моделей ([UserDto])
+ * в список доменных сущностей проектов ([User]).
+ * * * Изолирует модели бизнес-логики от аннотаций `@Serializable` и `@SerialName`.
+ *
+ * * @return Список [User], содержащий информацию о пользователях.
+ */
 fun List<UserDto>.toEntities(): List<User> {
     return map { it.toEntity() }
 }

@@ -12,6 +12,20 @@ import ru.vsu.front.model.entity.*
 import ru.vsu.front.projectinfo.ProjectInfoEffect.ProjectDeleted
 import ru.vsu.front.projectinfo.ProjectInfoEffect.ShowMessage
 
+/**
+ * Вьюмодель экрана кода проекта.
+ *
+ * @param projectId Идентификатор открытого проекта.
+ * @param observeFilesUseCase UseCase для подписки на деревья файлов проекта.
+ * @param observeRemovedFromProjectUseCase UseCase для подписки на события исключения текущего пользователя из проекта.
+ * @param connectToTheProjectRoomUseCase UseCase подключения к комнате проекта.
+ * @param leaveFromProjectRoomUseCase UseCase для выхода из комнаты проекта.
+ * @param getProjectInfoUseCase UseCase для получения информации о проекте.
+ * @param deleteProjectUseCase UseCase для удаления проекта.
+ * @param kickUserUseCase UseCase для исключения пользователя из проекта.
+ * @param inviteUserUseCase UseCase для приглашения пользователя в проект.
+ * @param dispatcherProvider Провайдер корутинных диспатчеров.
+ */
 class ProjectInfoViewModel(
     private val projectId: Int,
     private val observeFilesUseCase: ObserveFilesUseCase,
@@ -349,6 +363,9 @@ class ProjectInfoViewModel(
     }
 }
 
+/**
+ * Состояние экрана информации о проекте.
+ */
 data class UiStateProjectInfo(
     val projectInfo: ProjectInfo = ProjectInfo(
         languageName = "",

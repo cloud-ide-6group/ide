@@ -35,6 +35,9 @@ import front.core.designsystem.generated.resources.stop_24dp
 import front.core.designsystem.generated.resources.visibility_off_24dp
 import front.core.designsystem.generated.resources.visibility_on_24dp
 
+/**
+ * Объект, представляю иконки, используемые в приложении.
+ */
 object AppIcons {
     val Add2
         get() = Res.drawable.add_2_24dp
