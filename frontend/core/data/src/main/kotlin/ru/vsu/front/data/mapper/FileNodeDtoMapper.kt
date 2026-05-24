@@ -20,7 +20,3 @@ fun FileNodeDto.toEntity(): FileNode {
         }
     )
 }
-
-fun List<FileNodeDto>.toEntities(): List<FileNode> {
-    return map { it.toEntity() }
-}
