@@ -68,7 +68,7 @@ internal fun ProjectItem(
                 }
             ) {
                 Icon(
-                    painter = painterResource(AppIcons.Info),
+                    painter = painterResource(AppIcons.ArrowRightIn),
                     contentDescription = "Project info",
                     tint = CodeTogetherTheme.colors.primary
                 )
