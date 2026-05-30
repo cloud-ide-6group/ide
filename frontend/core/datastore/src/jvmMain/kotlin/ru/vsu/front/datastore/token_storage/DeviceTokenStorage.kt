@@ -43,7 +43,6 @@ class DeviceTokenStorage(
             val decodedAccessToken = cryptoManager.decrypt(encryptedAccessToken)
             val decodedRefreshToken = cryptoManager.decrypt(encryptedRefreshToken)
 
-            println(decodedAccessToken)
             if (decodedAccessToken != null && decodedRefreshToken != null) {
                 return AuthTokens(decodedAccessToken, decodedRefreshToken)
             }

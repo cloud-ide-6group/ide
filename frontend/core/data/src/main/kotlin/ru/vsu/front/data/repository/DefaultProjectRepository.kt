@@ -206,7 +206,6 @@ class DefaultProjectRepository(
                 )
             }
 
-            println(response.bodyAsText())
             when (response.status) {
                 HttpStatusCode.OK -> {
                     Response.Success(Unit)
@@ -404,7 +403,6 @@ class DefaultProjectRepository(
         currentSocket.on(SEND_FILE_CONTENT) { args ->
             try {
                 val data = args.firstOrNull { it is JSONObject } as? JSONObject
-                println(data)
                 if (data == null) {
                     return@on
                 }

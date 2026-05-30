@@ -48,7 +48,6 @@ class ProfileViewModel(
         observeRemovedFromProjectUseCase()
             .flowOn(dispatcherProvider.io)
             .onEach { projectId ->
-                println("removed")
                 updateLoadedState {
                     it.copy(projects = it.projects.filter { it.id != projectId })
                 }
