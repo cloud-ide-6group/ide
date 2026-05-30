@@ -9,7 +9,8 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import ru.vsu.front.auth.AuthManager
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.usecase.RefreshUseCase
 import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.Response
@@ -54,7 +55,7 @@ fun withJWTTokensHttpClient(
                  * Загрузка токенов при создании клиента.
                  */
                 loadTokens {
-                    val tokens = tokenStorage.getTokens()
+                    val tokens = tokenStorage.getTokensAsync()
 
                     return@loadTokens tokens?.let {
                         BearerTokens(it.accessToken, it.refreshToken)
@@ -65,7 +66,7 @@ fun withJWTTokensHttpClient(
                  * Обновление токенов при получении ошибки 401.
                  */
                 refreshTokens {
-                    val oldTokens = tokenStorage.getTokens() ?: return@refreshTokens null
+                    val oldTokens = tokenStorage.getTokensAsync() ?: return@refreshTokens null
 
                     when (val response = refreshUseCase(oldTokens.refreshToken)) {
                         is Response.Error<*> -> {

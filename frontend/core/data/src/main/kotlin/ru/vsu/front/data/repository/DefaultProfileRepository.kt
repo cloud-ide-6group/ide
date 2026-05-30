@@ -2,7 +2,6 @@ package ru.vsu.front.data.repository
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.dto.UserProfileDto
@@ -10,7 +9,8 @@ import ru.vsu.front.data.entity.request.UpdateProfileDataRequest
 import ru.vsu.front.data.entity.request.UpdateProfilePasswordRequest
 import ru.vsu.front.data.entity.request.UpdateProfilePhotoRequest
 import ru.vsu.front.data.mapper.toEntity
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response

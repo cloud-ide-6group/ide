@@ -12,7 +12,6 @@ import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.projects.ProjectCommand.*
 import ru.vsu.front.projects.ProjectEffect.ShowMessage
-import kotlin.collections.flatMap
 
 /**
  * Вьюмодель экрана кода проекта.
@@ -37,6 +36,7 @@ import kotlin.collections.flatMap
  * @param observeRemovedFromProjectUseCase UseCase для отслеживания события исключения пользователя из проекта.
  * @param leaveFromProjectRoomUseCase UseCase для отключения от комнаты проекта.
  * @param observeConsoleOutputUseCase UseCase для подписки на вывод выполняемой программы.
+ * @param getFileContentUseCase UseCase получения текущего содержимого определенного файла.
  */
 @OptIn(FlowPreview::class)
 class ProjectViewModel(
@@ -60,6 +60,7 @@ class ProjectViewModel(
     private val observeRemovedFromProjectUseCase: ObserveRemovedFromProjectUseCase,
     private val leaveFromProjectRoomUseCase: LeaveFromProjectRoomUseCase,
     private val observeConsoleOutputUseCase: ObserveConsoleOutputUseCase,
+    private val getFileContentUseCase: GetFileContentUseCase
 ) : ViewModel() {
 
     /**
@@ -74,11 +75,6 @@ class ProjectViewModel(
     private val _events = MutableSharedFlow<ProjectEffect>()
     val events: SharedFlow<ProjectEffect>
         get() = _events.asSharedFlow()
-
-    /**
-     * Фоновая задача для отслеживания изменений содержимого открытого файла по сокету.
-     */
-    private var observeFileContentJob: Job? = null
 
     /**
      * Фоновая задача для отложенной отправки изменений кода на сервер (debounce),
@@ -121,6 +117,15 @@ class ProjectViewModel(
                 .onEach {
                     leaveFromProjectRoomUseCase(projectId)
                     _events.emit(ProjectEffect.RemovedFromProject)
+                }
+                .launchIn(viewModelScope)
+            observeFileContentUseCase()
+                .flowOn(dispatcherProvider.io)
+                .onEach { fileContent ->
+                    if (fileContent.id != _uiState.value.selectedFileId) return@onEach
+                    _uiState.update {
+                        it.copy(selectedFileContent = fileContent.content)
+                    }
                 }
                 .launchIn(viewModelScope)
         }
@@ -280,17 +285,24 @@ class ProjectViewModel(
             }
 
             is ClickFile -> {
-                if (observeMessagesJob != null) {
-                    observeMessagesJob?.cancel()
-                }
                 viewModelScope.launch(dispatcherProvider.io) {
-                    _uiState.update { previousState ->
-                        if (previousState.activeChatLink != null) {
-                            leaveChatUseCase(previousState.activeChatLink, projectId)
+                    with(_uiState.value) {
+                        if (_uiState.value.selectedFileId == command.fileId) return@launch
+
+                        if (command.fileId != selectedFileId) {
+                            observeMessagesJob?.cancel()
+
+                            if (activeChatLink != null) {
+                                leaveChatUseCase(activeChatLink, projectId)
+                            }
+
+                            _uiState.update { previousState ->
+                                previousState.copy(activeChatId = null, activeChatLink = null, messages = emptyList())
+                            }
                         }
-                        previousState.copy(activeChatId = null, activeChatLink = null, messages = emptyList())
                     }
-                    observeFileContent(command.fileId)
+
+                    getFileContent(command.fileId)
                 }
             }
 
@@ -422,23 +434,11 @@ class ProjectViewModel(
     }
 
     /**
-     * Выполняет смену текущего активного файла.
+     * Выполняет запрос на получение текущего содержимого файла.
      *
-     * * @param fileId Идентификатор файла, который необходимо открыть и отслеживать.
+     * * @param fileId Идентификатор файла.
      */
-    private fun observeFileContent(fileId: Int) {
-        if (_uiState.value.selectedFileId == fileId) return
-
-        val pendingFileId = _uiState.value.selectedFileId
-        val pendingContent = _uiState.value.selectedFileContent
-        if (debounceUploadJob?.isActive == true && pendingFileId != null && pendingContent != null) {
-            debounceUploadJob?.cancel()
-            viewModelScope.launch(dispatcherProvider.io) {
-                updateFileContentUseCase(fileId = pendingFileId, content = pendingContent)
-            }
-        }
-
-        observeFileContentJob?.cancel()
+    private suspend fun getFileContent(fileId: Int) {
         _uiState.update { previousState ->
             val flatFiles = previousState.files.flattenAll()
 
@@ -447,16 +447,8 @@ class ProjectViewModel(
                 recentlyFiles = (previousState.recentlyFiles + flatFiles.first { it.id == fileId }).toSet(),
             )
         }
-        observeFileContentJob = observeFileContentUseCase(fileId = fileId)
-            .flowOn(dispatcherProvider.io)
-            .onEach { content ->
-                if (_uiState.value.selectedFileId == fileId) {
-                    _uiState.update {
-                        it.copy(selectedFileContent = content)
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
+
+        getFileContentUseCase(fileId)
     }
 
     /**
@@ -533,8 +525,6 @@ class ProjectViewModel(
             if (fileToSelectNext != null) {
                 processCommand(ClickFile(fileToSelectNext.id))
             } else {
-                observeFileContentJob?.cancel()
-
                 val activeLink = currentState.activeChatLink
                 if (activeLink != null) {
                     viewModelScope.launch(dispatcherProvider.io) {

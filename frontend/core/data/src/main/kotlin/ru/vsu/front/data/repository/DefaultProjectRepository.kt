@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.engineio.client.transports.Polling
+import jdk.internal.net.http.common.Utils.close
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -21,9 +22,10 @@ import ru.vsu.front.data.entity.response.CreateProjectResponse
 import ru.vsu.front.data.entity.response.ProjectInfoResponse
 import ru.vsu.front.data.entity.response.UserResponse
 import ru.vsu.front.data.mapper.toEntity
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
 import ru.vsu.front.model.entity.ConsoleOutput
+import ru.vsu.front.model.entity.FileContent
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.ProjectInfo
@@ -317,7 +319,7 @@ class DefaultProjectRepository(
      * @return [Socket] или null, если токен отсутствует.
      */
     private suspend fun getConnectedSocket(): Socket? {
-        val tokens = tokenStorage.getTokens()
+        val tokens = tokenStorage.getTokensAsync()
 
         if (tokens == null) {
             closeSocket()
@@ -390,11 +392,9 @@ class DefaultProjectRepository(
     /**
      * Отправляет запрос на получение контента файла.
      *
-     * @param fileId Идентификатор файла.
-     *
      * @return [Flow], отправляющий текст файла.
      */
-    override fun observeFileContent(fileId: Int): Flow<String> = callbackFlow {
+    override fun observeFileContent(): Flow<FileContent> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
@@ -404,23 +404,25 @@ class DefaultProjectRepository(
         currentSocket.on(SEND_FILE_CONTENT) { args ->
             try {
                 val data = args.firstOrNull { it is JSONObject } as? JSONObject
-
+                println(data)
                 if (data == null) {
                     return@on
                 }
 
+                val fileId = data.optInt("file_id", 0)
                 val code = data.optString("content", "")
 
-                trySend(code)
+                if (fileId == 0) return@on
+
+                val fileContent = FileContent(
+                    id = fileId,
+                    content = code
+                )
+
+                trySend(fileContent)
             } catch (_: Exception) {
             }
         }
-
-        val requestData = JSONObject().apply {
-            put("file_id", fileId)
-        }
-
-        currentSocket.emit(GET_FILE_CONTENT, requestData)
 
         awaitClose {
             currentSocket.off(SEND_FILE_CONTENT)
@@ -671,5 +673,20 @@ class DefaultProjectRepository(
         awaitClose {
             currentSocket.off(REMOVED_FROM_PROJECT)
         }
+    }
+
+    /**
+     * Получает содержимое определенного файла
+     *
+     * @param fileId Идентификатор файла.
+     */
+    override suspend fun getFileContent(fileId: Int) {
+        val currentSocket = getConnectedSocket() ?: return
+
+        val payload = JSONObject().apply {
+            put("file_id", fileId)
+        }
+
+        currentSocket.emit(GET_FILE_CONTENT, payload)
     }
 }

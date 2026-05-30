@@ -1,5 +1,6 @@
 package ru.vsu.front.auth.di
 
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.vsu.front.auth.AuthManager
 

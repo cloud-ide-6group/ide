@@ -2,6 +2,7 @@ package ru.vsu.front.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import ru.vsu.front.model.entity.ConsoleOutput
+import ru.vsu.front.model.entity.FileContent
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.ProjectInfo
@@ -91,11 +92,9 @@ interface ProjectRepository {
     /**
      * Выполняет получение содержимого файла (не папки).
      *
-     * @param fileId Идентификатор файла.
-     *
      * @return [Flow] с текущим содержимым файла.
      */
-    fun observeFileContent(fileId: Int): Flow<String>
+    fun observeFileContent(): Flow<FileContent>
 
     /**
      * Подписка на поток вывода консоли для запущенного проекта.
@@ -174,4 +173,9 @@ interface ProjectRepository {
      * Принудительно закрывает текущее соединение.
      */
     fun closeSocket()
+
+    /**
+     * Получение содержимого определенного файла.
+     */
+    suspend fun getFileContent(fileId: Int)
 }

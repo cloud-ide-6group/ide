@@ -10,7 +10,7 @@ import ru.vsu.front.authorization.AuthCommand
 import ru.vsu.front.authorization.AuthEffect
 import ru.vsu.front.authorization.AuthViewModel
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
@@ -23,7 +23,7 @@ import kotlin.test.*
 class AuthViewModelTest {
     private lateinit var loginUseCase: LoginUseCase
     private lateinit var signUseCase: SignUseCase
-    private lateinit var tokenStorage: TokenStorage
+    private lateinit var tokenStorage: DeviceTokenStorage
     private lateinit var authManager: AuthManager
     private lateinit var dispatcherProvider: DispatcherProvider
 

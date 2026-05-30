@@ -2,6 +2,7 @@ package ru.vsu.front.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.model.entity.FileContent
 
 /**
  * UseCase для подписки на получение содержимого файла.
@@ -14,11 +15,9 @@ class ObserveFileContentUseCase(
     /**
      * Выполняет подписку на актуальное текстовое содержимое файла.
      *
-     * @param fileId Идентификатор файла.
-     *
      * @return [Flow] со строкой, содержащей код (текст) файла.
      */
-    operator fun invoke(fileId: Int): Flow<String> {
-        return repository.observeFileContent(fileId)
+    operator fun invoke(): Flow<FileContent> {
+        return repository.observeFileContent()
     }
 }

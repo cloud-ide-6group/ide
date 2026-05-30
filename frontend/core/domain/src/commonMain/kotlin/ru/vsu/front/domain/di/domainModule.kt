@@ -40,6 +40,7 @@ import ru.vsu.front.domain.usecase.*
  * - [DeleteProjectUseCase] Получение информации о проекте.
  * - [KickUserUseCase] Исключение участника из проекта.
  * - [InviteUserUseCase] Приглашение пользователя в проект.
+ * - [GetFileContentUseCase] Получение содержимого определенного файла.
  */
 val domainModule = module {
     single {
@@ -172,5 +173,9 @@ val domainModule = module {
 
     single {
         InviteUserUseCase(get())
+    }
+
+    single {
+        GetFileContentUseCase(get())
     }
 }
