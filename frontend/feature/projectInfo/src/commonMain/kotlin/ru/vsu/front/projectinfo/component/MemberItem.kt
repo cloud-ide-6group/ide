@@ -1,6 +1,7 @@
 package ru.vsu.front.projectinfo.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -43,20 +44,20 @@ fun MemberItem(
     ) {
         CodeTogetherText(text = member.name)
         Spacer(modifier = Modifier.weight(1f))
-        if (isOwner) {
-            CodeTogetherIconButton(
-                onClick = {
-                    onKickClick(member.email)
+        Box(modifier = Modifier.height(48.dp)){
+            if (isOwner) {
+                CodeTogetherIconButton(
+                    onClick = {
+                        onKickClick(member.email)
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(AppIcons.Remove),
+                        contentDescription = "Kick user",
+                        tint = CodeTogetherTheme.colors.primary,
+                    )
                 }
-            ) {
-                Icon(
-                    painter = painterResource(AppIcons.Remove),
-                    contentDescription = "Kick user",
-                    tint = CodeTogetherTheme.colors.primary,
-                )
             }
-        } else {
-            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
