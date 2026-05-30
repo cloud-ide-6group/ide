@@ -109,7 +109,10 @@ class ProjectViewModel(
                 .flowOn(dispatcherProvider.io)
                 .onEach { consoleOutput ->
                     _uiState.update {
-                        it.copy(consoleLines = it.consoleLines + consoleOutput)
+                        it.copy(
+                            consoleLines = it.consoleLines + consoleOutput.text,
+                            isProgramEnded = consoleOutput.isProgramEnded
+                        )
                     }
                 }
                 .launchIn(viewModelScope)
@@ -617,7 +620,8 @@ data class ProjectState(
     val activeChatLink: String? = null,
     val activeChatId: Int? = null,
     val messages: List<Message> = emptyList(),
-    val chatInputValue: String = ""
+    val chatInputValue: String = "",
+    val isProgramEnded: Boolean = true
 )
 
 /**

@@ -7,15 +7,12 @@ import io.ktor.http.*
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.engineio.client.transports.Polling
-import jdk.internal.net.http.common.Utils.close
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
-import ru.vsu.front.data.entity.dto.ProjectInfoDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.request.DeleteProjectRequest
 import ru.vsu.front.data.entity.request.InviteUserRequest
@@ -26,6 +23,7 @@ import ru.vsu.front.data.entity.response.UserResponse
 import ru.vsu.front.data.mapper.toEntity
 import ru.vsu.front.datastore.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.model.entity.ConsoleOutput
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
 import ru.vsu.front.model.entity.ProjectInfo
@@ -482,7 +480,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор отслеживаемого проекта.
      * @return [Flow] со строками вывода консоли приложения.
      */
-    override fun observeConsoleOutput(projectId: Int): Flow<String> = callbackFlow {
+    override fun observeConsoleOutput(projectId: Int): Flow<ConsoleOutput> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
@@ -497,9 +495,15 @@ class DefaultProjectRepository(
                     return@on
                 }
 
-                val output = data.optString("data", null) ?: return@on
+                val text = data.optString("data", null) ?: return@on
+                val isEnded = data.optBoolean("is_ended", true)
 
-                trySend(output)
+                val consoleOutput = ConsoleOutput(
+                    text = text,
+                    isProgramEnded = isEnded
+                )
+
+                trySend(consoleOutput)
             } catch (_: Exception) {
             }
         }

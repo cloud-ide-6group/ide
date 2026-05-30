@@ -88,18 +88,21 @@ fun WindowScope.ProjectScreen(
                 onClick = onBackClick,
                 icon = AppIcons.Back
             )
-            TopBarButton(
-                onClick = {
-                    viewModel.processCommand(ProjectCommand.ClickRunCode)
-                },
-                icon = AppIcons.Run
-            )
-            TopBarButton(
-                onClick = {
-                    viewModel.processCommand(ProjectCommand.ClickStopCode)
-                },
-                icon = AppIcons.Stop
-            )
+            if (uiState.isProgramEnded) {
+                TopBarButton(
+                    onClick = {
+                        viewModel.processCommand(ProjectCommand.ClickRunCode)
+                    },
+                    icon = AppIcons.Run
+                )
+            } else {
+                TopBarButton(
+                    onClick = {
+                        viewModel.processCommand(ProjectCommand.ClickStopCode)
+                    },
+                    icon = AppIcons.Stop
+                )
+            }
             TopBarButton(
                 onClick = {
                     viewModel.processCommand(ProjectCommand.ChangeTerminalPanelVisible)
