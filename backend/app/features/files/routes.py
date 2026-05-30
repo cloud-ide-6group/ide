@@ -307,7 +307,7 @@ def get_file_content_socket(data):
 
     socketio.emit(
         "send_file_content",
-        {"content": get_file_content(file_id)},
+        {"file_id": file_id, "content": get_file_content(file_id)},
         room=f"{id}",
     )
 

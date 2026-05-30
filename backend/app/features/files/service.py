@@ -292,6 +292,6 @@ def send_file_content_to_clients(file_id, new_content):
     file = file_repo.get_by_id(file_id)
     socketio.emit(
         "send_file_content",
-        {"content": new_content},
+        {"file_id": file_id, "content": new_content},
         room=f"project_{file.project_id}",
     )

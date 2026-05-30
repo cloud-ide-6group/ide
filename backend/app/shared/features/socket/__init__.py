@@ -24,7 +24,7 @@ def connect(auth):
 
     Возможные события ОТ СЕРВЕРА КЛИЕНТУ, ПОДПИСЫВАЕМСЯ НА НИХ:
         - send_file_content -- посылает всем клиентам обновленное содержимое файла
-            >>> {"content": "content example"}
+            >>> {"file_id": 65, "content": "content example"}
         - notifications_list -- уведомления
             >>> {"notifications": [
             >>>     {
