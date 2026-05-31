@@ -18,7 +18,8 @@ def get_notifications(user_id):
                     "send_time": datetime,
                     "notification_id": int,
                     "project_id": int,
-                    "project_name": str
+                    "project_name": str,
+                    "was_invited": bool
                 }
             ]
     """
@@ -27,7 +28,7 @@ def get_notifications(user_id):
     for n in raw_notifications:
         notifications.append(
             {
-                "sender_name": user_repo.get_name(n.sender_id) or "-",
+                "sender_name": user_repo.get_name_by_id(n.sender_id) or "-",
                 "send_time": n.send_time.isoformat() if n.send_time else None,
                 "notification_id": n.id,
                 "project_id": n.project_id,

@@ -18,10 +18,13 @@ def connect(auth):
         - run_code -- запустить программу
         - send_input -- отправить ввод в программу
         - stop_code -- остановить выполнение программы
+        - leave_project_room -- покинуть проект
+        - join_chat_room -- открыть чат
+        - leave_chat_room -- покинуть чат
 
     Возможные события ОТ СЕРВЕРА КЛИЕНТУ, ПОДПИСЫВАЕМСЯ НА НИХ:
         - send_file_content -- посылает всем клиентам обновленное содержимое файла
-            >>> {"content": "content example"}
+            >>> {"file_id": 65, "content": "content example"}
         - notifications_list -- уведомления
             >>> {"notifications": [
             >>>     {
@@ -29,7 +32,8 @@ def connect(auth):
             >>>         "send_time": "2026-05-21T15:30:45.123456",
             >>>         "notification_id": 80,
             >>>         "project_id": 79,
-            >>>         "project_name": "TestProject"
+            >>>         "project_name": "TestProject",
+            >>>         "was_invited": True
             >>>     }
             >>> ]}
         - files_trees_list -- массив деревьев файлов проекта
@@ -44,7 +48,7 @@ def connect(auth):
             >>>     ]
             >>> }
         - console_output -- вывод в консоль
-            >>> {"data": "output"}
+            >>> {"data": "output", "is_ended": True}
         - get_messages -- получить сообщения чата
             >>> {"chat_id": 80,
             >>>     "messages":
@@ -53,17 +57,8 @@ def connect(auth):
             >>>         "author": "username",
             >>>         "send_time": "2026-05-21 15:30:45"
             >>> }
-        - get_chats -- получить чаты с сообщениями
-            >>> {"chats_list": 
-            >>>     "id": 80,
-            >>>     "messages":
-            >>>         [
-            >>>             "id": 80,
-            >>>             "text": "message",
-            >>>             "author": "username",
-            >>>             "send_time": "2026-05-21 15:30:45"
-            >>>         ]
-            >>> }
+        - removed_from_project -- был удален из проекта. После этого сразу отправляем leave_project_room
+            >>> {"project_id": 81}
 
     Args:
         auth (str): Токен в json БЕЗ BEARER

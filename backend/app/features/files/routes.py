@@ -16,7 +16,6 @@ from .service import (
 from app.shared.extensions import socketio
 
 
-# TODO: валидировать токен
 @files_bp.route("/files/create", methods=["POST"])
 def create_file_route():
     """
@@ -26,72 +25,75 @@ def create_file_route():
       - features/files
     description: |
       Создает файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "main.txt"
-            project_name:
-              type: string
-              example: "TestProject"
-            parent_id:
-              type: int
-              example: 13 | "" если родителя нет
-            is_folder:
-              type: boolean
-              example: false
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "main.txt"
+              project_id:
+                type: integer
+                example: 81
+              parent_id:
+                type: integer
+                example: 13
+              is_folder:
+                type: boolean
+                example: false
     responses:
       201:
         description: Успешное создание
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     result = create_file(
-        data["name"], data["project_name"], data["parent_id"], data["is_folder"], id
+        data["name"], data["project_id"], data["parent_id"], data["is_folder"], id
     )
 
     if result == ResultsCodes.OK:
@@ -109,66 +111,69 @@ def delete_file_route():
       - features/files
     description: |
       Удалить файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            file_id:
-              type: int
-              example: 23
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              file_id:
+                type: integer
+                example: 23
     responses:
       200:
         description: Успешное удаление
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка удаления файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     file_id = data["file_id"]
     result = delete_file(file_id, id)
 
     if result == ResultsCodes.OK:
-        return {}, 201
+        return {}, 200
     else:
         return {"message": result}, 409
 
@@ -182,63 +187,66 @@ def rename_file_route():
       - features/files
     description: |
       Переименовать файл
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            file_id:
-              type: int
-              example: 23
-            new_name:
-              type: str
-              example: "NewFileName"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              file_id:
+                type: integer
+                example: 23
+              new_name:
+                type: string
+                example: "NewFileName"
     responses:
       200:
         description: Успешное переименование
       401:
         description: Проблема с токеном
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Токен недействителен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Токен недействителен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка переименования файла
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
     token, result = get_jwt_from_header(auth_header)
 
-    if result == ResultsCodes.NO_TOKEN:
-        response = create_unauthorized_response()
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
     id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     file_id = data["file_id"]
     new_name = data["new_name"]
@@ -254,7 +262,7 @@ def rename_file_route():
 @socketio.on("update_file_content")
 def update_file_content(data):
     """
-    Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
+    Сокет update_file_content. Клиент посылает новое содержимое файла, которое рассылается всем остальным пользователям.
 
     Args:
         data (dict): Словарь с данными файла.
@@ -281,7 +289,7 @@ def update_file_content(data):
 @socketio.on("get_file_content")
 def get_file_content_socket(data):
     """
-    Клиент посылает id файла и получает содержимое файла.
+    Сокет get_file_content. Клиент посылает id файла и получает содержимое файла.
 
     Args:
         data (dict): {
@@ -299,7 +307,7 @@ def get_file_content_socket(data):
 
     socketio.emit(
         "send_file_content",
-        {"content": get_file_content(file_id)},
+        {"file_id": file_id, "content": get_file_content(file_id)},
         room=f"{id}",
     )
 

@@ -12,6 +12,10 @@ author = "123abc1920"
 release = "0.0.1"
 language = 'ru'
 
+napoleon_use_param = False
+napoleon_use_rtype = False
+napoleon_attr_annotations = True
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -33,5 +37,15 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = "alabaster"
 html_static_path = ["_static"]
+html_theme = 'furo'
+html_css_files = ['styles.css']
+
+# Иконки для TOC
+html_theme_options = {
+    'navigation_depth': 2,
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'includehidden': True,
+    'titles_only': False,
+}

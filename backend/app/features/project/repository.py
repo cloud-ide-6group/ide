@@ -1,17 +1,15 @@
-from app.shared.dbmodels import Project, File, UserInProject, Message, User, Chat
+from app.shared.dbmodels import Project, File, Chat, UserInProject, User
 from app.shared.extensions import db
-from app.shared.consts import ResultsCodes
+from app.shared.base_repositories import (
+    BaseMessageRepository,
+    BaseProjectRepository,
+    BaseUserRepository,
+    BaseFileRepository,
+    BaseLanguageRepository,
+)
 
 
-class ProjectRepository:
-    """
-    Репозиторий для работы с проектами.
-
-    Attributes:
-        session: Сессия SQLAlchemy для работы с БД
-        model: Модель Project
-    """
-
+class ProjectRepository(BaseProjectRepository):
     def create_project(self, _name, _language_id, _owner_id):
         """
         Добавить проект в базу
@@ -35,71 +33,41 @@ class ProjectRepository:
             db.session.rollback()
             raise e
 
-    def get_project(self, _name):
+    def delete_project(self, _project_id):
         """
-        Получить проект из базы по имени
+        Удалить проект из базы
 
         Args:
-            _name (str): Имя проекта
+            _project_id (int): Id проекта
 
         Returns:
-            Project: Проект
+            bool: Удален ли
         """
-        return db.session.query(Project).filter(_name == Project.name).first()
-
-    def get_by_id(self, id):
-        """
-        Получить проект из базы по id
-
-        Args:
-            id (int): Id проекта
-
-        Returns:
-            Project: Проект
-        """
-        return db.session.query(Project).filter(Project.id == id).first()
-
-    def is_user_invited(self, project_id, user_id):
-        """
-        Приглашен ли пользователь в проект
-
-        Args:
-            project_id (int): Id проекта
-            user_id (int): Id пользователя
-
-        Returns:
-            bool: True, если пользователь уже в проекте, иначе False
-        """
-        userInProject = (
-            db.session.query(UserInProject)
-            .filter(
-                (UserInProject.project_id == project_id)
-                & (UserInProject.user_id == user_id)
-            )
-            .first()
-        )
-
-        if userInProject:
+        project = db.session.query(Project).filter(Project.id == _project_id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
             return True
 
         return False
 
     def get_chats(self, project_id):
+        """
+        Получить все чаты проекта
+
+        Args:
+            _project_id (int): Id проекта
+
+        Returns:
+            list[Chat]: Список чатов
+        """
         try:
             return db.session.query(Chat).filter(Chat.project_id == project_id).all()
         except Exception as e:
             raise RuntimeError(f"Getting chats error: {e}")
 
 
-class FileRepository:
-    """
-    Репозиторий для работы с файлами.
-
-    Attributes:
-        session: Сессия SQLAlchemy для работы с БД
-        model: Модель File
-    """
-
+class FileRepository(BaseFileRepository):
     def get_root_files(self, id):
         """
         Возвращает файлы в корневой директории проекта
@@ -129,49 +97,32 @@ class FileRepository:
         return db.session.query(File).filter(File.parent_id == parent_id).all()
 
 
-class MessageRepository:
-    """
-    Репозиторий для работы с файлами
-
-    Attributes:
-        session: Сессия SQLAlchemy для работы с БД
-        model: Модель File
-    """
-
-    def get_chat_messages(self, chat_id):
-        try:
-            return db.session.query(Message).filter(Message.chat_id == chat_id).all()
-        except Exception as e:
-            raise RuntimeError(f"Getting messages error: {e}")
+class MessageRepository(BaseMessageRepository):
+    pass
 
 
-class UserRepository:
-    """
-    Репозиторий для работы с файлами
+class UserRepository(BaseUserRepository):
+    def get_by_project_id(self, project_id, owner_id):
+        usersInProjects = (
+            db.session.query(UserInProject)
+            .filter(UserInProject.project_id == project_id)
+            .all()
+        )
+        owner = db.session.query(User).filter(User.id == owner_id).first()
 
-    Attributes:
-        session: Сессия SQLAlchemy для работы с БД
-        model: Модель File
-    """
+        users = [owner]
+        for unip in usersInProjects:
+            users.append(self.get_by_id(unip.user_id))
 
-    def get_name_by_id(self, id):
-        """
-        Получить файл по id.
+        return users
 
-        Args:
-            id (int): Id файла.
 
-        Returns:
-            File: Файл.
-        """
-        user = db.session.query(User).filter(User.id == int(id)).first()
-        if user:
-            return user.name
-        else:
-            return ResultsCodes.UNKNOWN_USER
+class LanguageRepository(BaseLanguageRepository):
+    pass
 
 
 project_repo = ProjectRepository()
 file_repo = FileRepository()
 message_repo = MessageRepository()
 user_repo = UserRepository()
+language_repo = LanguageRepository()

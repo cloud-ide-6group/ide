@@ -22,35 +22,30 @@ def run_code(project_id, user_id, app):
         app (): Объект приложения
     """
     with app.app_context():
-        user_in_project, result = project_repo.is_user_in_project(user_id, project_id)
-        if result != ResultsCodes.OK or not user_in_project:
-            socketio.emit("console_output", {"data": result}, room=str(user_id))
+        result = project_repo.is_user_in_project(user_id, project_id)
+        if result == False:
+            print(ResultsCodes.USER_IS_NOT_IN_PROJECT)
             return
 
         projects_dir = os.getenv("PROJECTS_PATH")
         project = project_repo.get_by_id(project_id)
         if project is None:
-            socketio.emit(
-                "console_output",
-                {"data": ResultsCodes.PROJECT_NOT_FOUND},
-                room=str(user_id),
-            )
+            print(ResultsCodes.PROJECT_NOT_FOUND)
             return
 
         project_dir = os.path.join(projects_dir, project.name)
         language = language_repo.get_by_id(project.language_id)
 
         if not language:
-            socketio.emit(
-                "console_output",
-                {"data": ResultsCodes.INCORRECT_LANG},
-                room=str(user_id),
-            )
+            print(ResultsCodes.INCORRECT_LANG)
             return
 
-        image_command = (
-            language.command + " " + MOUNT_DIR + read_start_file_from_conf(project_dir)
-        )
+        start_file = read_start_file_from_conf(project_dir)
+        if start_file is None:
+            print(ResultsCodes.INCORRECT_SETUP)
+            return
+
+        image_command = prepare_command(language.command, MOUNT_DIR, start_file)
 
         run_docker(project_dir, language.image_name, image_command, user_id, project_id)
 
@@ -96,7 +91,6 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
             "LC_ALL": "C.UTF-8",
             "PYTHONIOENCODING": "utf-8",
             "PYTHONUTF8": "1",
-            "NODE_OPTIONS": "--input-encoding=utf-8",
             "JAVA_TOOL_OPTIONS": "-Dfile.encoding=UTF-8",
         },
     )
@@ -123,7 +117,17 @@ def run_docker(project_dir, image_name, image_command, user_id, project_id):
 
             if line.strip():
                 line = re.sub(r"[\r\n\t\x0b\x0c]", "", line)
-                socketio.emit("console_output", {"data": line}, room=str(user_id))
+                socketio.emit(
+                    "console_output",
+                    {"data": line, "is_ended": False},
+                    room=str(user_id),
+                )
+
+    socketio.emit(
+        "console_output",
+        {"data": "Программа завершена.", "is_ended": True},
+        room=str(user_id),
+    )
 
     container_id = redis_client.get(session_key)
     if container_id:
@@ -173,3 +177,22 @@ def get_container(container_id):
             return container
         except Exception as e:
             return None
+
+
+def prepare_command(command, mount_dir, file_name):
+    """
+    Заменяет специальные символы актуальными в команде.
+
+    Args:
+        command (str): Исходная команда
+        mount_dir (str): Директория в которую монтировать в контейнере
+        file_name (str): Имя стартового файла
+
+    Returns:
+        str: Улучшенная команда
+    """
+    return (
+        command.replace("{file}", mount_dir + file_name)
+        .replace("{class}", file_name.split(".")[0])
+        .replace("?mount?", mount_dir[:-1])
+    )

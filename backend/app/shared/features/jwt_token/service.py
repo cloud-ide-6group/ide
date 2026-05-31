@@ -13,14 +13,16 @@ HOURS = 24
 MINS = 60
 SECS = 60
 
+ACCESS_KEY = os.getenv("ACCESS")
+REFRESH_KEY = os.getenv("REFRESH")
 
-def create_token(id, key, token_lifetime, is_access):
+
+def create_token(id, token_lifetime, is_access):
     """
     Генерирует JWT-токены.
 
     Args:
         id (int): Id пользователя
-        secret (str): Секретный ключ
         token_lifetime (int): Время жизни токена
         is_acess (bool): True, если это access-токен
 
@@ -31,6 +33,10 @@ def create_token(id, key, token_lifetime, is_access):
         >>> refresh = create_token(123, "key", timedelta(days=7), False)
         >>> access = create_token(123, "key", timedelta(minutes=15), True)
     """
+    key = REFRESH_KEY
+    if is_access:
+        key = ACCESS_KEY
+
     return jwt.encode(
         {
             "sub": str(id),
@@ -43,14 +49,12 @@ def create_token(id, key, token_lifetime, is_access):
     )
 
 
-def get_access_refresh_tokens(token, refresh_key, access_key):
+def get_access_refresh_tokens(token):
     """
     Создает access-токен. Используется refresh token rotation(новый refresh каждый раз)
 
     Args:
         token (refresh_token): Refresh-токен
-        refresh_key (str): Секретный ключ для refresh
-        access_key (str): Секретный ключ для access
 
     Returns:
         access: Сгенерерированный access-токен
@@ -64,14 +68,14 @@ def get_access_refresh_tokens(token, refresh_key, access_key):
     if redis_client.get(token):
         return {"result": ResultsCodes.REFRESH_TOKEN_EXPIRED}
 
-    data = jwt.decode(token, refresh_key, algorithms=["HS256"])
+    data = jwt.decode(token, REFRESH_KEY, algorithms=["HS256"])
     if data["is_access"]:
         return {
             "result": ResultsCodes.REFRESH_TOKEN_NEEDED,
         }
     else:
-        access = create_token(data["id"], access_key, timedelta(minutes=15), True)
-        refresh = create_token(data["id"], refresh_key, timedelta(days=7), False)
+        access = create_token(data["id"], timedelta(minutes=15), True)
+        refresh = create_token(data["id"], timedelta(days=7), False)
         redis_client.setex(token, DAYS * HOURS * MINS * SECS, "used")
         return {"access": access, "refresh": refresh, "result": ResultsCodes.OK}
 
@@ -112,24 +116,46 @@ def get_jwt_from_header(auth_header):
         result_code (ResultCodes): Результат выполнения
 
     Example:
-        > auth_header = request.headers.get("Authorization")
-        > token, result = get_jwt_from_header(auth_header)
+        >>> auth_header = request.headers.get("Authorization")
+        >>> token, result = get_jwt_from_header(auth_header)
     """
     if not auth_header or not auth_header.startswith("Bearer "):
         return None, ResultsCodes.NO_TOKEN
 
     access_token = auth_header.split(" ")[1]
 
+    is_token_valid = validate_jwt(access_token, os.getenv("ACCESS"))
+    if is_token_valid == False:
+        return None, ResultsCodes.INVALID_TOKEN
+
     return access_token, ResultsCodes.OK
 
 
-def create_unauthorized_response():
+def create_unauthorized_response(result):
     """
     Создает стандартный ответ для отсутствия токена
 
     Returns:
         response (json): Json ответ
     """
-    response = make_response({"message": ResultsCodes.NO_TOKEN}, 401)
+    response = make_response({"message": result}, 401)
     response.headers["WWW-Authenticate"] = "Bearer"
     return response
+
+
+def validate_jwt(token, secret_key):
+    """
+    Валидирует токен
+
+    Args:
+        token (str): Токен
+        secret_key(str): Ключ
+
+    Returns:
+        bool: Валиден или нет
+    """
+    try:
+        jwt.decode(token, secret_key, algorithms=["HS256"])
+        return True
+    except:
+        return False

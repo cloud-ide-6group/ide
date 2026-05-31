@@ -28,7 +28,7 @@ def lang_exists(id):
     Returns:
         bool: True, если язык есть, иначе False
     """
-    language = language_repo.get_lang(id)
+    language = language_repo.get_lang_by_id(id)
 
     if language == None:
         return False

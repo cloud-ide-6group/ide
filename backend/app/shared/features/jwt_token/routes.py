@@ -17,38 +17,42 @@ def refresh():
     ---
     tags:
       - shared/features/jwt_token
-    parameters:
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          required:
-            - refresh_token
-          properties:
-            refresh_token:
-              type: string
-              example: "eyJhbGciOiJIUzI1NiIs..."
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - refresh_token
+            properties:
+              refresh_token:
+                type: string
+                example: "eyJhbGciOiJIUzI1NiIs..."
     responses:
       200:
         description: Новый access-токен и refresh-токен
-        schema:
-          type: object
-          properties:
-            access_token:
-              type: string
-              example: "eyJhbGciOiJIUzI1NiIs..."
-            refresh_token:
-              type: string
-              example: "eyJhbGciOiJIUzI1NiIs..."
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIs..."
+                refresh_token:
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIs..."
       401:
         description: Недействительный refresh-токен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный refresh токен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный refresh токен"
     """
     data = request.json
     refresh_token = data["refresh_token"]
@@ -56,11 +60,8 @@ def refresh():
     if not refresh_token:
         return {"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401
 
-    ACCESS_SECRET = os.getenv("ACCESS", "UMLFphza4e")
-    REFRESH_SECRET = os.getenv("REFRESH", "iZdMl8QF0X")
-
     try:
-        result = get_access_refresh_tokens(refresh_token, REFRESH_SECRET, ACCESS_SECRET)
+        result = get_access_refresh_tokens(refresh_token)
         if result["result"] == ResultsCodes.OK:
             return {
                 "access_token": result["access"],

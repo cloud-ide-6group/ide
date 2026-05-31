@@ -34,7 +34,7 @@ def get_file_path(current_file, file_path):
     return file_path
 
 
-def create_file(name, project_name, parent_id, is_folder, user_id):
+def create_file(name, project_id, parent_id, is_folder, user_id):
     """
     Создать файл.
 
@@ -48,16 +48,22 @@ def create_file(name, project_name, parent_id, is_folder, user_id):
     Returns:
         ResultCodes: Результат выполнения операции.
     """
-    project = project_repo.get_by_name(project_name)
+    project = project_repo.get_by_id(project_id)
     if project:
         if not is_user_in_project(user_id, project.id):
             return ResultsCodes.CANT_CHANGE_FILE
         parent = file_repo.get_by_id(parent_id)
+
         if parent_id != "" and parent_id != None and not parent:
             return ResultsCodes.PARENT_NOT_EXIST
+
+        if parent and (parent.project_id != project_id or parent.is_folder == False):
+            return ResultsCodes.PARENT_NOT_EXIST
+
         if file_repo.is_file_exists(name, project.id, parent):
             return ResultsCodes.FILE_ALREADY_EXIST
-        result = create_file_on_disk(name, parent, project_name, is_folder)
+
+        result = create_file_on_disk(name, parent, project.name, is_folder)
         if result == ResultsCodes.OK:
             file_repo.create_file(
                 name, None if parent is None else parent.id, project.id, is_folder
@@ -97,6 +103,9 @@ def create_file_on_disk(name, parent, project_name, is_folder):
     Returns:
         ResultCodes: Результат выполнения операции.
     """
+    if name is None or name == "":
+        return ResultsCodes.INCORRECT_NAME
+
     project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
 
     file_path = get_file_path(parent, "")
@@ -207,6 +216,9 @@ def rename_file(file_id, new_name, user_id):
     Returns:
         ResultCodes: Результат выполнения операции.
     """
+    if new_name is None or new_name == "":
+        return ResultsCodes.INCORRECT_NAME
+
     file = file_repo.get_by_id(file_id)
     if not file:
         return ResultsCodes.FILE_NOT_EXIST
@@ -280,6 +292,6 @@ def send_file_content_to_clients(file_id, new_content):
     file = file_repo.get_by_id(file_id)
     socketio.emit(
         "send_file_content",
-        {"content": new_content},
+        {"file_id": file_id, "content": new_content},
         room=f"project_{file.project_id}",
     )

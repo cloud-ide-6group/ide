@@ -9,7 +9,7 @@ from config import DebugConfig
 @socketio.on("run_code")
 def run_code_socket(data):
     """
-    Сокет запуска кода
+    Сокет run_code. Сокет запуска кода
 
     Args:
         project_id (int): Id проекта.
@@ -28,7 +28,7 @@ def run_code_socket(data):
 @socketio.on("send_input")
 def input_socket(data):
     """
-    Сокет отправки ввода в программу
+    Сокет send_input. Сокет отправки ввода в программу
 
     Args:
         project_id (int): Id проекта.
@@ -57,7 +57,7 @@ def input_socket(data):
 @socketio.on("stop_code")
 def stop_code_socket(data):
     """
-    Сокет прерывания выполнения программы
+    Сокет stop_code. Сокет прерывания выполнения программы
 
     Args:
         project_id (int): Id проекта.

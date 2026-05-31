@@ -8,12 +8,6 @@ from email_validator import validate_email, EmailNotValidError
 class Project(db.Model):
     """Модель проекта в IDE.
 
-    Attributes:
-        id (int): Уникальный идентификатор проекта
-        name (str): Название проекта. Должно быть уникальным в системе
-        owner_id (int): ID пользователя-владельца (внешний ключ к user.id)
-        language_id (int): ID языка программирования проекта
-
     Example:
         >>> project = Project(
         ...     name="MyFirstProject",
@@ -25,9 +19,16 @@ class Project(db.Model):
     __tablename__ = "project"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор проекта"""
+
     name = db.Column(db.Text, unique=True, nullable=False)
+    """Название проекта. Должно быть уникальным в системе"""
+
     owner_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    """ID пользователя-владельца (внешний ключ к user.id)"""
+
     language_id = db.Column(db.Integer, db.ForeignKey("language.id"), nullable=False)
+    """ID языка программирования проекта"""
 
     chats = db.relationship(
         "Chat",
@@ -48,13 +49,6 @@ class Project(db.Model):
 class File(db.Model):
     """Модель файла или папки в проекте.
 
-    Attributes:
-        id (int): Уникальный идентификатор файла
-        name (str): Имя файла или папки
-        parent_id (int): ID родительской папки (null если в корне) (внешний ключ к File.id)
-        project_id (int): ID проекта-владельца
-        is_folder (bool): True = папка, False = файл
-
     Example:
         >>> file = File(
         ...     name="file5.txt",
@@ -67,12 +61,23 @@ class File(db.Model):
     __tablename__ = "file"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор файла"""
+
     name = db.Column(db.Text, nullable=False)
+    """Имя файла или папки"""
+
     parent_id = db.Column(
         db.Integer, db.ForeignKey("file.id", ondelete="CASCADE"), nullable=True
     )
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
+    """ID родительской папки (null если в корне) (внешний ключ к File.id)"""
+
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
+    """ID проекта-владельца"""
+
     is_folder = db.Column(db.Boolean, nullable=False)
+    """True = папка, False = файл"""
 
     children = db.relationship(
         "File",
@@ -93,13 +98,6 @@ class File(db.Model):
 class Language(db.Model):
     """Модель языка программирования.
 
-    Attributes:
-        id (int): Уникальный идентификатор языка
-        name (str): Имя языка
-        description (str): Описание языка
-        image_name (str): Docker образ для создания контейнера
-        command (str): Команда для запуска кода
-
     Example:
         >>> lang = Language(
         ...     name="Java 17",
@@ -113,34 +111,47 @@ class Language(db.Model):
     __tablename__ = "language"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор языка"""
+
     name = db.Column(db.Text)
+    """Имя языка"""
+
     description = db.Column(db.Text)
+    """Описание языка"""
+
     image_name = db.Column(db.Text)
+    """Docker образ для создания контейнера"""
+
     command = db.Column(db.Text)
+    """Команда для запуска кода"""
 
 
 class Chat(db.Model):
     """Модель чата. Может быть в разных файлах, но в одном проекте.
 
-    Attributes:
-        id (int): Уникальный идентификатор
-        author_id (int): ID создавшего участника (внешний ключ к User.id)
-        project_id (int): ID проекта-владельца
-
     Example:
         >>> chat = Chat(
         ...     author_id=1,
         ...     project_id=10,
+        ...     identificator="abc10",
         ... )
     """
 
     __tablename__ = "chat"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор"""
+
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    """ID создавшего участника (внешний ключ к User.id)"""
+
     project_id = db.Column(
         db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
     )
+    """ID проекта-владельца"""
+
+    identificator = db.Column(db.Text, nullable=False)
+    """Уникальный идентификатор в контексте чатов. ЗАДАВАТЬ при создании."""
 
     messages = db.relationship(
         "Message",
@@ -151,13 +162,6 @@ class Chat(db.Model):
 
 class Message(db.Model):
     """Модель сообщения в чате.
-
-    Attributes:
-        id (int): Уникальный идентификатор
-        text (str): Текст сообщения
-        author_id (int): ID создавшего участника (внешний ключ к User.id)
-        chat_id (int): ID чата-владельца
-        send_time (datetime): Время и дата отправки
 
     Example:
         >>> message = Message(
@@ -171,23 +175,25 @@ class Message(db.Model):
     __tablename__ = "message"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор"""
+
     text = db.Column(db.Text)
+    """Текст сообщения"""
+
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    """ID создавшего участника (внешний ключ к User.id)"""
+
     chat_id = db.Column(
         db.Integer, db.ForeignKey("chat.id", ondelete="CASCADE"), nullable=False
     )
+    """ID чата-владельца"""
+
     send_time = db.Column(db.DateTime, nullable=False)
+    """Время и дата отправки"""
 
 
 class User(db.Model):
     """Модель пользователя.
-
-    Attributes:
-        id (int): Уникальный идентификатор
-        name (str): Имя пользователя
-        photo_path (str): Путь к фотографии профиля
-        password_hash (str): Хэш пароля
-        email (str): Почта-логин
 
     Example:
         >>> user = User(
@@ -201,10 +207,19 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
+    """Уникальный идентификатор"""
+
     name = db.Column(db.Text, nullable=False)
+    """Имя пользователя"""
+
     photo_path = db.Column(db.Text, default="users_imgs/default.png")
+    """Путь к фотографии профиля"""
+
     password_hash = db.Column(db.Text, nullable=False)
+    """Хэш пароля"""
+
     email = db.Column(db.Text, nullable=False, unique=True)
+    """Почта-логин"""
 
     @validates("name")
     def validate_name(self, key, name):
@@ -232,11 +247,6 @@ class User(db.Model):
 class UserInProject(db.Model):
     """Таблица связи пользователя и проекта для реализации связи многие-ко-многим.
 
-    Attributes:
-        id (int): Уникальный идентификатор
-        project_id (int): ID проекта
-        user_id (int): ID пользователя
-
     Example:
         >>> user_in_project = UserInProject(
         ...     project_id=12,
@@ -251,19 +261,17 @@ class UserInProject(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    """Уникальный идентификатор"""
+
+    project_id = db.Column(db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"))
+    """ID проекта"""
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"))
+    """ID пользователя"""
 
 
 class Notification(db.Model):
     """Модель уведомлений.
-
-    Attributes:
-        id (int): Уникальный идентификатор
-        project_id (int): ID проекта
-        receiver_id (int): ID пользователя, которому отправлено уведомление (внешний ключ к User.id)
-        sender_id (int): ID отправителя (внешний ключ к User.id)
-        send_time (str): Дата и время отправки уведомления
 
     Example:
         >>> notification = Notification(
@@ -281,7 +289,20 @@ class Notification(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey("project.id"), nullable=False)
-    receiver_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    """Уникальный идентификатор"""
+
+    project_id = db.Column(
+        db.Integer, db.ForeignKey("project.id", ondelete="CASCADE"), nullable=False
+    )
+    """ID проекта"""
+
+    receiver_id = db.Column(
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
+    """ID пользователя, которому отправлено уведомление (внешний ключ к User.id)"""
+
     sender_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    """ID отправителя (внешний ключ к User.id)"""
+
     send_time = db.Column(db.DateTime, nullable=False)
+    """Дата и время отправки уведомления"""

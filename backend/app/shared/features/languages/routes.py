@@ -15,22 +15,33 @@ def get_languages():
     responses:
       200:
         description: Успешное получение массива языков
-        examples:
-        application/json:
-            {
-            "data": [
-                {
-                "id": 1,
-                "name": "Java17",
-                "description": "Java 17 language"
-                },
-                {
-                "id": 2,
-                "name": "Java21",
-                "description": "Java 21 language"
-                }
-            ]
-        }
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: "Java17"
+                      description:
+                        type: string
+                        example: "Java 17 language"
+            example:
+              data:
+                - id: 1
+                  name: "Java17"
+                  description: "Java 17 language"
+                - id: 2
+                  name: "Java21"
+                  description: "Java 21 language"
     """
     langs = get_all_langs()
 

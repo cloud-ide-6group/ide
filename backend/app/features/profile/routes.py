@@ -10,7 +10,11 @@ from .service import (
     save_photo,
     get_projects_includes,
 )
-from ...shared.features.jwt_token.service import get_id
+from ...shared.features.jwt_token.service import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from app.shared.features.password_hash.service import get_password_hash
 from app.shared.consts import ResultsCodes
 
@@ -26,73 +30,72 @@ def profile():
       - features/profile
     description: |
       Получить профиль пользователя. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
+    security:
+      - BearerAuth: []
     responses:
       200:
         description: Получение данных
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "username"
-            photo:
-              type: string
-              format: byte
-              description: "Фото в формате base64"
-              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
-            email:
-              type: string
-              example: "user@mail.ru"
-            projects:
-              type: array
-              items:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    description: "ID проекта"
-                    example: 1
-                  name:
-                    type: string
-                    description: "Название проекта"
-                    example: "Project34"
-              example: [{"id": 1, "name": "Project1"}, {"id": 15, "name": "Project2"}]
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "username"
+                photo:
+                  type: string
+                  format: byte
+                  description: "Фото в формате base64"
+                  example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+                email:
+                  type: string
+                  example: "user@mail.ru"
+                projects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: "ID проекта"
+                        example: 1
+                      name:
+                        type: string
+                        description: "Название проекта"
+                        example: "Project34"
+                  example: [{"id": 1, "name": "Project1"}, {"id": 15, "name": "Project2"}]
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       404:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
     if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+        response = create_unauthorized_response(result)
         return response
+
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     user, result = get_user_data(id)
     if user == None:
@@ -133,59 +136,57 @@ def update_profile():
       - features/profile
     description: |
       Обновить профиль. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            email:
-              type: email
-              example: "example@examp.le"
-            name:
-              type: string
-              example: "newName"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "example@examp.le"
+              name:
+                type: string
+                example: "newName"
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       404:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
     if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     user, result = update_user_data(id, data["email"], data["name"], None, None)
 
@@ -204,59 +205,56 @@ def update_password():
       - features/profile
     description: |
       Обновить пароль профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            old_password:
-              type: string
-              example: "password"
-            new_password:
-              type: string
-              example: "password123"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              old_password:
+                type: string
+                example: "password"
+              new_password:
+                type: string
+                example: "password123"
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       409:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Новый пароль не введен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Новый пароль не введен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
     if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
 
     if data["new_password"] != "" and data["new_password"] != None:
         old_password = data["old_password"]
@@ -281,58 +279,56 @@ def update_photo():
       - features/profile
     description: |
       Обновить фото профиля. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            photo:
-              type: string
-              format: byte
-              description: "Фото в формате base64"
-              example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              photo:
+                type: string
+                format: byte
+                description: "Фото в формате base64"
+                example: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
     responses:
       200:
         description: Данные обновлены
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       409:
         description: Пользователь не найден, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Пользователь не найден, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Пользователь не найден, доступ запрещен"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": ResultsCodes.REFRESH_TOKEN_NEEDED}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
-        return response
+    token, result = get_jwt_from_header(auth_header)
 
-    token = auth_header.split(" ")[1]
-
-    id, result = get_id(token)
     if result != ResultsCodes.OK:
-        response = make_response({"message": result}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
+
     photo = data["photo"]
 
     filename, result = save_photo(photo, id)

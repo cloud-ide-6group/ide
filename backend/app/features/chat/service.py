@@ -3,23 +3,28 @@ from app.shared.consts import ResultsCodes
 from datetime import datetime
 
 
-def create_chat(project_id, author_id):
+def create_chat(project_id, author_id, identificator):
     """
     Создать чат
 
     Args:
         project_id (int): Id проекта
         author_id (int): Id пользователя
+        identificator (str): Идентификатор чата
 
     Returns:
         Chat: Созданный чат
         ResultCodes: Результат выполнения операции
     """
+    chat = chat_repo.get_by_identificator(identificator, project_id)
+    if chat:
+        return None, ResultsCodes.CHAT_ALREADY_EXISTS
+
     if project_repo.is_user_in_project(author_id, project_id) == False:
         return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
 
     try:
-        chat = chat_repo.add_chat(project_id, author_id)
+        chat = chat_repo.add_chat(project_id, author_id, identificator)
         return chat, ResultsCodes.OK
     except Exception as e:
         print(e)

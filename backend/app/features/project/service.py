@@ -1,13 +1,14 @@
 import os
 from dotenv import load_dotenv
 from ...shared.consts import ResultsCodes
-from .repository import project_repo, file_repo, message_repo, user_repo
+from .repository import project_repo, file_repo, message_repo, user_repo, language_repo
 from app.shared.extensions import socketio
+import shutil
+from pathlib import Path
 
 load_dotenv()
 
 
-# TODO: дублирование get_messages
 def create_project_dir(project_name):
     """
     Выделяет пространство на диске на проект
@@ -54,7 +55,7 @@ def create_project(user_id, project_name, language_id):
     if project_name == "" or project_name == None:
         return None, ResultsCodes.INCORRECT_NAME
 
-    if project_repo.get_project(project_name) != None:
+    if project_repo.get_by_name(project_name) != None:
         return None, ResultsCodes.PROJECT_EXISTS_ALREADY
 
     project = project_repo.create_project(project_name, language_id, user_id)
@@ -110,7 +111,7 @@ def get_project_files_trees(project_id):
     return files_trees
 
 
-def is_user_invited(project_id, user_id):
+def user_is_in_project(project_id, user_id):
     """
     Приглашен ли пользователь в проект
 
@@ -121,7 +122,7 @@ def is_user_invited(project_id, user_id):
     Returns:
         bool: True, если пользователь уже в проекте, иначе False
     """
-    return project_repo.is_user_invited(project_id, user_id)
+    return project_repo.is_user_in_project(user_id, project_id)
 
 
 def get_project_by_id(project_id):
@@ -203,3 +204,81 @@ def get_chats(project_id):
     except Exception as e:
         print(e)
         return [], ResultsCodes.CHAT_NOT_FOUND
+
+
+def delete_project(project_id, user_id):
+    """
+    Удаляет проект
+
+    Args:
+        project_id (int): Id проекта
+        user_id (int): Id пользователя
+
+    Returns:
+        ResultCodes: Удален ли проект
+    """
+    project = project_repo.get_by_id(project_id)
+    if project:
+        if project.owner_id != user_id:
+            return ResultsCodes.USER_NOT_OWNER
+
+    result = project_repo.delete_project(project_id)
+    if result == True:
+        delete_from_disc(project.name)
+        return ResultsCodes.OK
+
+    return ResultsCodes.DELETE_ERROR
+
+
+def get_project_info(project_id, user_id):
+    """
+    Возвращает информацию о проекте
+
+    Args:
+        project_id (int): Id проекта
+        user_id (int): Id пользователя
+
+    Returns:
+        dict: Информация о проекте
+            - "user_is_owner": True,
+            - "project_name": "Project",
+            - "project_id": 9,
+            - "language_name": "JAVA",
+            - "users": [ {"id": 9, "name": "UserName", "email" "user_name@mail.ru"} ]
+        ResultsCodes: Результат выполнения операции
+    """
+    project = project_repo.get_by_id(project_id)
+    if project:
+        if project_repo.is_user_in_project(user_id, project_id) == False:
+            return None, ResultsCodes.USER_IS_NOT_IN_PROJECT
+
+        language = language_repo.get_lang_by_id(project.language_id)
+
+        users_raw = user_repo.get_by_project_id(project_id, project.owner_id)
+        users = []
+        for u in users_raw:
+            users.append({"id": u.id, "name": u.name, "email": u.email})
+
+        return {
+            "user_is_owner": project.owner_id == user_id,
+            "project_name": project.name,
+            "project_id": project.id,
+            "language_name": language.name if language else "",
+            "users": users,
+        }, ResultsCodes.OK
+
+    return None, ResultsCodes.PROJECT_NOT_FOUND
+
+
+def delete_from_disc(project_name):
+    """
+    Удаляет проект с диска и его файлы
+
+    Args:
+        project_name (str): Имя проекта
+    """
+    project_dir = os.path.join(os.getenv("PROJECTS_PATH"), project_name)
+
+    path = Path(project_dir)
+    if path.exists():
+        shutil.rmtree(path)

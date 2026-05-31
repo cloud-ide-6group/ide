@@ -1,25 +1,28 @@
 from . import project_bp
-from ...shared.features.jwt_token.routes import get_id
+from ...shared.features.jwt_token.routes import (
+    get_id,
+    get_jwt_from_header,
+    create_unauthorized_response,
+)
 from app.shared.features.languages.service import lang_exists
 from app.shared.consts import ResultsCodes
-from flask import request, make_response
+from flask import request
 from .service import (
     create_project_dir,
     create_project,
-    is_user_invited,
+    user_is_in_project,
     get_project_by_id,
     get_project_files_trees,
     get_messages,
     get_chats,
+    delete_project,
+    get_project_info,
 )
 from flask_socketio import join_room, leave_room
 from flask import session
 from app.shared.extensions import socketio
 
 
-# TODO: удаление проекта
-# TODO: вынести сокеты в отдельный файл
-# TODO: базовые реализации репозиториев
 @project_bp.route("/project/create", methods=["POST"])
 def create_new_project():
     """
@@ -27,69 +30,74 @@ def create_new_project():
     ---
     tags:
       - features/project
-    parameters:
-      - name: Authorization
-        in: header
-        required: true
-        type: string
-        example: "Bearer pbkdf2:sha256:260000$xyz..."
-      - name: body
-        in: body
-        required: true
-        schema:
-          type: object
-          properties:
-            project_name:
-              type: string
-              example: "TestProject"
-            language_id:
-              type: int
-              example: 7
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_name:
+                type: string
+                example: "TestProject"
+              language_id:
+                type: integer
+                example: 7
     responses:
       201:
         description: Успешное создание
-        schema:
-          type: object
-          properties:
-              project_id:
-                type: int
-                example: 25
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                project_id:
+                  type: integer
+                  example: 25
       401:
         description: Неверный access токен, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверный access токен, доступ запрещен"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
       403:
         description: Неверные учетные данные, доступ запрещен
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Неверные учетные данные"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
       409:
         description: Ошибка создания проекта
-        schema:
-          type: object
-          properties:
-              message:
-                type: string
-                example: "Проект уже существует"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
+    security:
+      - BearerAuth: []
     """
     auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        response = make_response({"message": "Токен не предоставлен"}, 401)
-        response.headers["WWW-Authenticate"] = "Bearer"
+    token, result = get_jwt_from_header(auth_header)
+
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
         return response
 
     data = request.json
-    access_token = auth_header.split(" ")[1]
-    id, id_result = get_id(access_token)
+    id, id_result = get_id(token)
     if id_result != ResultsCodes.OK:
-        return {"message": id_result}, 403
+        return {"message": id_result}, 401
 
     project_name = data["project_name"]
     language_id = data["language_id"]
@@ -110,10 +118,193 @@ def create_new_project():
     return {"project_id": project.id}, 201
 
 
+@project_bp.route("/project/delete", methods=["DELETE"])
+def delete_project_route():
+    """
+    Удаление проекта
+    ---
+    tags:
+      - features/project
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              project_id:
+                type: integer
+                example: 7
+    responses:
+      200:
+        description: Успешное удаление
+      401:
+        description: Неверный access токен, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
+      409:
+        description: Ошибка удаления проекта
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
+    security:
+      - BearerAuth: []
+    """
+    auth_header = request.headers.get("Authorization")
+    token, result = get_jwt_from_header(auth_header)
+
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
+        return response
+
+    data = request.json
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
+
+    project_id = data["project_id"]
+
+    result = delete_project(project_id, id)
+    if result != ResultsCodes.OK:
+        return {"message": result}, 409
+
+    return {}, 200
+
+
+@project_bp.route("/project/info", methods=["GET"])
+def get_project_info_route():
+    """
+    Получить информацию о проекте
+    ---
+    tags:
+      - features/project
+    parameters:
+      - name: project_id
+        in: query
+        required: true
+        schema:
+          type: integer
+        example: 7
+    responses:
+      200:
+        description: Успешное получение
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_is_owner:
+                  type: boolean
+                  description: Является ли пользователь владельцем проекта
+                  example: true
+                project_name:
+                  type: string
+                  description: Название проекта
+                  example: "Project"
+                project_id:
+                  type: integer
+                  description: Уникальный идентификатор проекта
+                  example: 9
+                language_name:
+                  type: string
+                  description: Название языка программирования
+                  example: "JAVA"
+                users:
+                  type: array
+                  description: Список пользователей в проекте
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        description: ID пользователя
+                        example: 9
+                      name:
+                        type: string
+                        description: Имя пользователя
+                        example: "UserName"
+                      email:
+                        type: string
+                        description: Почтв пользователя
+                        example: "user_name@mail.ru"
+      401:
+        description: Неверный access токен, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверный access токен, доступ запрещен"
+      403:
+        description: Неверные учетные данные, доступ запрещен
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Неверные учетные данные"
+      409:
+        description: Ошибка удаления проекта
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Проект уже существует"
+    security:
+      - BearerAuth: []
+    """
+    auth_header = request.headers.get("Authorization")
+    token, result = get_jwt_from_header(auth_header)
+
+    if result != ResultsCodes.OK:
+        response = create_unauthorized_response(result)
+        return response
+
+    id, id_result = get_id(token)
+    if id_result != ResultsCodes.OK:
+        return {"message": id_result}, 401
+
+    project_id = request.args.get("project_id")
+
+    project_info, result = get_project_info(project_id, id)
+    if result != ResultsCodes.OK:
+        return {"message": result}, 409
+
+    return {"project_info": project_info}, 200
+
+
 @socketio.on("join_project_room")
 def join_project_room(data):
     """
-    Клиент открывает проект и попадает в его комнату. Необходимо вызывать при открытии проекта.
+    Сокет join_project_room. Клиент открывает проект и попадает в его комнату. Необходимо вызывать при открытии проекта.
 
     Args:
         data (dict): Словарь с данными проекта.
@@ -146,7 +337,7 @@ def join_project_room(data):
     project_id = data.get("project_id")
     project = get_project_by_id(project_id)
     if project:
-        if project.owner_id == id or is_user_invited(project_id, id):
+        if user_is_in_project(project_id, id):
             for room in session.get("project_rooms", []):
                 leave_room(room)
             new_room = f"project_{project_id}"
@@ -163,11 +354,6 @@ def join_project_room(data):
                 messages, result_getting_messages = get_messages(c.id)
                 if result_getting_messages == ResultsCodes.OK:
                     chats_list.append({"id": c.id, "messages": messages})
-            socketio.emit(
-                "get_chats",
-                {"chats_list": chats_list},
-                room=f"{id}",
-            )
             return True
 
     return False
