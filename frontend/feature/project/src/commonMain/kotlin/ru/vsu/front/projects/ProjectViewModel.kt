@@ -93,10 +93,13 @@ class ProjectViewModel(
             observeFilesUseCase(projectId)
                 .flowOn(dispatcherProvider.io)
                 .onEach { files ->
-                    _uiState.update {
-                        it.copy(
+                    _uiState.update { previousState ->
+                        val selectedFileWasDeleted = previousState.selectedFileId !in files.map { it.id }
+
+                        previousState.copy(
                             files = files,
-                            recentlyFiles = it.recentlyFiles.filter { file -> file in files }.toSet()
+                            recentlyFiles = previousState.recentlyFiles.filter { file -> file in files }.toSet(),
+                            selectedFileId = if (selectedFileWasDeleted) null else previousState.selectedFileId
                         )
                     }
                 }
