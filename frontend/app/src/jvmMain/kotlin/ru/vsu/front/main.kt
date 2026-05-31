@@ -52,7 +52,7 @@ fun main() {
             icon = painterResource(AppIcons.AppIcon),
             state = windowState,
             undecorated = true,
-            transparent = false
+            transparent = true
         ) {
             var previousSize by remember {
                 mutableStateOf(DpSize.Unspecified)
