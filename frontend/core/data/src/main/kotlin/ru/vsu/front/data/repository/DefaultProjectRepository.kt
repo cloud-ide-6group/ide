@@ -2,12 +2,12 @@ package ru.vsu.front.data.repository
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.engineio.client.transports.Polling
 import jdk.internal.net.http.common.Utils.close
-import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -15,14 +15,28 @@ import org.json.JSONArray
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
+import ru.vsu.front.data.entity.request.DeleteProjectRequest
+import ru.vsu.front.data.entity.request.InviteUserRequest
+import ru.vsu.front.data.entity.request.KickUserRequest
 import ru.vsu.front.data.entity.response.CreateProjectResponse
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.data.entity.response.ProjectInfoResponse
+import ru.vsu.front.data.entity.response.UserResponse
+import ru.vsu.front.data.mapper.toEntity
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.model.entity.ConsoleOutput
+import ru.vsu.front.model.entity.FileContent
 import ru.vsu.front.model.entity.FileNode
 import ru.vsu.front.model.entity.Message
+import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
+import ru.vsu.front.model.entity.User
 import ru.vsu.front.network.HttpRoutes.CREATE_PROJECT
+import ru.vsu.front.network.HttpRoutes.DELETE_PROJECT
+import ru.vsu.front.network.HttpRoutes.GET_PROJECT_INFO
+import ru.vsu.front.network.HttpRoutes.INVITE_USER
+import ru.vsu.front.network.HttpRoutes.KICK_USER
 import ru.vsu.front.network.MainHttpClientManager
 import ru.vsu.front.network.SocketRoutes.CONSOLE_OUTPUT
 import ru.vsu.front.network.SocketRoutes.FILES_TREES_LIST
@@ -57,11 +71,8 @@ class DefaultProjectRepository(
      * Выполняет POST-запрос на эндпоинт создания проекта ([CREATE_PROJECT]).
      *
      * @return [Response.Success] с доступными языками программирования при успешном запросе.
-     * @return [RequestError.Unauthorized] при недействительном токене обновления (401).
-     * @return [RequestError.Forbidden] при неверных учетных данных (403).
-     * @return [RequestError.Conflict] при ошибке создания проекта (409).
-     * @return [RequestError.UnknownError] при непредвиденной ошибке.
-     * @return [RequestError.NetworkException] при ошибке сети.
+     *
+     * @return [Response.Error] с [RequestError] в ошибки.
      */
     override suspend fun createProject(
         programingLanguageId: Int,
@@ -98,6 +109,181 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Выполняет GET-запрос на эндпоинт получения информации о проекте ([GET_PROJECT_INFO]).
+     *
+     * @return [Response.Success] с доступными языками программирования при успешном запросе.
+     *
+     * @return [Response.Error] с [RequestError] в ошибки.
+     */
+    override suspend fun getProjectInfo(projectId: Int): Response<ProjectInfo> {
+       return try {
+           val response = mainHttpClientManager.getClient().get(GET_PROJECT_INFO) {
+               parameter("project_id", projectId)
+           }
+
+           when (response.status) {
+               HttpStatusCode.OK -> {
+                   val projectInfoDto = response.body<ProjectInfoResponse>().projectInfoDto
+                   Response.Success(projectInfoDto.toEntity())
+               }
+
+               HttpStatusCode.Forbidden,
+               HttpStatusCode.Conflict -> {
+                   val message = response.body<ErrorResponseDto>().message
+                   Response.Error(RequestError.Conflict(message))
+               }
+
+               else -> {
+                   Response.Error(RequestError.UnknownError())
+               }
+           }
+       } catch (_: Exception) {
+           Response.Error(RequestError.NetworkException())
+       }
+    }
+
+    /**
+     * Выполняет DELETE-запрос для удаления проекта.
+     *
+     * @param projectId Идентификатор удаляемого проекта.
+     *
+     * @return [Response.Success] в случае успешного удаления.
+     * @return [Response.Error] с [RequestError] в ошибки.
+     */
+    override suspend fun deleteProject(projectId: Int): Response<*> {
+        return try {
+            val response = mainHttpClientManager.getClient().delete(DELETE_PROJECT) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    DeleteProjectRequest(
+                        projectId = projectId
+                    )
+                )
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    Response.Success(Unit)
+                }
+
+                HttpStatusCode.Forbidden,
+                HttpStatusCode.Conflict -> {
+                    val message = response.body<ErrorResponseDto>().message
+                    Response.Error(RequestError.Conflict(message))
+                }
+
+                else -> {
+                    Response.Error(RequestError.UnknownError())
+                }
+            }
+        } catch (_: Exception) {
+            Response.Error<RequestError>(RequestError.NetworkException())
+        }
+    }
+
+    /**
+     * Выполняет DELETE-запрос для исключения пользователя из проекта.
+     *
+     * @param userEmail Почта исключаемого пользователя.
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response.Success] при успешном исключении пользователя.
+     * @return [Response.Error] с [RequestError] при ошибке.
+     */
+    override suspend fun kickUser(
+        userEmail: String,
+        projectId: Int
+    ): Response<*> {
+        return try {
+            val response = mainHttpClientManager.getClient().delete(KICK_USER) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    KickUserRequest(
+                        userEmail = userEmail,
+                        projectId = projectId
+                    )
+                )
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    Response.Success(Unit)
+                }
+
+                HttpStatusCode.Forbidden,
+                HttpStatusCode.Conflict -> {
+                    val message = response.body<ErrorResponseDto>().message
+                    Response.Error(RequestError.Conflict(message))
+                }
+
+                else -> {
+                    Response.Error(RequestError.UnknownError())
+                }
+            }
+        } catch (_: Exception) {
+            Response.Error<RequestError>(RequestError.NetworkException())
+        }
+    }
+
+    /**
+     * Выполняет POST-запрос для приглашения пользователя в проект.
+     *
+     * @param userEmail Почта приглашаемого пользователя.
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Response.Success] с [User].
+     * @return [Response.Error] с [RequestError] при ошибке.
+     */
+    override suspend fun inviteUser(
+        userEmail: String,
+        projectId: Int
+    ): Response<User> {
+        return try {
+            val response = mainHttpClientManager.getClient().post(INVITE_USER) {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    InviteUserRequest(
+                        userEmail = userEmail,
+                        projectId = projectId
+                    )
+                )
+            }
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    val response = response.body<UserResponse>()
+                    Response.Success(
+                        User(
+                            userId = response.userId,
+                            name = response.name,
+                            email = response.email
+                        )
+                    )
+                }
+
+                HttpStatusCode.Forbidden,
+                HttpStatusCode.Conflict -> {
+                    val message = response.body<ErrorResponseDto>().message
+                    Response.Error(RequestError.Conflict(message))
+                }
+
+                else -> {
+                    Response.Error(RequestError.UnknownError())
+                }
+            }
+        } catch (_: Exception) {
+            Response.Error(RequestError.NetworkException())
+        }
+    }
+
+    /**
+     * Устанавливает подписку на получение дерева файлов проекта.
+     *
+     * @param projectId Идентификатор проекта.
+     *
+     * @return [Flow] со списком файлов [FileNode].
+     */
     override fun observeFiles(projectId: Int): Flow<List<FileNode>> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -126,8 +312,13 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Метод для получения текущего соединения.
+     *
+     * @return [Socket] или null, если токен отсутствует.
+     */
     private suspend fun getConnectedSocket(): Socket? {
-        val tokens = tokenStorage.getTokens()
+        val tokens = tokenStorage.getTokensAsync()
 
         if (tokens == null) {
             closeSocket()
@@ -154,6 +345,13 @@ class DefaultProjectRepository(
         return socket
     }
 
+    /**
+     * Преобразует [JSONArray] в список объектов [FileNode].
+     *
+     * @param fileNodes Массив файлов.
+     *
+     * @return Список файлов.
+     */
     private fun parseJSONArrayOfFileNodes(fileNodes: JSONArray): List<FileNode> {
         val filesList = mutableListOf<FileNode>()
 
@@ -175,6 +373,11 @@ class DefaultProjectRepository(
         return filesList
     }
 
+    /**
+     * Отправляет событие для подключения текущего пользователя к комнате проекта.
+     *
+     * @param projectId Идентификатор проекта, к которому осуществляется подключение.
+     */
     override suspend fun connectToTheProjectRoom(projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -185,7 +388,12 @@ class DefaultProjectRepository(
         currentSocket.emit(JOIN_PROJECT_ROOM, payload)
     }
 
-    override fun observeFileContent(fileId: Int): Flow<String> = callbackFlow {
+    /**
+     * Отправляет запрос на получение контента файла.
+     *
+     * @return [Flow], отправляющий текст файла.
+     */
+    override fun observeFileContent(): Flow<FileContent> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
@@ -195,23 +403,24 @@ class DefaultProjectRepository(
         currentSocket.on(SEND_FILE_CONTENT) { args ->
             try {
                 val data = args.firstOrNull { it is JSONObject } as? JSONObject
-
                 if (data == null) {
                     return@on
                 }
 
+                val fileId = data.optInt("file_id", 0)
                 val code = data.optString("content", "")
 
-                trySend(code)
+                if (fileId == 0) return@on
+
+                val fileContent = FileContent(
+                    id = fileId,
+                    content = code
+                )
+
+                trySend(fileContent)
             } catch (_: Exception) {
             }
         }
-
-        val requestData = JSONObject().apply {
-            put("file_id", fileId)
-        }
-
-        currentSocket.emit(GET_FILE_CONTENT, requestData)
 
         awaitClose {
             currentSocket.off(SEND_FILE_CONTENT)
@@ -271,7 +480,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор отслеживаемого проекта.
      * @return [Flow] со строками вывода консоли приложения.
      */
-    override fun observeConsoleOutput(projectId: Int): Flow<String> = callbackFlow {
+    override fun observeConsoleOutput(projectId: Int): Flow<ConsoleOutput> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
@@ -286,9 +495,15 @@ class DefaultProjectRepository(
                     return@on
                 }
 
-                val output = data.optString("data", null) ?: return@on
+                val text = data.optString("data", null) ?: return@on
+                val isEnded = data.optBoolean("is_ended", true)
 
-                trySend(output)
+                val consoleOutput = ConsoleOutput(
+                    text = text,
+                    isProgramEnded = isEnded
+                )
+
+                trySend(consoleOutput)
             } catch (_: Exception) {
             }
         }
@@ -311,13 +526,22 @@ class DefaultProjectRepository(
         currentSocket.emit(LEAVE_PROJECT_ROOM, payload)
         closeSocket()
     }
-
+    /**
+     * Отключает текущий сокет.
+     */
     override fun closeSocket() {
         socket?.disconnect()
         socket?.off()
         socket = null
     }
 
+    /**
+     * Отправляет ввод пользователя в выполняемую программу.
+     *
+     * @param input Текст ввода.
+     *
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun sendInput(input: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -329,6 +553,12 @@ class DefaultProjectRepository(
         currentSocket.emit(SEND_INPUT, payload)
     }
 
+    /**
+     * Отправляет событие присоединения пользователя к комнате чата.
+     *
+     * @param identificator Текстовый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun joinChatRoom(identificator: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -340,6 +570,12 @@ class DefaultProjectRepository(
         currentSocket.emit(JOIN_CHAT_ROOM, payload)
     }
 
+    /**
+     * Отправляет на сервер событие выхода пользователя из комнаты чата.
+     *
+     * @param identificator Текстовый идентификатор чата.
+     * @param projectId Идентификатор проекта.
+     */
     override suspend fun leaveChatRoom(identificator: String, projectId: Int) {
         val currentSocket = getConnectedSocket() ?: return
 
@@ -351,6 +587,11 @@ class DefaultProjectRepository(
         currentSocket.emit(LEAVE_CHAT_ROOM, payload)
     }
 
+    /**
+     * Устанавливает подписку на получение новых сообщений текущего открытого чата.
+     *
+     * @return [Flow], содержащий идентификатор чата и сообщения в нем.
+     */
     override fun observeMessages(): Flow<Pair<Int, List<Message>>> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -402,6 +643,11 @@ class DefaultProjectRepository(
         }
     }
 
+    /**
+     * Устанавливает подписку, уведомляющую об удалении текущего пользователя из проекта
+     *
+     * @return [Flow] с идентификатором проекта, из которого был исключен пользователь.
+     */
     override fun observeRemovedFromProject(): Flow<Int> = callbackFlow {
         val currentSocket = getConnectedSocket()
         if (currentSocket == null) {
@@ -425,5 +671,20 @@ class DefaultProjectRepository(
         awaitClose {
             currentSocket.off(REMOVED_FROM_PROJECT)
         }
+    }
+
+    /**
+     * Получает содержимое определенного файла
+     *
+     * @param fileId Идентификатор файла.
+     */
+    override suspend fun getFileContent(fileId: Int) {
+        val currentSocket = getConnectedSocket() ?: return
+
+        val payload = JSONObject().apply {
+            put("file_id", fileId)
+        }
+
+        currentSocket.emit(GET_FILE_CONTENT, payload)
     }
 }

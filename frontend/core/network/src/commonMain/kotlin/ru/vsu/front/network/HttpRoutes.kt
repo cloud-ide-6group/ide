@@ -78,4 +78,24 @@ object HttpRoutes {
      * Эндпоинт создания сообщения.
      */
     const val CREATE_MESSAGE = "/message/create"
+
+    /**
+     * Эндпоинт получения информации о проекте.
+     */
+    const val GET_PROJECT_INFO = "/project/info"
+
+    /**
+     * Эндпоинт удаления проекта.
+     */
+    const val DELETE_PROJECT = "/project/delete"
+
+    /**
+     * Эндпоинт исключения участника из проекта.
+     */
+    const val KICK_USER = "/invited/delete"
+
+    /**
+     * Эндпоинт приглашения пользователя в проект.
+     */
+    const val INVITE_USER = "/invite"
 }

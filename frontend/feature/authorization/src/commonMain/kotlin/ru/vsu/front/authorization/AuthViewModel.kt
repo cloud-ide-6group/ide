@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase
 import ru.vsu.front.domain.validation.EmailMatcher
@@ -20,6 +21,7 @@ import ru.vsu.front.model.entity.Response
  * @param signUseCase UseCase для регистрации.
  * @param tokenStorage Хранилище JWT-токенов.
  * @param dispatcherProvider Провайдер корутинных диспетчеров.
+ * @param authManager Менеджер аутентификации.
  */
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,

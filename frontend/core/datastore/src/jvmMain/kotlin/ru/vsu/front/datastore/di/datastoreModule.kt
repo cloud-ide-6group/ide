@@ -1,9 +1,13 @@
 package ru.vsu.front.datastore.di
 
 import kotlinx.serialization.json.Json
+import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.vsu.front.datastore.CryptoManager
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
+import ru.vsu.front.datastore.token_storage.InMemoryTokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import java.util.prefs.Preferences
 
 /**
@@ -15,8 +19,7 @@ import java.util.prefs.Preferences
  * - [Preferences] - хранилище.
  * - [CryptoManager] - класс для шифрования и дешифрования локальных данных.
  * - [Json] - Json.
- * - [TokenStorage] - инструмент для записи и чтения JWT-токенов,
- * использующий [Preferences] и [CryptoManager].
+ * - [TokenStorage] - инструмент для записи и чтения JWT-токенов [InMemoryTokenStorage] или [DeviceTokenStorage].
  */
 val datastoreModule = module {
     single {
@@ -24,7 +27,7 @@ val datastoreModule = module {
     }
 
     single {
-        CryptoManager(prefs = get())
+        CryptoManager(get())
     }
 
     single {
@@ -34,6 +37,6 @@ val datastoreModule = module {
     }
 
     single {
-        TokenStorage(cryptoManager = get(), prefs = get(), json = get())
-    }
+        InMemoryTokenStorage(get(), get())
+    }.bind<TokenStorage>()
 }

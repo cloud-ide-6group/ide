@@ -29,6 +29,7 @@ import ru.vsu.front.model.entity.Project
  * @param onChangeVisibleClick Коллбек для переключения видимости списка.
  * @param onCreateProjectClick Коллбек для создания нового проекта.
  * @param onProjectClick Коллбек выбора конкретного проекта.
+ * @param onProjectInfoClick Коллбек, срабатывающий при клике на иконку информации о проекте.
  */
 @Composable
 internal fun ProjectsSection(
@@ -37,7 +38,8 @@ internal fun ProjectsSection(
     modifier: Modifier = Modifier,
     onChangeVisibleClick: () -> Unit,
     onCreateProjectClick: () -> Unit,
-    onProjectClick: (Int) -> Unit
+    onProjectClick: (Int) -> Unit,
+    onProjectInfoClick: (Int) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -66,7 +68,8 @@ internal fun ProjectsSection(
                     modifier = Modifier.weight(1f),
                     projects = projects,
                     state = projectsState,
-                    onProjectClick = onProjectClick
+                    onProjectClick = onProjectClick,
+                    onProjectInfoClick = onProjectInfoClick
                 )
             }
         }
@@ -85,7 +88,7 @@ internal fun ProjectsSection(
 
 @Composable
 @Preview
-internal fun ProjectsSectionPreview() {
+private fun ProjectsSectionPreview() {
     BackgroundPreview {
         ProjectsSection(
             projects = buildList {
@@ -102,6 +105,9 @@ internal fun ProjectsSectionPreview() {
 
             },
             onProjectClick = { _ ->
+
+            },
+            onProjectInfoClick = {
 
             }
         )

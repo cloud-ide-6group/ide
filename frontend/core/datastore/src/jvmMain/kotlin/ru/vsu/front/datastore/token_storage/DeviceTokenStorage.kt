@@ -1,24 +1,29 @@
-package ru.vsu.front.datastore
+package ru.vsu.front.datastore.token_storage
 
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
+import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
+import ru.vsu.front.datastore.CryptoManager
 import ru.vsu.front.datastore.entity.IdFromPayload
 import ru.vsu.front.model.entity.AuthTokens
 import java.util.*
 import java.util.prefs.Preferences
 
 /**
- * Хранилище JWT-токенов.
+ * Хранилище JWT-токенов на устройстве пользователя.
  * Обеспечивает безопасное чтение, запись и удаление токенов с использованием локального шифрования.
  *
  * @param cryptoManager Утилита для шифрования и дешифрования.
  * @param prefs Хранилище.
  * @param json Json.
+ * @param dispatcherProvider Провайдер корутинных диспатчеров.
  */
-class TokenStorage(
+class DeviceTokenStorage(
     private val cryptoManager: CryptoManager,
     private val prefs: Preferences,
-    private val json: Json
-) {
+    private val json: Json,
+    private val dispatcherProvider: DispatcherProvider
+) : TokenStorage {
     companion object {
         private const val JWT_ACCESS_TOKEN_KEY = "jwt_access_token"
         private const val JWT_REFRESH_TOKEN_KEY = "jwt_refresh_token"
@@ -29,7 +34,7 @@ class TokenStorage(
      * * Возвращает пару [AuthTokens] в расшифрованном виде.
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
-    fun getTokensSync(): AuthTokens? {
+    override fun getTokensSync(): AuthTokens? {
         val encryptedAccessToken = prefs.get(JWT_ACCESS_TOKEN_KEY, null)
         val encryptedRefreshToken = prefs.get(JWT_REFRESH_TOKEN_KEY, null)
 
@@ -50,8 +55,10 @@ class TokenStorage(
      * * Асинхронно возвращает [AuthTokens] в расшифрованном виде.
      * * Если хотя бы одного токена нет в хранилище, возвращает `null`.
      */
-    suspend fun getTokens(): AuthTokens? {
-        return getTokensSync()
+    override suspend fun getTokensAsync(): AuthTokens? {
+        return withContext(dispatcherProvider.default) {
+            getTokensSync()
+        }
     }
 
     /**
@@ -60,7 +67,7 @@ class TokenStorage(
      * @param token Строка-токен в не зашифрованном виде.
      * @param isAccess Тип токена: `true` - Access-токен, `false` - Refresh-токен.
      */
-    suspend fun saveToken(token: String, isAccess: Boolean) {
+    override fun saveToken(token: String, isAccess: Boolean) {
         val encryptedToken = cryptoManager.encrypt(token)
 
         if (isAccess) {
@@ -73,7 +80,7 @@ class TokenStorage(
     /**
      * Удаляет Access и Refresh токены из хранилища.
      */
-    fun clearTokens() {
+    override fun clearTokens() {
         prefs.remove(JWT_ACCESS_TOKEN_KEY)
         prefs.remove(JWT_REFRESH_TOKEN_KEY)
     }
@@ -83,7 +90,7 @@ class TokenStorage(
      *
      * @return Идентификатор пользователя или null.
      */
-    fun getUserIdFromToken(): Int? {
+    override fun getUserIdFromToken(): Int? {
         return try {
             val accessToken = getTokensSync()?.accessToken ?: return null
             val payloadBase64 = accessToken.split(".")[1]

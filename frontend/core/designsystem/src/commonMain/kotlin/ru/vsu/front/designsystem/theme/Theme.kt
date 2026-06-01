@@ -15,6 +15,7 @@ import ru.vsu.front.designsystem.theme.CodeTogetherTheme.selectionColors
  * Корневой Composable-компонент темы приложения.
  *
  * @param themeVariant Выбранный вариант темы.
+ * @param primaryColor Первичный цвет темы.
  * @param content Composable-элементы, к которым будет применена тема.
  */
 @Composable

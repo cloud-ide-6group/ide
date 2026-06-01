@@ -26,6 +26,8 @@ import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen
 import ru.vsu.front.profile.ProfileViewModel
+import ru.vsu.front.projectinfo.ProjectInfoScreen
+import ru.vsu.front.projectinfo.ProjectInfoViewModel
 import ru.vsu.front.projects.ProjectScreen
 import ru.vsu.front.projects.ProjectViewModel
 
@@ -33,6 +35,11 @@ import ru.vsu.front.projects.ProjectViewModel
  * Главный граф навигации приложения.
  *
  * @param navController Контроллер для управления стеком навигации.
+ * @param onMinimizeClick Коллбек, вызывающийся при клике "Свернуть.
+ * @param onMaximizeClick Коллбек, вызывающийся при клике "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызывающийся при клике "Закрыть"
+ * @param onSettingsClick Коллбек, вызывающийся при клике на настройки.
+ * @param onLogoutClick Коллбек, вызывающийся при клике на выход из аккаунта.
  * @param AuthManager Менеджер аутентификации, предоставляющий состояние текущей сессии пользователя.
  */
 @Composable
@@ -72,9 +79,6 @@ fun WindowScope.Navigation(
             val viewModel = koinViewModel<ProfileViewModel>()
             ProfileScreen(
                 viewModel = viewModel,
-                onProjectInfoClick = { projectId ->
-                    navController.navigate(Route.Project(projectId))
-                },
                 onMinimizeClick = onMinimizeClick,
                 onMaximizeClick = onMaximizeClick,
                 onCloseClick = onCloseClick,
@@ -82,7 +86,13 @@ fun WindowScope.Navigation(
                 onNotificationsClick = {
                     navController.navigate(Route.Notifications)
                 },
-                onLogoutClick = onLogoutClick
+                onLogoutClick = onLogoutClick,
+                onProjectClick = { projectId ->
+                    navController.navigate(Route.Project(projectId))
+                },
+                onProjectInfoClick = { projectId ->
+                    navController.navigate(Route.ProjectInfo(projectId))
+                }
             )
         }
 
@@ -101,10 +111,29 @@ fun WindowScope.Navigation(
             )
         }
 
-        composable<Route.ProjectInfo> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CodeTogetherText(text = "Project Info Screen")
-            }
+        composable<Route.ProjectInfo> { navBackStackEntry ->
+            val projectId = navBackStackEntry.toRoute<Route.ProjectInfo>().projectId
+
+            val viewModel = koinViewModel<ProjectInfoViewModel>(
+                parameters = {
+                    parametersOf(projectId)
+                }
+            )
+
+            ProjectInfoScreen(
+                viewModel = viewModel,
+                onMinimizeClick = onMinimizeClick,
+                onMaximizeClick = onMaximizeClick,
+                onCloseClick = onCloseClick,
+                onSettingsClick = onSettingsClick,
+                onLogoutClick = onLogoutClick,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onRemovedFromProject = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable<Route.Project> { navBackStackEntry ->

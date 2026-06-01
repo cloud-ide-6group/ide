@@ -2,6 +2,7 @@ package ru.vsu.front.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.model.entity.ConsoleOutput
 
 /**
  * UseCase для подписки на вывод консоли запущенного проекта.
@@ -18,7 +19,7 @@ class ObserveConsoleOutputUseCase(
      *
      * @return [Flow] со строками вывода консоли.
      */
-    operator fun invoke(projectId: Int): Flow<String> {
+    operator fun invoke(projectId: Int): Flow<ConsoleOutput> {
         return repository.observeConsoleOutput(projectId)
     }
 }

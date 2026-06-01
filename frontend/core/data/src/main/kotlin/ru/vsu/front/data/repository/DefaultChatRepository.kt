@@ -16,7 +16,7 @@ import ru.vsu.front.network.HttpRoutes.CREATE_MESSAGE
 import ru.vsu.front.network.MainHttpClientManager
 
 /**
- * Реализация интерфейса [AuthRepository].
+ * Реализация интерфейса [ChatRepository].
  *
  * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
  */

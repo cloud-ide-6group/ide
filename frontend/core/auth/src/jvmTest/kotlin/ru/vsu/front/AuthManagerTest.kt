@@ -7,7 +7,7 @@ import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.auth.AuthState
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,7 +15,7 @@ class AuthManagerTest {
 
     @Test
     fun `initial state is Authorized when token storage has valid user id`() = runTest {
-        val mockTokenStorage = mockk<TokenStorage> {
+        val mockTokenStorage = mockk<DeviceTokenStorage> {
             every { getUserIdFromToken() } returns 123
         }
         val authManager = AuthManager(mockTokenStorage)
@@ -28,7 +28,7 @@ class AuthManagerTest {
 
     @Test
     fun `initial state is NotAuthorized when token storage returns null`() = runTest {
-        val mockTokenStorage = mockk<TokenStorage> {
+        val mockTokenStorage = mockk<DeviceTokenStorage> {
             every { getUserIdFromToken() } returns null
         }
         val authManager = AuthManager(mockTokenStorage)
@@ -41,7 +41,7 @@ class AuthManagerTest {
 
     @Test
     fun `onLoginSuccess emits Authorized state with correct user id`() = runTest {
-        val mockTokenStorage = mockk<TokenStorage> {
+        val mockTokenStorage = mockk<DeviceTokenStorage> {
             every { getUserIdFromToken() } returns null
         }
         val authManager = AuthManager(mockTokenStorage)
@@ -58,7 +58,7 @@ class AuthManagerTest {
 
     @Test
     fun `logout calls clearTokens and emits NotAuthorized state`() = runTest {
-        val mockTokenStorage = mockk<TokenStorage>(relaxed = true) {
+        val mockTokenStorage = mockk<DeviceTokenStorage>(relaxed = true) {
             every { getUserIdFromToken() } returns 789
         }
         val authManager = AuthManager(mockTokenStorage)

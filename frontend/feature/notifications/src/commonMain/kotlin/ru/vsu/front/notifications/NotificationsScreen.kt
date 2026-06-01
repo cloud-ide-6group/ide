@@ -33,6 +33,12 @@ import ru.vsu.front.notifications.component.Notifications
  * Экран уведомлений.
  *
  * @param viewModel Вьюмодель для экрана уведомлений.
+ * @param onMinimizeClick Коллбек, вызывающийся при клике "Свернуть.
+ * @param onMaximizeClick Коллбек, вызывающийся при клике "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызывающийся при клике "Закрыть"
+ * @param onSettingsClick Коллбек, вызывающийся при клике на настройки.
+ * @param onLogoutClick Коллбек, вызывающийся при клике на выход из аккаунта.
+ * @param onBackClick Коллбек, вызывающийся при клике на кнопку назад.
  * @param modifier Модификатор для настройки.
  */
 @Composable

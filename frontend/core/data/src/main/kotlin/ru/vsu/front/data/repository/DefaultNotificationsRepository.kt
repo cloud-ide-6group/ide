@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.DeleteNotificationRequest
-import ru.vsu.front.datastore.TokenStorage
+import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.NotificationsRepository
 import ru.vsu.front.model.entity.Notification
 import ru.vsu.front.model.entity.RequestError
@@ -38,7 +39,7 @@ class DefaultNotificationsRepository(
      * Выполняет подписку на получение уведомлений, используя AccessToken из хранилища.
      */
     override fun observeNotifications(): Flow<List<Notification>> = callbackFlow {
-        val tokens = tokenStorage.getTokens()
+        val tokens = tokenStorage.getTokensSync()
 
         if (tokens == null) {
             close(Exception("Token is null"))

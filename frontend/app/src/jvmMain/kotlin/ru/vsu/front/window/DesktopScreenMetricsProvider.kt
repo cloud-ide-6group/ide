@@ -8,6 +8,10 @@ import java.awt.GraphicsEnvironment
  * экрана (без учета панели задач и системных меню).
  */
 object DesktopScreenMetricsProvider : ScreenMetricsProvider {
+    /**
+     * Вычисляет максимальные доступные границы окна для текущего экрана.
+     * * @return Объект [WindowBounds] с координатами и размерами доступной области.
+     */
     override fun getMaximumWindowBounds(): WindowBounds {
         val env = GraphicsEnvironment.getLocalGraphicsEnvironment()
         val maximumWindowBounds = env.maximumWindowBounds

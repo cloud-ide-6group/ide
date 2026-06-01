@@ -36,6 +36,11 @@ import ru.vsu.front.domain.usecase.*
  * - [CreateMessageUseCase] Создание сообщения (отправка).
  * - [ObserveRemovedFromProjectUseCase] Подписка на событие исключения текущего пользователя из проекта.
  * - [LeaveFromProjectRoomUseCase] Отключение от комнаты проекта.
+ * - [GetProjectInfoUseCase] Получение информации о проекте.
+ * - [DeleteProjectUseCase] Получение информации о проекте.
+ * - [KickUserUseCase] Исключение участника из проекта.
+ * - [InviteUserUseCase] Приглашение пользователя в проект.
+ * - [GetFileContentUseCase] Получение содержимого определенного файла.
  */
 val domainModule = module {
     single {
@@ -152,5 +157,25 @@ val domainModule = module {
 
     single {
         LeaveFromProjectRoomUseCase(get())
+    }
+
+    single {
+        GetProjectInfoUseCase(get())
+    }
+
+    single {
+        DeleteProjectUseCase(get())
+    }
+
+    single {
+        KickUserUseCase(get())
+    }
+
+    single {
+        InviteUserUseCase(get())
+    }
+
+    single {
+        GetFileContentUseCase(get())
     }
 }
