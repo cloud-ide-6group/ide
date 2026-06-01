@@ -30,7 +30,14 @@ import ru.vsu.front.profile.component.UserAvatar
  * Экран профиля.
  *
  * @param viewModel Вьюмодель для экрана профиля.
+ * @param onMinimizeClick Коллбек, вызывающийся при клике "Свернуть.
+ * @param onMaximizeClick Коллбек, вызывающийся при клике "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызывающийся при клике "Закрыть"
+ * @param onSettingsClick Коллбек, вызывающийся при клике на настройки.
+ * @param onNotificationsClick Коллбек, вызываемый при клике на уведомления.
+ * @param onLogoutClick Коллбек, вызываемый при клике на выход из аккаунта.
  * @param modifier Модификатор для настройки.
+ * @param onProjectClick Коллбек, вызываемый при клике на информацию о проекте.
  * @param onProjectInfoClick Коллбек, вызываемый при клике на проект.
  */
 @Composable

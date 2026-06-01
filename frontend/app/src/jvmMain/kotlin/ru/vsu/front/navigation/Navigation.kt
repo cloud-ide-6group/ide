@@ -35,6 +35,11 @@ import ru.vsu.front.projects.ProjectViewModel
  * Главный граф навигации приложения.
  *
  * @param navController Контроллер для управления стеком навигации.
+ * @param onMinimizeClick Коллбек, вызывающийся при клике "Свернуть.
+ * @param onMaximizeClick Коллбек, вызывающийся при клике "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызывающийся при клике "Закрыть"
+ * @param onSettingsClick Коллбек, вызывающийся при клике на настройки.
+ * @param onLogoutClick Коллбек, вызывающийся при клике на выход из аккаунта.
  * @param AuthManager Менеджер аутентификации, предоставляющий состояние текущей сессии пользователя.
  */
 @Composable

@@ -21,6 +21,8 @@ import ru.vsu.front.model.entity.*
  * @param updateProfilePasswordUseCase UseCase для обновления пароля.
  * @param createProjectUseCase UseCase для создания проекта.
  * @param updateProfilePhotoUseCase UseCase для обновления аватара пользователя.
+ * @param observeNotificationsUseCase UseCase для подписки на получение уведомлений.
+ * @param observeRemovedFromProjectUseCase UseCase для подписки на получение уведомления об исключении из проекта.
  * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class ProfileViewModel(

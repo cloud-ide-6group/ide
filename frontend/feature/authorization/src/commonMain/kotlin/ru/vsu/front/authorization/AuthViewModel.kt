@@ -21,6 +21,7 @@ import ru.vsu.front.model.entity.Response
  * @param signUseCase UseCase для регистрации.
  * @param tokenStorage Хранилище JWT-токенов.
  * @param dispatcherProvider Провайдер корутинных диспетчеров.
+ * @param authManager Менеджер аутентификации.
  */
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,

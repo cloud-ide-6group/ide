@@ -26,6 +26,10 @@ import ru.vsu.front.designsystem.component.TopBarButton
  * Экран авторизации и регистрации.
  *
  * @param authViewModel Вьюмодель для входа и регистрации.
+ * @param onMinimizeClick Коллбек, вызывающийся при клике "Свернуть.
+ * @param onMaximizeClick Коллбек, вызывающийся при клике "Свернуть в окно".
+ * @param onCloseClick Коллбек, вызывающийся при клике "Закрыть"
+ * @param onSettingsClick Коллбек, вызывающийся при клике на настройки.
  * @param modifier Модификатор для настройки.
  */
 @Composable

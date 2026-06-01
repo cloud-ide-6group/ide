@@ -4,9 +4,18 @@ import androidx.compose.ui.graphics.Color
 import ru.vsu.front.designsystem.theme.DEFAULT_PRIMARY_COLOR
 import java.util.prefs.Preferences
 
+/**
+ * Настройки темы приложения.
+ */
 class ThemeSettings {
+    /**
+     * Хранилище темы.
+     */
     private val prefs: Preferences = Preferences.userRoot().node("ru/vsu/front/settings")
 
+    /**
+     * Стандартный цвет темы.
+     */
     private val defaultColorValue = DEFAULT_PRIMARY_COLOR.value.toLong()
 
     /**
