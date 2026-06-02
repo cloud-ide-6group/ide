@@ -16,7 +16,7 @@ load_dotenv()
 @subscription_bp.route("/subscribe", methods=["GET"])
 def subscribe_route():
     """
-    Получить профиль пользователя. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
+    Оформить подписку. JWT-токен отправляем в заголовке Authorization: Bearer 4f677hu98u...
     ---
     tags:
       - features/subscription
