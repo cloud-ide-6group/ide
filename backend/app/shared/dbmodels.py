@@ -3,6 +3,7 @@ from sqlalchemy.orm import validates
 from .consts import ResultsCodes
 import re
 from email_validator import validate_email, EmailNotValidError
+from datetime import datetime
 
 
 class Project(db.Model):
@@ -220,6 +221,11 @@ class User(db.Model):
 
     email = db.Column(db.Text, nullable=False, unique=True)
     """Почта-логин"""
+
+    subscription_end = db.Column(
+        db.DateTime, default=datetime(1900, 1, 1), unique=False
+    )
+    """Дата истечения подписки. По умолчанию 01.01.1900"""
 
     @validates("name")
     def validate_name(self, key, name):

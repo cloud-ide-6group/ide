@@ -1,6 +1,8 @@
 MOUNT_DIR = "/app/"
 CONFIG_FILE = "conf.ctgson"
 
+MAX_PROJECTS_COUNT = 5
+
 
 class ResultsCodes:
     """
@@ -50,5 +52,5 @@ class ResultsCodes:
     USER_IS_NOT_IN_PROJECT = "Пользователь не в проекте"
     INVALID_TOKEN = "Токен некорректен"
     USER_NOT_OWNER = "Пользователь не имеет права удалить проект"
-    CHAT_ALREADY_EXISTS="Чат с таким идентификатором уже существует"
-    INCORRECT_SETUP="Некорректный файл conf.ctgson"
+    CHAT_ALREADY_EXISTS = "Чат с таким идентификатором уже существует"
+    INCORRECT_SETUP = "Некорректный файл conf.ctgson"
