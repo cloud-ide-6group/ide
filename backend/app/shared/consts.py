@@ -1,7 +1,10 @@
+from datetime import timedelta
+
 MOUNT_DIR = "/app/"
 CONFIG_FILE = "conf.ctgson"
 
 MAX_PROJECTS_COUNT = 5
+SUBSCRIPTION_DURATION = timedelta(days=7)
 
 
 class ResultsCodes:
@@ -54,3 +57,4 @@ class ResultsCodes:
     USER_NOT_OWNER = "Пользователь не имеет права удалить проект"
     CHAT_ALREADY_EXISTS = "Чат с таким идентификатором уже существует"
     INCORRECT_SETUP = "Некорректный файл conf.ctgson"
+    SUBSCRIPTION_EXPIRED = "Ваша подписка не активна"

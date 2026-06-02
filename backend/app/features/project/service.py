@@ -5,6 +5,7 @@ from .repository import project_repo, file_repo, message_repo, user_repo, langua
 from app.shared.extensions import socketio
 import shutil
 from pathlib import Path
+from datetime import datetime
 
 load_dotenv()
 
@@ -57,6 +58,15 @@ def create_project(user_id, project_name, language_id):
 
     if project_repo.get_by_name(project_name) != None:
         return None, ResultsCodes.PROJECT_EXISTS_ALREADY
+
+    user = user_repo.get_by_id(user_id)
+    if not user:
+        return None, ResultsCodes.USER_NOT_FOUND
+
+    date = datetime.now()
+    sub_date = user.subscription_end
+    if date >= sub_date:
+        return None, ResultsCodes.SUBSCRIPTION_EXPIRED
 
     project = project_repo.create_project(project_name, language_id, user_id)
     if project == None:

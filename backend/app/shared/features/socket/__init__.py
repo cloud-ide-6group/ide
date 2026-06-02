@@ -1,9 +1,11 @@
 from app.shared.extensions import socketio
 from flask_socketio import join_room
-from flask import request, session
+from flask import session
 from app.shared.consts import ResultsCodes
 from app.shared.features.jwt_token.service import get_id
 from app.shared.features.notifications.service import send_notifications_to_client
+from app.shared.base_repositories import BaseUserRepository as user_repo
+from datetime import datetime
 
 
 @socketio.on("connect")
@@ -59,6 +61,8 @@ def connect(auth):
             >>> }
         - removed_from_project -- был удален из проекта. После этого сразу отправляем leave_project_room
             >>> {"project_id": 81}
+        - subscription_expired -- подписка истекла или нет. Если да, то ограничить доступ ко всем проектам кроме первых 5.
+            >>> {"is_expired": True}
 
     Args:
         auth (str): Токен в json БЕЗ BEARER
@@ -81,4 +85,20 @@ def connect(auth):
     session["user_id"] = user_id
     join_room(str(user_id))
     send_notifications_to_client(user_id)
+
+    user = user_repo.get_by_id(user_id)
+    if not user:
+        return None, ResultsCodes.USER_NOT_FOUND
+
+    is_expired = False
+    date = datetime.now()
+    sub_date = user.subscription_end
+    if date >= sub_date:
+        is_expired = True
+
+    socketio.emit(
+        "subscription_expired",
+        {"is_expired": is_expired},
+        room=f"{user_id}",
+    )
     return True
