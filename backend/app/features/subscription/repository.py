@@ -11,7 +11,10 @@ class UserRepository(BaseUserRepository):
 
         Args:
             user_id (int): Id пользователя
-            
+            subscription_end (datetime): Дата и время конца подписки
+
+        Returns:
+            ResultCodes: Результат выполнения операции
         """
         try:
             user = db.session.query(User).filter(User.id == user_id).first()
