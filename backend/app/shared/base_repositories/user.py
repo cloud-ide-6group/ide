@@ -93,3 +93,6 @@ class BaseUserRepository:
             >>> user = repo.get_by_id(123)
         """
         return db.session.get(User, user_id)
+
+
+user_repo = BaseUserRepository()
