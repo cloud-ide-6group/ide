@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from ...shared.consts import ResultsCodes
+from ...shared.consts import ResultsCodes, MAX_PROJECTS_COUNT
 from .repository import project_repo, file_repo, message_repo, user_repo, language_repo
 from app.shared.extensions import socketio
 import shutil
@@ -36,6 +36,30 @@ def create_project_dir(project_name):
         return ResultsCodes.PROJECT_EXISTS_ALREADY
 
 
+def is_subscripition_active(user_id):
+    """
+    Проверяет активна ли подписка
+
+    Args:
+        user_id (int): Id создателя
+
+    Returns:
+        ResultCodes: Код результата операции
+    """
+    user = user_repo.get_by_id(user_id)
+    if not user:
+        return None, ResultsCodes.USER_NOT_FOUND
+
+    projects_count = user_repo.count_projects(user_id)
+
+    date = datetime.now()
+    sub_date = user.subscription_end
+    if projects_count >= MAX_PROJECTS_COUNT and date >= sub_date:
+        return False
+
+    return True
+
+
 def create_project(user_id, project_name, language_id):
     """
     Добавляет проект в базу данных
@@ -58,15 +82,6 @@ def create_project(user_id, project_name, language_id):
 
     if project_repo.get_by_name(project_name) != None:
         return None, ResultsCodes.PROJECT_EXISTS_ALREADY
-
-    user = user_repo.get_by_id(user_id)
-    if not user:
-        return None, ResultsCodes.USER_NOT_FOUND
-
-    date = datetime.now()
-    sub_date = user.subscription_end
-    if date >= sub_date:
-        return None, ResultsCodes.SUBSCRIPTION_EXPIRED
 
     project = project_repo.create_project(project_name, language_id, user_id)
     if project == None:

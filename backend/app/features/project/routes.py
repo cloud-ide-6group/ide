@@ -17,6 +17,7 @@ from .service import (
     get_chats,
     delete_project,
     get_project_info,
+    is_subscripition_active,
 )
 from flask_socketio import join_room, leave_room
 from flask import session
@@ -105,6 +106,10 @@ def create_new_project():
     is_lang_exists = lang_exists(language_id)
     if not is_lang_exists:
         return {"message": ResultsCodes.INCORRECT_LANG}, 409
+
+    is_subscripition_actived = is_subscripition_active(id)
+    if not is_subscripition_actived:
+        return {"message": ResultsCodes.SUBSCRIPTION_EXPIRED}, 409
 
     result = create_project_dir(project_name)
     if result != ResultsCodes.OK:

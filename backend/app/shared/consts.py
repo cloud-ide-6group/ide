@@ -1,10 +1,16 @@
 from datetime import timedelta
 
 MOUNT_DIR = "/app/"
+"""Путь для монтирования директории в контейнере."""
+
 CONFIG_FILE = "conf.ctgson"
+"""Имя конфигурационного файла."""
 
 MAX_PROJECTS_COUNT = 5
-SUBSCRIPTION_DURATION = timedelta(days=7)
+"""Максимальное количество проектов для одного пользователя."""
+
+SUBSCRIPTION_DURATION = timedelta(days=30)
+"""Длительность подписки (30 дней)."""
 
 
 class ResultsCodes:

@@ -4,9 +4,8 @@ from flask import session
 from app.shared.consts import ResultsCodes
 from app.shared.features.jwt_token.service import get_id
 from app.shared.features.notifications.service import send_notifications_to_client
-from app.shared.base_repositories import BaseUserRepository as user_repo
+from app.shared.base_repositories.user import user_repo
 from datetime import datetime
-
 
 @socketio.on("connect")
 def connect(auth):
