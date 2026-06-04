@@ -173,11 +173,6 @@ interface ProjectRepository {
     suspend fun sendInput(input: String, projectId: Int)
 
     /**
-     * Принудительно закрывает текущее соединение.
-     */
-    fun closeSocket()
-
-    /**
      * Получение содержимого определенного файла.
      */
     suspend fun getFileContent(fileId: Int)

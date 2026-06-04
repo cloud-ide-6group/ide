@@ -12,6 +12,6 @@ import ru.vsu.front.auth.AuthManager
  */
 val authModule = module {
     single {
-        AuthManager(get())
+        AuthManager(get(),get())
     }
 }

@@ -2,17 +2,13 @@ package ru.vsu.front.data.repository
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
-import io.socket.client.IO
-import io.socket.client.Socket
-import io.socket.engineio.client.transports.Polling
-import jdk.internal.net.http.common.Utils.close
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONArray
 import org.json.JSONObject
+import ru.vsu.front.data.DefaultSocketHandler
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.CreateProjectRequest
 import ru.vsu.front.data.entity.request.DeleteProjectRequest
@@ -57,16 +53,11 @@ import ru.vsu.front.network.SocketRoutes.UPDATE_FILE_CONTENT
  * Реализация интерфейса [ProjectRepository] для работы с сетевым API.
  *
  * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
- * @property tokenStorage Хранилище токенов.
- * @property baseUrl Базовый url.
  */
 class DefaultProjectRepository(
     private val mainHttpClientManager: MainHttpClientManager,
-    private val tokenStorage: TokenStorage,
-    private val baseUrl: String,
+    private val socketHandler: DefaultSocketHandler
 ) : ProjectRepository {
-    private var socket: Socket? = null
-    private var activeToken: String? = null
     /**
      * Выполняет POST-запрос на эндпоинт создания проекта ([CREATE_PROJECT]).
      *
@@ -285,7 +276,7 @@ class DefaultProjectRepository(
      * @return [Flow] со списком файлов [FileNode].
      */
     override fun observeFiles(projectId: Int): Flow<List<FileNode>> = callbackFlow {
-        val currentSocket = getConnectedSocket()
+        val currentSocket = socketHandler.getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
             return@callbackFlow
@@ -310,39 +301,6 @@ class DefaultProjectRepository(
         awaitClose {
             currentSocket.off(FILES_TREES_LIST)
         }
-    }
-
-    /**
-     * Метод для получения текущего соединения.
-     *
-     * @return [Socket] или null, если токен отсутствует.
-     */
-    private suspend fun getConnectedSocket(): Socket? {
-        val tokens = tokenStorage.getTokensAsync()
-
-        if (tokens == null) {
-            closeSocket()
-            return null
-        }
-
-        if (socket != null && activeToken == tokens.accessToken) {
-            return socket
-        }
-
-        closeSocket()
-
-        val options = IO.Options().apply {
-            auth = mapOf("token" to tokens.accessToken)
-            transports = arrayOf(Polling.NAME)
-        }
-
-        activeToken = tokens.accessToken
-
-        socket = IO.socket(baseUrl, options).apply {
-            connect()
-        }
-
-        return socket
     }
 
     /**
@@ -379,7 +337,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор проекта, к которому осуществляется подключение.
      */
     override suspend fun connectToTheProjectRoom(projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("project_id", projectId)
@@ -394,7 +352,7 @@ class DefaultProjectRepository(
      * @return [Flow], отправляющий текст файла.
      */
     override fun observeFileContent(): Flow<FileContent> = callbackFlow {
-        val currentSocket = getConnectedSocket()
+        val currentSocket = socketHandler.getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
             return@callbackFlow
@@ -434,7 +392,7 @@ class DefaultProjectRepository(
      * @param content Новое текстовое содержимое файла.
      */
     override suspend fun updateFileContent(fileId: Int, content: String) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("file_id", fileId)
@@ -450,7 +408,7 @@ class DefaultProjectRepository(
     * @param projectId Идентификатор запускаемого проекта.
     */
     override suspend fun runCode(projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("project_id", projectId)
@@ -465,7 +423,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор останавливаемого проекта.
      */
     override suspend fun stopCode(projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("project_id", projectId)
@@ -481,7 +439,7 @@ class DefaultProjectRepository(
      * @return [Flow] со строками вывода консоли приложения.
      */
     override fun observeConsoleOutput(projectId: Int): Flow<ConsoleOutput> = callbackFlow {
-        val currentSocket = getConnectedSocket()
+        val currentSocket = socketHandler.getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
             return@callbackFlow
@@ -517,22 +475,14 @@ class DefaultProjectRepository(
      * Закрывает соединение с комнатой проекта, отписывается от всех событий и отключает веб-сокет.
      */
     override suspend fun leaveFromProjectRoom(projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("project_id", projectId)
         }
 
         currentSocket.emit(LEAVE_PROJECT_ROOM, payload)
-        closeSocket()
-    }
-    /**
-     * Отключает текущий сокет.
-     */
-    override fun closeSocket() {
-        socket?.disconnect()
-        socket?.off()
-        socket = null
+        socketHandler.closeSocket()
     }
 
     /**
@@ -543,7 +493,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор проекта.
      */
     override suspend fun sendInput(input: String, projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("input", input)
@@ -560,7 +510,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор проекта.
      */
     override suspend fun joinChatRoom(identificator: String, projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("identificator", identificator)
@@ -577,7 +527,7 @@ class DefaultProjectRepository(
      * @param projectId Идентификатор проекта.
      */
     override suspend fun leaveChatRoom(identificator: String, projectId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("identificator", identificator)
@@ -593,7 +543,7 @@ class DefaultProjectRepository(
      * @return [Flow], содержащий идентификатор чата и сообщения в нем.
      */
     override fun observeMessages(): Flow<Pair<Int, List<Message>>> = callbackFlow {
-        val currentSocket = getConnectedSocket()
+        val currentSocket = socketHandler.getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
             return@callbackFlow
@@ -649,7 +599,7 @@ class DefaultProjectRepository(
      * @return [Flow] с идентификатором проекта, из которого был исключен пользователь.
      */
     override fun observeRemovedFromProject(): Flow<Int> = callbackFlow {
-        val currentSocket = getConnectedSocket()
+        val currentSocket = socketHandler.getConnectedSocket()
         if (currentSocket == null) {
             close(Exception("Token is null or socket failed"))
             return@callbackFlow
@@ -679,7 +629,7 @@ class DefaultProjectRepository(
      * @param fileId Идентификатор файла.
      */
     override suspend fun getFileContent(fileId: Int) {
-        val currentSocket = getConnectedSocket() ?: return
+        val currentSocket = socketHandler.getConnectedSocket() ?: return
 
         val payload = JSONObject().apply {
             put("file_id", fileId)

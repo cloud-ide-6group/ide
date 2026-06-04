@@ -3,6 +3,7 @@ package ru.vsu.front.data.di
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import ru.vsu.front.data.DefaultSocketHandler
 import ru.vsu.front.data.repository.DefaultAuthRepository
 import ru.vsu.front.data.repository.DefaultChatRepository
 import ru.vsu.front.data.repository.DefaultFileRepository
@@ -19,6 +20,7 @@ import ru.vsu.front.domain.repository.PremiumRepository
 import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.domain.repository.ProgramingLanguageRepository
 import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.domain.socket.SocketHandler
 
 /**
  * Модуль слоя data.
@@ -32,6 +34,7 @@ import ru.vsu.front.domain.repository.ProjectRepository
  * - [DefaultFileRepository] - реализация репозитория через [FileRepository].
  * - [DefaultChatRepository] - реализация репозитория через [ChatRepository].
  * - [DefaultPremiumRepository] - реализация репозитория через [PremiumRepository].
+ * - [DefaultSocketHandler] - реализация интерфейса [SocketHandler].
  */
 val dataModule = module {
     single {
@@ -47,7 +50,7 @@ val dataModule = module {
     }.bind<ProgramingLanguageRepository>()
 
     single {
-        DefaultProjectRepository(get(), get(), get(named("baseUrl")))
+        DefaultProjectRepository(get(), get())
     }.bind<ProjectRepository>()
 
     single {
@@ -65,4 +68,8 @@ val dataModule = module {
     single {
         DefaultPremiumRepository(get())
     }.bind<PremiumRepository>()
+
+    single {
+        DefaultSocketHandler(get(), get(named("baseUrl")))
+    }.bind<SocketHandler>()
 }
