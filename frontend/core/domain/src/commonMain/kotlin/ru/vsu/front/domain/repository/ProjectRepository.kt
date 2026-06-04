@@ -9,6 +9,9 @@ import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.model.entity.User
 
+/**
+ * Интерфейс репозитория для работы с проектами.
+ */
 interface ProjectRepository {
 
     /**
