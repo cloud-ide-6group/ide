@@ -98,4 +98,9 @@ object HttpRoutes {
      * Эндпоинт приглашения пользователя в проект.
      */
     const val INVITE_USER = "/invite"
+
+    /**
+     * Эндпоинт оформления подписки.
+     */
+    const val SUBSCRIBE = "/subscribe"
 }
