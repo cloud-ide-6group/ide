@@ -47,7 +47,7 @@ class BaseProjectRepository:
             boolean: True, если пользователь приглашен или владеет проектом.
         """
         project = db.session.query(Project).filter(Project.id == project_id).first()
-        if project.owner_id == user_id:
+        if project and project.owner_id == user_id:
             return True
 
         userInProject = self.user_in_project_repo.get_if_user_in_project(
