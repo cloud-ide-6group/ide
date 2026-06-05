@@ -3,16 +3,28 @@ package ru.vsu.front.data.repository
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.network.sockets.Socket
+import io.socket.client.IO
+import io.socket.engineio.client.transports.Polling
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.dto.ProgramingLanguageDto
 import ru.vsu.front.data.mapper.toEntities
+import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.PremiumRepository
 import ru.vsu.front.domain.repository.ProgramingLanguageRepository
+import ru.vsu.front.domain.socket.SocketHandler
+import ru.vsu.front.model.entity.FileContent
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
 import ru.vsu.front.network.HttpRoutes.PROGRAMING_LANGUAGES
 import ru.vsu.front.network.HttpRoutes.SUBSCRIBE
 import ru.vsu.front.network.MainHttpClientManager
+import ru.vsu.front.network.SocketRoutes.SEND_FILE_CONTENT
+import ru.vsu.front.network.SocketRoutes.SUBSCRIPTION_EXPIRED
 
 /**
  * Реализация интерфейса [PremiumRepository] для работы с платными функциями.
@@ -20,7 +32,9 @@ import ru.vsu.front.network.MainHttpClientManager
  * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
  */
 class DefaultPremiumRepository(
-    private val mainHttpClientManager: MainHttpClientManager
+    private val mainHttpClientManager: MainHttpClientManager,
+    private val tokenStorage: TokenStorage,
+    private val baseUrl: String
 ) : PremiumRepository {
 
     /**
@@ -36,8 +50,7 @@ class DefaultPremiumRepository(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    val languages = response.body<List<ProgramingLanguageDto>>()
-                    Response.Success(languages.toEntities())
+                    Response.Success(Unit)
                 }
 
                 HttpStatusCode.Conflict -> {
@@ -49,6 +62,54 @@ class DefaultPremiumRepository(
             }
         } catch (_: Exception) {
             Response.Error<RequestError>(RequestError.NetworkException())
+        }
+    }
+
+    /**
+     * Отправляет запрос на получение контента файла.
+     *
+     * @return [Flow], отправляющий текст файла.
+     */
+    override fun observeSubscriptionExpired(): Flow<Boolean> = callbackFlow {
+        val tokens = tokenStorage.getTokensSync()
+
+        if (tokens == null) {
+            close(Exception("Token is null"))
+            return@callbackFlow
+        }
+
+        val options = IO.Options().apply {
+            auth = mapOf(
+                "token" to tokens.accessToken
+            )
+            transports = arrayOf(Polling.NAME)
+            reconnection = true
+            reconnectionAttempts = 10
+            reconnectionDelay = 1000
+            reconnectionDelayMax = 5000
+        }
+
+        val socket = IO.socket(baseUrl, options)
+
+        socket.on(SUBSCRIPTION_EXPIRED) { args ->
+            try {
+                val data = args.firstOrNull { it is JSONObject } as? JSONObject
+                if (data == null) {
+                    return@on
+                }
+
+                val isExpired = data.optBoolean("is_expired", true)
+                trySend(isExpired)
+            } catch (_: Exception) {
+            }
+        }
+
+        socket.connect()
+
+        awaitClose {
+            socket.disconnect()
+            socket.off(SUBSCRIPTION_EXPIRED)
+            socket.close()
         }
     }
 }

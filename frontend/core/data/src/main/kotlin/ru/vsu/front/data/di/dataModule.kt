@@ -66,7 +66,7 @@ val dataModule = module {
     }.bind<ChatRepository>()
 
     single {
-        DefaultPremiumRepository(get())
+        DefaultPremiumRepository(get(),get(), get(named("baseUrl")))
     }.bind<PremiumRepository>()
 
     single {

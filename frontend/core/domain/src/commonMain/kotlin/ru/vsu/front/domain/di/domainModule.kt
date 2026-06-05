@@ -42,6 +42,7 @@ import ru.vsu.front.domain.usecase.*
  * - [InviteUserUseCase] Приглашение пользователя в проект.
  * - [GetFileContentUseCase] Получение содержимого определенного файла.
  * - [SubscribeUseCase] Оформление подписки.
+ * - [ObserveSubscriptionExpiredUseCase] Подписка на конец подписки (премиум).
  */
 val domainModule = module {
     single {
@@ -182,5 +183,9 @@ val domainModule = module {
 
     single {
         SubscribeUseCase(get())
+    }
+
+    single {
+        ObserveSubscriptionExpiredUseCase(get())
     }
 }
