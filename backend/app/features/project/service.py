@@ -1,10 +1,11 @@
 import os
 from dotenv import load_dotenv
-from ...shared.consts import ResultsCodes
+from ...shared.consts import ResultsCodes, MAX_PROJECTS_COUNT
 from .repository import project_repo, file_repo, message_repo, user_repo, language_repo
 from app.shared.extensions import socketio
 import shutil
 from pathlib import Path
+from datetime import datetime
 
 load_dotenv()
 
@@ -33,6 +34,30 @@ def create_project_dir(project_name):
         return ResultsCodes.OK
     else:
         return ResultsCodes.PROJECT_EXISTS_ALREADY
+
+
+def is_subscripition_active(user_id):
+    """
+    Проверяет активна ли подписка
+
+    Args:
+        user_id (int): Id создателя
+
+    Returns:
+        ResultCodes: Код результата операции
+    """
+    user = user_repo.get_by_id(user_id)
+    if not user:
+        return None, ResultsCodes.USER_NOT_FOUND
+
+    projects_count = user_repo.count_projects(user_id)
+
+    date = datetime.now()
+    sub_date = user.subscription_end
+    if projects_count >= MAX_PROJECTS_COUNT and date >= sub_date:
+        return False
+
+    return True
 
 
 def create_project(user_id, project_name, language_id):

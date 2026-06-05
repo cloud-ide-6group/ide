@@ -103,6 +103,16 @@ class MessageRepository(BaseMessageRepository):
 
 class UserRepository(BaseUserRepository):
     def get_by_project_id(self, project_id, owner_id):
+        """
+        Возвращает всех пользователей в проекте
+
+        Args:
+            parent_id (int): Id файла
+            owner_id (int): Id владельца
+
+        Returns:
+            list[User]: Список пользователей
+        """
         usersInProjects = (
             db.session.query(UserInProject)
             .filter(UserInProject.project_id == project_id)
@@ -115,6 +125,19 @@ class UserRepository(BaseUserRepository):
             users.append(self.get_by_id(unip.user_id))
 
         return users
+
+    def count_projects(self, owner_id):
+        """
+        Возвращает количество проекто впользователя
+
+        Args:
+            owner_id (int): Id владельца
+
+        Returns:
+            int: Количество
+        """
+        projects = db.session.query(Project).filter(Project.owner_id == owner_id).all()
+        return len(projects)
 
 
 class LanguageRepository(BaseLanguageRepository):

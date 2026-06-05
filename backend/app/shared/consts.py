@@ -1,5 +1,16 @@
+from datetime import timedelta
+
 MOUNT_DIR = "/app/"
+"""Путь для монтирования директории в контейнере."""
+
 CONFIG_FILE = "conf.ctgson"
+"""Имя конфигурационного файла."""
+
+MAX_PROJECTS_COUNT = 5
+"""Максимальное количество проектов для одного пользователя."""
+
+SUBSCRIPTION_DURATION = timedelta(days=30)
+"""Длительность подписки (30 дней)."""
 
 
 class ResultsCodes:
@@ -50,5 +61,6 @@ class ResultsCodes:
     USER_IS_NOT_IN_PROJECT = "Пользователь не в проекте"
     INVALID_TOKEN = "Токен некорректен"
     USER_NOT_OWNER = "Пользователь не имеет права удалить проект"
-    CHAT_ALREADY_EXISTS="Чат с таким идентификатором уже существует"
-    INCORRECT_SETUP="Некорректный файл conf.ctgson"
+    CHAT_ALREADY_EXISTS = "Чат с таким идентификатором уже существует"
+    INCORRECT_SETUP = "Некорректный файл conf.ctgson"
+    SUBSCRIPTION_EXPIRED = "Ваша подписка не активна"
