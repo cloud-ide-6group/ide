@@ -5,7 +5,7 @@ import kotlinx.serialization.json.Json
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.datastore.entity.IdFromPayload
 import ru.vsu.front.model.entity.AuthTokens
-import java.util.Base64
+import java.util.*
 
 /**
  * Хранилище JWT-токенов в памяти.

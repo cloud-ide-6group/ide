@@ -1,7 +1,6 @@
 package ru.vsu.front.authorization.di
 
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.vsu.front.authorization.AuthViewModel
 

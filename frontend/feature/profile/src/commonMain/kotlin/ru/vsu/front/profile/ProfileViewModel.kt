@@ -11,7 +11,7 @@ import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.*
-import ru.vsu.front.profile.ProfileEffect.*
+import ru.vsu.front.profile.ProfileEffect.ShowMessage
 
 /**
  * Вьюмодель экрана профиля.

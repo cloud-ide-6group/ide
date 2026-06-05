@@ -14,12 +14,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import front.core.designsystem.generated.resources.Res
-import front.core.designsystem.generated.resources.close_24dp
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import kotlin.math.cos
 
 /**
  * Базовая кнопка приложения с иконкой.

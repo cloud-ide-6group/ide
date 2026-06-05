@@ -1,15 +1,12 @@
 package ru.vsu.front.profile.component
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import ru.vsu.front.designsystem.component.BackgroundPreview
 import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVerticalScrollBar
 import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
-import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.model.entity.Project
 
 /**

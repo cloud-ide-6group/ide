@@ -3,7 +3,6 @@ package ru.vsu.front.data.repository
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.network.sockets.Socket
 import io.socket.client.IO
 import io.socket.engineio.client.transports.Polling
 import kotlinx.coroutines.channels.awaitClose
@@ -11,19 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
-import ru.vsu.front.data.entity.dto.ProgramingLanguageDto
-import ru.vsu.front.data.mapper.toEntities
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.PremiumRepository
-import ru.vsu.front.domain.repository.ProgramingLanguageRepository
-import ru.vsu.front.domain.socket.SocketHandler
-import ru.vsu.front.model.entity.FileContent
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response
-import ru.vsu.front.network.HttpRoutes.PROGRAMING_LANGUAGES
 import ru.vsu.front.network.HttpRoutes.SUBSCRIBE
 import ru.vsu.front.network.MainHttpClientManager
-import ru.vsu.front.network.SocketRoutes.SEND_FILE_CONTENT
 import ru.vsu.front.network.SocketRoutes.SUBSCRIPTION_EXPIRED
 
 /**

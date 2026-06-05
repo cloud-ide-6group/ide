@@ -1,13 +1,7 @@
 package ru.vsu.front.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import ru.vsu.front.model.entity.ConsoleOutput
-import ru.vsu.front.model.entity.FileContent
-import ru.vsu.front.model.entity.FileNode
-import ru.vsu.front.model.entity.Message
-import ru.vsu.front.model.entity.ProjectInfo
-import ru.vsu.front.model.entity.Response
-import ru.vsu.front.model.entity.User
+import ru.vsu.front.model.entity.*
 
 /**
  * Интерфейс репозитория для работы с проектами.

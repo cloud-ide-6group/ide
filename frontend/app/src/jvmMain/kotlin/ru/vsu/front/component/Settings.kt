@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import front.app.generated.resources.Res
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import ru.vsu.front.ThemeSettings

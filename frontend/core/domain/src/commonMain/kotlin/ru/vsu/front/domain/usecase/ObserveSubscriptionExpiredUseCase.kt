@@ -2,8 +2,6 @@ package ru.vsu.front.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import ru.vsu.front.domain.repository.PremiumRepository
-import ru.vsu.front.domain.repository.ProjectRepository
-import ru.vsu.front.model.entity.ConsoleOutput
 
 /**
  * UseCase для подписки на вывод консоли запущенного проекта.

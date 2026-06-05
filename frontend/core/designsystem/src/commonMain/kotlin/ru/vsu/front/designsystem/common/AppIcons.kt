@@ -1,39 +1,6 @@
 package ru.vsu.front.designsystem.common
 
-import front.core.designsystem.generated.resources.Res
-import front.core.designsystem.generated.resources.add_24dp
-import front.core.designsystem.generated.resources.add_2_24dp
-import front.core.designsystem.generated.resources.app_icon
-import front.core.designsystem.generated.resources.app_icon_without_background
-import front.core.designsystem.generated.resources.arrow_down_24dp
-import front.core.designsystem.generated.resources.arrow_right_24dp
-import front.core.designsystem.generated.resources.arrow_right_down_24dp
-import front.core.designsystem.generated.resources.arrow_right_in_24dp
-import front.core.designsystem.generated.resources.back_24dp
-import front.core.designsystem.generated.resources.check_24dp
-import front.core.designsystem.generated.resources.close_24dp
-import front.core.designsystem.generated.resources.code_horizontal_24dp
-import front.core.designsystem.generated.resources.code_vertical_24dp
-import front.core.designsystem.generated.resources.confirm_24dp
-import front.core.designsystem.generated.resources.delete_24dp
-import front.core.designsystem.generated.resources.edit_24dp
-import front.core.designsystem.generated.resources.file_24dp
-import front.core.designsystem.generated.resources.folder_24dp
-import front.core.designsystem.generated.resources.info_24dp
-import front.core.designsystem.generated.resources.java
-import front.core.designsystem.generated.resources.javascript
-import front.core.designsystem.generated.resources.logout_24dp
-import front.core.designsystem.generated.resources.lua
-import front.core.designsystem.generated.resources.maximize_24dp
-import front.core.designsystem.generated.resources.minimize_24dp
-import front.core.designsystem.generated.resources.notifications_24dp
-import front.core.designsystem.generated.resources.python
-import front.core.designsystem.generated.resources.remove_24dp
-import front.core.designsystem.generated.resources.run_24dp
-import front.core.designsystem.generated.resources.settings_24dp
-import front.core.designsystem.generated.resources.stop_24dp
-import front.core.designsystem.generated.resources.visibility_off_24dp
-import front.core.designsystem.generated.resources.visibility_on_24dp
+import front.core.designsystem.generated.resources.*
 
 /**
  * Объект, представляю иконки, используемые в приложении.

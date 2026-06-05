@@ -6,9 +6,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import ru.vsu.front.datastore.token_storage.TokenStorage
-import ru.vsu.front.domain.repository.ProjectRepository
 import ru.vsu.front.domain.socket.SocketHandler
 
 /**

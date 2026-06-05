@@ -1,6 +1,9 @@
 package ru.vsu.front.authorization.component
 
-import androidx.compose.animation.*
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,11 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ru.vsu.front.authorization.AuthCommand
 import ru.vsu.front.authorization.AuthViewModel
-import ru.vsu.front.designsystem.component.CodeTogetherAnimatedVisibility
-import ru.vsu.front.designsystem.component.CodeTogetherText
-import ru.vsu.front.designsystem.component.CodeTogetherTextButton
-import ru.vsu.front.designsystem.component.Section
-import ru.vsu.front.designsystem.component.VisibilityButton
+import ru.vsu.front.designsystem.component.*
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
 import ru.vsu.front.domain.validation.EmailMatcher
 

@@ -1,8 +1,6 @@
 package ru.vsu.front.domain.usecase
 
-import ru.vsu.front.domain.repository.AuthRepository
 import ru.vsu.front.domain.repository.ProjectRepository
-import ru.vsu.front.model.entity.AuthTokens
 import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.Response
 

@@ -1,8 +1,6 @@
 package ru.vsu.front.data.mapper
 
-import ru.vsu.front.data.entity.dto.ProjectDto
 import ru.vsu.front.data.entity.dto.UserDto
-import ru.vsu.front.model.entity.Project
 import ru.vsu.front.model.entity.User
 
 /**
