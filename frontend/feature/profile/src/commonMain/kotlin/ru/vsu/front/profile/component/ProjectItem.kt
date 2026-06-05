@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -29,25 +28,35 @@ import ru.vsu.front.model.entity.Project
  *
  * @param project Данные проекта.
  * @param modifier Модификатор для настройки.
+ * @param expired Закончилось ли время платной подписки.
  * @param shape Форма карточки проекта.
  * @param backgroundColor Цвет фона карточки.
- * @param onProjectClick Коллбек, вызываемый при нажатии на сам проект.
+ * @param onIsNotExpiredProjectClick Коллбек, вызываемый при нажатии на сам проект, если он активен.
+ * @param onExpiredProjectClick Коллбек, вызываемый при нажатии на сам проект.
  * @param onProjectInfoClick Коллбек, срабатывающий при клике на иконку информации о проекте.
  */
 @Composable
 internal fun ProjectItem(
     project: Project,
     modifier: Modifier = Modifier,
+    expired: Boolean = true,
     shape: Shape = RoundedCornerShape(8.dp),
     backgroundColor: Color = CodeTogetherTheme.colors.primary.copy(alpha = 0.015f),
-    onProjectClick: () -> Unit,
+    onIsNotExpiredProjectClick: () -> Unit,
+    onExpiredProjectClick: () -> Unit,
     onProjectInfoClick: (Int) -> Unit,
 ) {
+    val contentColor = if (expired) CodeTogetherTheme.colors.error.copy(alpha = 0.15f) else Color.White
+    val backgroundColor =
+        if (expired) CodeTogetherTheme.colors.error.copy(alpha = 0.15f) else backgroundColor
     Surface(
-        onClick = onProjectClick,
+        onClick = {
+
+            if (expired) onExpiredProjectClick() else onIsNotExpiredProjectClick()
+        },
         modifier = modifier,
         shape = shape,
-        contentColor = Color.White,
+        contentColor = contentColor,
         color = backgroundColor
     ) {
         Row(
@@ -64,7 +73,7 @@ internal fun ProjectItem(
             Spacer(modifier = Modifier.weight(1f))
             CodeTogetherIconButton(
                 onClick = {
-                    onProjectInfoClick(project.id)
+                    if (expired) onExpiredProjectClick() else onProjectInfoClick(project.id)
                 }
             ) {
                 Icon(
@@ -83,10 +92,13 @@ private fun ProjectItemPreview() {
     BackgroundPreview {
         ProjectItem(
             project = Project(id = 1, name = "Hello World"),
-            onProjectClick = {
+            onIsNotExpiredProjectClick = {
 
             },
             onProjectInfoClick = {
+
+            },
+            onExpiredProjectClick = {
 
             }
         )

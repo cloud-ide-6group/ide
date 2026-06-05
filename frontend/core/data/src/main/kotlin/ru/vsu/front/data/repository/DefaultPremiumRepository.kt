@@ -30,6 +30,8 @@ import ru.vsu.front.network.SocketRoutes.SUBSCRIPTION_EXPIRED
  * Реализация интерфейса [PremiumRepository] для работы с платными функциями.
  *
  * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
+ * @property tokenStorage Хранилище токенов.
+ * @property baseUrl Базовый url для запросов.
  */
 class DefaultPremiumRepository(
     private val mainHttpClientManager: MainHttpClientManager,

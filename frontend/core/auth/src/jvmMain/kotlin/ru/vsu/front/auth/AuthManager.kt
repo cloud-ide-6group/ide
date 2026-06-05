@@ -14,18 +14,14 @@ import ru.vsu.front.domain.socket.SocketHandler
 /**
  * Менеджер аутентификации.
  *
- * @property tokenStorage хранилище токенов.
+ * @property tokenStorage Хранилище токенов.
+ * @property socketHandler Содержит в себе сокет.
  */
 class AuthManager(
     private val tokenStorage: TokenStorage,
     private val socketHandler: SocketHandler,
 ) : KoinComponent {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
-    /**
-     * Интерфейс репозитория проекта, чтобы закрыть подключение к проекту при выходе из аккаунта.
-     */
-    private val projectRepository: ProjectRepository by inject()
 
     /**
      * Авторизован ли пользователь.

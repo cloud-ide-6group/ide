@@ -36,9 +36,11 @@ internal fun ProjectsSection(
     projects: List<Project>,
     projectsAreVisible: Boolean,
     modifier: Modifier = Modifier,
+    expired: Boolean = true,
     onChangeVisibleClick: () -> Unit,
     onCreateProjectClick: () -> Unit,
     onProjectClick: (Int) -> Unit,
+    onExpiredProjectClick: () -> Unit,
     onProjectInfoClick: (Int) -> Unit,
 ) {
     Row(
@@ -69,7 +71,9 @@ internal fun ProjectsSection(
                     projects = projects,
                     state = projectsState,
                     onProjectClick = onProjectClick,
-                    onProjectInfoClick = onProjectInfoClick
+                    onProjectInfoClick = onProjectInfoClick,
+                    onExpiredProjectClick = onExpiredProjectClick,
+                    isSubscriptionExpired = expired
                 )
             }
         }
@@ -108,6 +112,9 @@ private fun ProjectsSectionPreview() {
 
             },
             onProjectInfoClick = {
+
+            },
+            onExpiredProjectClick = {
 
             }
         )

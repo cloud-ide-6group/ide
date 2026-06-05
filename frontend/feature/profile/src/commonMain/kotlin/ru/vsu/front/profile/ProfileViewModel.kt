@@ -2,6 +2,7 @@ package ru.vsu.front.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -10,6 +11,7 @@ import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
 import ru.vsu.front.domain.usecase.*
 import ru.vsu.front.domain.validation.EmailMatcher
 import ru.vsu.front.model.entity.*
+import ru.vsu.front.profile.ProfileEffect.*
 
 /**
  * Вьюмодель экрана профиля.
@@ -23,6 +25,8 @@ import ru.vsu.front.model.entity.*
  * @param updateProfilePhotoUseCase UseCase для обновления аватара пользователя.
  * @param observeNotificationsUseCase UseCase для подписки на получение уведомлений.
  * @param observeRemovedFromProjectUseCase UseCase для подписки на получение уведомления об исключении из проекта.
+ * @param observeSubscriptionExpiredUseCase UseCase TODO.
+ * @param dispatcherProvider UseCase TODO.
  * @param dispatcherProvider Провайдер корутинных диспетчеров.
  */
 class ProfileViewModel(
@@ -34,11 +38,15 @@ class ProfileViewModel(
     private val updateProfilePhotoUseCase: UpdateProfilePhotoUseCase,
     private val observeNotificationsUseCase: ObserveNotificationsUseCase,
     private val observeRemovedFromProjectUseCase: ObserveRemovedFromProjectUseCase,
+    private val observeSubscriptionExpiredUseCase: ObserveSubscriptionExpiredUseCase,
+    private val subscribeUseCase: SubscribeUseCase,
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiStatusProfile>(UiStatusProfile.Loading)
     val uiState = _uiState.asStateFlow()
+
+    private var observeSubscriptionExpired: Job? = null
 
     private val _events = MutableSharedFlow<ProfileEffect>()
     val events: SharedFlow<ProfileEffect>
@@ -132,7 +140,7 @@ class ProfileViewModel(
                     updateLoadedState { latestState ->
                         when (result) {
                             is Response.Success<Int> -> {
-                                _events.emit(ProfileEffect.ShowMessage("Проект создан"))
+                                _events.emit(ShowMessage("Проект создан"))
                                 latestState.copy(
                                     projects = latestState.projects + Project(
                                         id = result.data,
@@ -150,7 +158,7 @@ class ProfileViewModel(
                                     is RequestError.Forbidden,
                                     is RequestError.UnknownError,
                                     is RequestError.NetworkException -> _events.emit(
-                                        ProfileEffect.ShowMessage(
+                                        ShowMessage(
                                             requestError.message
                                         )
                                     )
@@ -168,6 +176,12 @@ class ProfileViewModel(
             ProfileCommand.ChangeCreateProjectDialogVisibility -> {
                 updateLoadedState {
                     it.copy(isCreateProjectDialogShown = !it.isCreateProjectDialogShown)
+                }
+            }
+
+            ProfileCommand.ChangeBuyingSubscriptionDialogVisibility -> {
+                updateLoadedState {
+                    it.copy(isCreateBuyingSubscriptionDialogOpen = !it.isCreateBuyingSubscriptionDialogOpen)
                 }
             }
 
@@ -196,7 +210,7 @@ class ProfileViewModel(
                                 is RequestError.NotFound,
                                 is RequestError.NetworkException,
                                 is RequestError.UnknownError -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    _events.emit(ShowMessage(requestError.message))
                                 }
 
                                 else -> {
@@ -205,7 +219,7 @@ class ProfileViewModel(
                         }
 
                         is Response.Success<*> -> {
-                            _events.emit(ProfileEffect.ShowMessage("Данные обновлены"))
+                            _events.emit(ShowMessage("Данные обновлены"))
                             updateLoadedState {
                                 it.copy(
                                     initialEmail = email,
@@ -237,7 +251,7 @@ class ProfileViewModel(
                                 is RequestError.Unauthorized,
                                 is RequestError.UnknownError,
                                 is RequestError.NetworkException -> {
-                                    _events.emit(ProfileEffect.ShowMessage(requestError.message))
+                                    _events.emit(ShowMessage(requestError.message))
                                 }
 
                                 else -> {
@@ -246,7 +260,7 @@ class ProfileViewModel(
                         }
 
                         is Response.Success<*> -> {
-                            _events.emit(ProfileEffect.ShowMessage("Данные обновлены"))
+                            _events.emit(ShowMessage("Данные обновлены"))
                             updateLoadedState {
                                 it.copy(
                                     currentPassword = "",
@@ -269,7 +283,7 @@ class ProfileViewModel(
                                 is RequestError.Conflict,
                                 is RequestError.UnknownError,
                                 is RequestError.NetworkException -> {
-                                    _events.emit(ProfileEffect.ShowMessage(result.requestError.message))
+                                    _events.emit(ShowMessage(result.requestError.message))
                                 }
 
                                 else -> {
@@ -281,7 +295,30 @@ class ProfileViewModel(
                             updateLoadedState {
                                 it.copy(photo = command.photoBase64)
                             }
-                            _events.emit(ProfileEffect.ShowMessage("Аватар изменён"))
+                            _events.emit(ShowMessage("Аватар изменён"))
+                        }
+                    }
+                }
+            }
+
+            ProfileCommand.ClickExpiredProject -> {
+                viewModelScope.launch {
+                    _events.emit(ShowMessage("Срок вашей подписки истек! Доступ ограничен."))
+                }
+            }
+
+            ProfileCommand.ClickConfirmSubscription -> {
+                viewModelScope.launch {
+                    when(val result = subscribeUseCase()) {
+                        is Response.Error<*> -> {
+                            val error = result.requestError
+                            _events.emit(ShowMessage(error.message))
+                        }
+                        is Response.Success<*> -> {
+                            _events.emit(ShowMessage("Подписка оформлена!"))
+                            updateLoadedState {
+                                it.copy(isSubscriptionExpired = false, isCreateBuyingSubscriptionDialogOpen = false)
+                            }
                         }
                     }
                 }
@@ -316,6 +353,7 @@ class ProfileViewModel(
                         }
 
                         is Response.Success<List<ProgramingLanguage>> -> {
+                            observeSubscriptionExpired()
                             _uiState.update {
                                 UiStatusProfile.Loaded(
                                     uiStateProfileLoaded = UiStateProfileLoaded(
@@ -371,6 +409,28 @@ class ProfileViewModel(
     }
 
     /**
+     * Подписка на конец подписки (премиум).
+     */
+    private fun observeSubscriptionExpired() {
+        observeSubscriptionExpired?.cancel()
+        observeSubscriptionExpired = observeSubscriptionExpiredUseCase()
+            .flowOn(dispatcherProvider.io)
+            .retryWhen { _, _ ->
+                delay(5000)
+                true
+            }
+            .catch { e ->
+                emit(false)
+            }
+            .onEach { isSubscriptionExpired ->
+                updateLoadedState { state ->
+                    state.copy(isSubscriptionExpired = isSubscriptionExpired)
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    /**
      * Обновление состояния, если оно текущее состояние Loaded.
      */
     private inline fun updateLoadedState(transform: (UiStateProfileLoaded) -> UiStateProfileLoaded) {
@@ -397,6 +457,9 @@ sealed interface ProfileCommand {
     data object ChangeProjectsVisibility : ProfileCommand
     data object ChangeProgramingLanguagesVisibility : ProfileCommand
     data object ChangeCreateProjectDialogVisibility : ProfileCommand
+    data object ChangeBuyingSubscriptionDialogVisibility : ProfileCommand
+    data object ClickExpiredProject : ProfileCommand
+    data object ClickConfirmSubscription : ProfileCommand
     data class ChangeProjectName(val projectName: String) : ProfileCommand
     data class ChangeProgramingLanguage(val programingLanguage: ProgramingLanguage) : ProfileCommand
     data object CreateProject : ProfileCommand
@@ -429,6 +492,8 @@ data class UiStateProfileLoaded(
     val emailIsReadyForChange: Boolean = false,
     val hasChangesName: Boolean = false,
     val hasChangesNewPassword: Boolean = false,
+    val isSubscriptionExpired: Boolean = true,
+    val isCreateBuyingSubscriptionDialogOpen: Boolean = false,
 )
 
 /**

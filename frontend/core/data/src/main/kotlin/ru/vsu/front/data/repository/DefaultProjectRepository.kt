@@ -53,6 +53,7 @@ import ru.vsu.front.network.SocketRoutes.UPDATE_FILE_CONTENT
  * Реализация интерфейса [ProjectRepository] для работы с сетевым API.
  *
  * @property mainHttpClientManager Менеджер для получения HttpClient работающего с токенами.
+ * @property socketHandler Содержит в себе сокет.
  */
 class DefaultProjectRepository(
     private val mainHttpClientManager: MainHttpClientManager,
