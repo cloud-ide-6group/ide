@@ -3,7 +3,6 @@ package ru.vsu.front.network
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import ru.vsu.front.auth.AuthManager
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.usecase.RefreshUseCase
 

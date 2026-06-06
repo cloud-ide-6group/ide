@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import front.feature.profile.generated.resources.Res
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme

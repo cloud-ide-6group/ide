@@ -1,7 +1,6 @@
 package ru.vsu.front.profile
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,14 +16,10 @@ import io.github.ismoy.imagepickerkmp.domain.extensions.loadBase64
 import io.github.ismoy.imagepickerkmp.features.imagepicker.config.ImagePickerKMPConfig
 import io.github.ismoy.imagepickerkmp.features.imagepicker.model.ImagePickerResult
 import io.github.ismoy.imagepickerkmp.features.imagepicker.ui.rememberImagePickerKMP
-import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.component.*
 import ru.vsu.front.designsystem.theme.CodeTogetherTheme
-import ru.vsu.front.profile.component.CreatingProject
-import ru.vsu.front.profile.component.ProfileSections
-import ru.vsu.front.profile.component.ProjectsSection
-import ru.vsu.front.profile.component.UserAvatar
+import ru.vsu.front.profile.component.*
 
 /**
  * Экран профиля.
@@ -106,11 +101,18 @@ fun WindowScope.ProfileScreen(
                 onClick = onNotificationsClick,
                 icon = AppIcons.Notifications,
             )
+            TopBarButton(
+                onClick = {
+                    viewModel.processCommand(ProfileCommand.ChangeBuyingSubscriptionDialogVisibility)
+                },
+                text = "PREMIUM",
+            )
         }
     ) {
         when (val currentState = uiState) {
             is UiStatusProfile.Loaded -> {
                 val loadedState = currentState.uiStateProfileLoaded
+                println(loadedState.isSubscriptionExpired)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -180,7 +182,11 @@ fun WindowScope.ProfileScreen(
                             viewModel.processCommand(ProfileCommand.ChangeCreateProjectDialogVisibility)
                         },
                         onProjectClick = onProjectClick,
-                        onProjectInfoClick = onProjectInfoClick
+                        onProjectInfoClick = onProjectInfoClick,
+                        onExpiredProjectClick = {
+                            viewModel.processCommand(ProfileCommand.ClickExpiredProject)
+                        },
+                        expired = loadedState.isSubscriptionExpired
                     )
                 }
                 CustomDialog(
@@ -209,6 +215,21 @@ fun WindowScope.ProfileScreen(
                         },
                         onDismissRequest = {
                             viewModel.processCommand(ProfileCommand.ChangeProgramingLanguagesVisibility)
+                        }
+                    )
+                }
+                CustomDialog(
+                    show = loadedState.isCreateBuyingSubscriptionDialogOpen,
+                    onDismissRequest = {
+                        viewModel.processCommand(ProfileCommand.ChangeBuyingSubscriptionDialogVisibility)
+                    }
+                ) {
+                    BuyingSubscription(
+                        onConfirmClick = {
+                            viewModel.processCommand(ProfileCommand.ClickConfirmSubscription)
+                        },
+                        onDismissRequest = {
+                            viewModel.processCommand(ProfileCommand.ChangeBuyingSubscriptionDialogVisibility)
                         }
                     )
                 }

@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import org.json.JSONObject
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.DeleteNotificationRequest
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.NotificationsRepository
 import ru.vsu.front.model.entity.Notification

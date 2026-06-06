@@ -9,7 +9,6 @@ import ru.vsu.front.data.entity.request.UpdateProfileDataRequest
 import ru.vsu.front.data.entity.request.UpdateProfilePasswordRequest
 import ru.vsu.front.data.entity.request.UpdateProfilePhotoRequest
 import ru.vsu.front.data.mapper.toEntity
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.repository.ProfileRepository
 import ru.vsu.front.model.entity.RequestError

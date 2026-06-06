@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.window.WindowScope
-import front.core.designsystem.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import ru.vsu.front.designsystem.common.AppIcons
 import ru.vsu.front.designsystem.common.NecessaryAppButtons

@@ -2,12 +2,10 @@ package ru.vsu.front.data.repository
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import ru.vsu.front.data.entity.dto.ErrorResponseDto
 import ru.vsu.front.data.entity.request.CreateChatRequest
 import ru.vsu.front.data.entity.request.CreateMessageRequest
-import ru.vsu.front.domain.repository.AuthRepository
 import ru.vsu.front.domain.repository.ChatRepository
 import ru.vsu.front.model.entity.RequestError
 import ru.vsu.front.model.entity.Response

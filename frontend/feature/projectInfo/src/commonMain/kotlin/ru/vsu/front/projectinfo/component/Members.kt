@@ -1,6 +1,7 @@
 package ru.vsu.front.projectinfo.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ fun Members(
     modifier: Modifier = Modifier,
     onKickClick: (String) -> Unit
 ) {
-    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(modifier = modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(items = members, key = { it.userId }) { member ->
             MemberItem(
                 modifier = Modifier

@@ -1,7 +1,6 @@
 package ru.vsu.front.domain.usecase
 
 import ru.vsu.front.domain.repository.ProjectRepository
-import ru.vsu.front.model.entity.ProjectInfo
 import ru.vsu.front.model.entity.Response
 
 /**

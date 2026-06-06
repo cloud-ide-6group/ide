@@ -1,11 +1,9 @@
 package ru.vsu.front.profile.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +18,7 @@ import ru.vsu.front.model.entity.Project
  * @param projects Список проектов.
  * @param state Состояние прокрутки списка [LazyListState], используется также для привязки скроллбара.
  * @param modifier Модификатор для настройки.
+ * @param isSubscriptionExpired Закончилось ли время платной подписки.
  * @param onProjectClick Коллбек, возвращающий ID проекта при клике на его карточку.
  * @param onProjectInfoClick Коллбек, срабатывающий при клике на иконку информации о проекте.
  */
@@ -28,7 +27,9 @@ internal fun Projects(
     projects: List<Project>,
     state: LazyListState,
     modifier: Modifier = Modifier,
+    isSubscriptionExpired: Boolean = true,
     onProjectClick: (Int) -> Unit,
+    onExpiredProjectClick: () -> Unit,
     onProjectInfoClick: (Int) -> Unit,
 ) {
     LazyColumn(
@@ -36,13 +37,15 @@ internal fun Projects(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(items = projects, key = { it.id }) {
+        itemsIndexed(items = projects, key = { _, item -> item.id }) { index, item ->
             ProjectItem(
-                project = it,
-                onProjectClick = {
-                    onProjectClick(it.id)
+                project = item,
+                onIsNotExpiredProjectClick = {
+                    onProjectClick(item.id)
                 },
-                onProjectInfoClick = onProjectInfoClick
+                onProjectInfoClick = onProjectInfoClick,
+                onExpiredProjectClick = onExpiredProjectClick,
+                expired = index > 4 && isSubscriptionExpired
             )
         }
     }
@@ -66,6 +69,9 @@ internal fun ProjectsPreview() {
 
             },
             onProjectInfoClick = {
+
+            },
+            onExpiredProjectClick = {
 
             }
         )

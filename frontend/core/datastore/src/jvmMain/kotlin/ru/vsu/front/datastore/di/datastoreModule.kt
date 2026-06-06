@@ -1,7 +1,6 @@
 package ru.vsu.front.datastore.di
 
 import kotlinx.serialization.json.Json
-import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.vsu.front.datastore.CryptoManager

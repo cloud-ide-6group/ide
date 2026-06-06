@@ -3,20 +3,10 @@ package ru.vsu.front.data.di
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ru.vsu.front.data.repository.DefaultAuthRepository
-import ru.vsu.front.data.repository.DefaultChatRepository
-import ru.vsu.front.data.repository.DefaultFileRepository
-import ru.vsu.front.data.repository.DefaultNotificationsRepository
-import ru.vsu.front.data.repository.DefaultProfileRepository
-import ru.vsu.front.data.repository.DefaultProgramingLanguageRepository
-import ru.vsu.front.data.repository.DefaultProjectRepository
-import ru.vsu.front.domain.repository.AuthRepository
-import ru.vsu.front.domain.repository.ChatRepository
-import ru.vsu.front.domain.repository.FileRepository
-import ru.vsu.front.domain.repository.NotificationsRepository
-import ru.vsu.front.domain.repository.ProfileRepository
-import ru.vsu.front.domain.repository.ProgramingLanguageRepository
-import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.data.DefaultSocketHandler
+import ru.vsu.front.data.repository.*
+import ru.vsu.front.domain.repository.*
+import ru.vsu.front.domain.socket.SocketHandler
 
 /**
  * Модуль слоя data.
@@ -29,6 +19,8 @@ import ru.vsu.front.domain.repository.ProjectRepository
  * - [DefaultNotificationsRepository] - реализация репозитория через [NotificationsRepository].
  * - [DefaultFileRepository] - реализация репозитория через [FileRepository].
  * - [DefaultChatRepository] - реализация репозитория через [ChatRepository].
+ * - [DefaultPremiumRepository] - реализация репозитория через [PremiumRepository].
+ * - [DefaultSocketHandler] - реализация интерфейса [SocketHandler].
  */
 val dataModule = module {
     single {
@@ -44,7 +36,7 @@ val dataModule = module {
     }.bind<ProgramingLanguageRepository>()
 
     single {
-        DefaultProjectRepository(get(), get(), get(named("baseUrl")))
+        DefaultProjectRepository(get(), get())
     }.bind<ProjectRepository>()
 
     single {
@@ -58,4 +50,12 @@ val dataModule = module {
     single {
         DefaultChatRepository(get())
     }.bind<ChatRepository>()
+
+    single {
+        DefaultPremiumRepository(get(),get(), get(named("baseUrl")))
+    }.bind<PremiumRepository>()
+
+    single {
+        DefaultSocketHandler(get(), get(named("baseUrl")))
+    }.bind<SocketHandler>()
 }

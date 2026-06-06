@@ -2,12 +2,8 @@ package ru.vsu.front.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.WindowScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -21,7 +17,6 @@ import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.auth.AuthState
 import ru.vsu.front.authorization.AuthScreen
 import ru.vsu.front.authorization.AuthViewModel
-import ru.vsu.front.designsystem.component.CodeTogetherText
 import ru.vsu.front.notifications.NotificationsScreen
 import ru.vsu.front.notifications.NotificationsViewModel
 import ru.vsu.front.profile.ProfileScreen

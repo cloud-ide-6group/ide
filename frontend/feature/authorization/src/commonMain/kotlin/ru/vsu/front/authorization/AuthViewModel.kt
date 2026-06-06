@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import ru.vsu.front.auth.AuthManager
 import ru.vsu.front.common.dispatcher_provider.DispatcherProvider
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.usecase.LoginUseCase
 import ru.vsu.front.domain.usecase.SignUseCase

@@ -1,26 +1,25 @@
 package ru.vsu.front.auth
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
-import ru.vsu.front.domain.repository.ProjectRepository
+import ru.vsu.front.domain.socket.SocketHandler
 
 /**
  * Менеджер аутентификации.
  *
- * @property tokenStorage хранилище токенов.
+ * @property tokenStorage Хранилище токенов.
+ * @property socketHandler Содержит в себе сокет.
  */
 class AuthManager(
-    private val tokenStorage: TokenStorage
+    private val tokenStorage: TokenStorage,
+    private val socketHandler: SocketHandler,
 ) : KoinComponent {
-
-    /**
-     * Интерфейс репозитория проекта, чтобы закрыть подключение к проекту при выходе из аккаунта.
-     */
-    private val projectRepository: ProjectRepository by inject()
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /**
      * Авторизован ли пользователь.
@@ -54,8 +53,8 @@ class AuthManager(
      * Очищает токены, закрывает подключение к проекту, меняете состояние на "Не авторизован".
      */
     fun logout() {
+        socketHandler.closeSocket()
         tokenStorage.clearTokens()
-        projectRepository.closeSocket()
         _isAuthorized.value = AuthState.NotAuthorized
     }
 }

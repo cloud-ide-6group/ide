@@ -64,4 +64,8 @@ object SocketRoutes {
      * Подписка на уведомления.
      */
     const val NOTIFICATIONS_LIST = "notifications_list"
+    /**
+     * Подписка на конец подписки.
+     */
+    const val SUBSCRIPTION_EXPIRED  = "subscription_expired"
 }

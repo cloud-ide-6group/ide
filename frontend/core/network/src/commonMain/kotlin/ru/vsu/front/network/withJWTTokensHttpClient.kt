@@ -9,7 +9,6 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import ru.vsu.front.auth.AuthManager
-import ru.vsu.front.datastore.token_storage.DeviceTokenStorage
 import ru.vsu.front.datastore.token_storage.TokenStorage
 import ru.vsu.front.domain.usecase.RefreshUseCase
 import ru.vsu.front.model.entity.AuthTokens

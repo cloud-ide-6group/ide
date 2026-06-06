@@ -11,6 +11,7 @@ kotlin {
             implementation(libs.koin.core)
             api(projects.core.model)
             implementation(libs.coroutines)
+            implementation(libs.socketio)
         }
 
         jvmTest.dependencies {

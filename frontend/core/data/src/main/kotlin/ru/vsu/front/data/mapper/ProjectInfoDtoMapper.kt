@@ -1,9 +1,6 @@
 package ru.vsu.front.data.mapper
 
-import ru.vsu.front.data.entity.dto.NotificationDto
-import ru.vsu.front.data.entity.dto.ProgramingLanguageDto
 import ru.vsu.front.data.entity.dto.ProjectInfoDto
-import ru.vsu.front.model.entity.Notification
 import ru.vsu.front.model.entity.ProgramingLanguage
 import ru.vsu.front.model.entity.ProjectInfo
 

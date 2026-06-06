@@ -1,6 +1,5 @@
 package ru.vsu.front.auth.di
 
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ru.vsu.front.auth.AuthManager
 
@@ -12,6 +11,6 @@ import ru.vsu.front.auth.AuthManager
  */
 val authModule = module {
     single {
-        AuthManager(get())
+        AuthManager(get(),get())
     }
 }
